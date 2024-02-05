@@ -1,5 +1,6 @@
 {
   "expo": {
+    "host": "192.168.100.20",
     "name": "AgrosenseMovil",
     "slug": "AgrosenseMovil",
     "version": "1.0.0",
@@ -21,6 +22,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "usesCleartextTraffic": true
       }
     },
     "web": {
