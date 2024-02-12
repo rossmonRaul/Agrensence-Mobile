@@ -53,7 +53,7 @@ export const IncioScreen: React.FC = () => {
           </View>
 
           <View style={styles.createAccountContainer} >
-            <TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
+            <TouchableOpacity>
               <Text style={styles.createAccountText} >Crear una cuenta</Text>
             </TouchableOpacity>
 
