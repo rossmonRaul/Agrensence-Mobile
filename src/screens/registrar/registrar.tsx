@@ -49,7 +49,7 @@ export const RegistrarScreen: React.FC = () => {
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
-        usuario: '',
+        identificacion: '',
         correo: '',
         contrasena: '',
         confirmarContrasena: '',
@@ -121,13 +121,13 @@ export const RegistrarScreen: React.FC = () => {
     const validateFirstForm = () => {
         let isValid = true;
 
-        if (!formulario.usuario && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
+        if (!formulario.identificacion && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
             alert('Por favor rellene el formulario');
             isValid = false;
             return
         }
-        if (isValid && !formulario.usuario) {
-            alert('Ingrese un nombre de usuario');
+        if (isValid && !formulario.identificacion) {
+            alert('Ingrese un nombre de identificacion');
             isValid = false;
             return
         }
@@ -150,7 +150,7 @@ export const RegistrarScreen: React.FC = () => {
         return isValid
     }
 
-    // Se defina una función para manejar el registro del usuario
+    // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
         let isValid = true;
         // Se valida que la empresa, finca y parcela estén seleccionadas
@@ -169,7 +169,7 @@ export const RegistrarScreen: React.FC = () => {
 
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
-            usuario: formulario.usuario,
+            identificacion: formulario.identificacion,
             correo: formulario.correo,
             contrasena: formulario.contrasena,
             idEmpresa: formulario.empresa,
@@ -178,7 +178,7 @@ export const RegistrarScreen: React.FC = () => {
         };
         console.log(formData);
 
-        //  Se inserta el usuario en la base de datos
+        //  Se inserta el identificacion en la base de datos
         const responseInsert = await InsertarUsuario(formData);
 
         // Se muestra una alerta de éxito o error según la respuesta obtenida
@@ -213,12 +213,12 @@ export const RegistrarScreen: React.FC = () => {
                 <View style={styles.formContainer}>
                     {!isSecondFormVisible ? (
                         <>
-                            <Text style={styles.formText} >Usuario</Text>
+                            <Text style={styles.formText} >Identificación</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Usuario"
-                                value={formulario.usuario}
-                                onChangeText={(text) => updateFormulario('usuario', text)}
+                                placeholder="Identificación"
+                                value={formulario.identificacion}
+                                onChangeText={(text) => updateFormulario('identificacion', text)}
                             />
                             <Text style={styles.formText} >Correo electrónico</Text>
                             <TextInput

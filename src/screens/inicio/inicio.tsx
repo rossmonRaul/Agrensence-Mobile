@@ -34,7 +34,7 @@ export const IncioScreen: React.FC = () => {
           <Text style={styles.formText} >Usuario</Text>
           <TextInput
             style={styles.input}
-            placeholder="Usuario"
+            placeholder="Identificación o correo"
             value={username}
             onChangeText={(text) => setUsername(text)}
           />

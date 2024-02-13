@@ -22,7 +22,7 @@ const useLogin = () => {
         }
 
         const formData = {
-            usuario: username,
+            identificacion: username,
             contrasena: password,
         };
 
@@ -40,7 +40,7 @@ const useLogin = () => {
         if (userFound.mensaje === "Usuario encontrado.") {
             alert('Inicio sesión correctamente.');
             setUserData({
-                usuario: userFound.usuario,
+                identificacion: userFound.identificacion,
                 correo: userFound.correo,
                 idEmpresa: userFound.idEmpresa,
                 idFinca: userFound.idFinca,

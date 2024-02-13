@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 
 // Se define la interfaz para los datos del usuario
 interface UserData {
-    usuario: string;
+    identificacion: string;
     correo: string;
     idEmpresa: number;
     idFinca: number;
@@ -20,7 +20,7 @@ interface UserContextProps {
 // Se crea el contexto con las interfaces definidas
 export const UserContext = createContext<UserContextProps>({
     userData: {
-        usuario: "",
+        identificacion: "",
         correo: "",
         idEmpresa: 0,
         idFinca: 0,
@@ -37,7 +37,7 @@ interface UserContextProviderProps {
 // Se crea un componente proveedor
 export const UserContextProvider: React.FC<UserContextProviderProps> = ({ children }) => {
     const [userData, setUserData] = useState<UserData>({
-        usuario: "",
+        identificacion: "",
         correo: "",
         idEmpresa: 0,
         idFinca: 0,
