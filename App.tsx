@@ -11,6 +11,7 @@ import { Screen_Names } from './src/constants';
 import { useFontsLoader } from './src/hooks/useFontsLoader';
 import { styles } from './src/screens/inicio/inicio.styles';
 
+import { UserContextProvider } from './src/context/UserProvider';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,11 +45,14 @@ const App: React.FC = () => {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={Screen_Names.Login} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={Screen_Names.Login} component={IncioScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserContextProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={Screen_Names.Login} screenOptions={{ headerShown: false }}>
+          <Stack.Screen name={Screen_Names.Login} component={IncioScreen} />
+          <Stack.Screen name={Screen_Names.Register} component={RegistrarScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserContextProvider>
   );
 };
 
