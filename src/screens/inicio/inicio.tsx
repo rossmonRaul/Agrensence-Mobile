@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from './inicio.styles';
 import { useNavigation } from '@react-navigation/native';
 import useLogin from '../../hooks/useLogin';
 
-const Usuario = [
-  { username: 'usuario21', password: 'password22' },
-  { username: 'usuario2', password: 'password22' },
-];
-
 export const IncioScreen: React.FC = () => {
   const navigation = useNavigation();
 
-  const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin(Usuario);
+  const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin();
 
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigation.navigate('Register' as never);
+    }
+  }, [isLoggedIn, navigation]);
 
   return (
     <View style={styles.container}>
@@ -39,6 +40,7 @@ export const IncioScreen: React.FC = () => {
           />
           <Text style={styles.formText} >Contraseña</Text>
           <TextInput style={styles.input}
+            secureTextEntry={true}
             placeholder="Contraseña"
             value={password}
             onChangeText={(text) => setPassword(text)}
@@ -53,11 +55,10 @@ export const IncioScreen: React.FC = () => {
           </View>
 
           <View style={styles.createAccountContainer} >
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
               <Text style={styles.createAccountText} >Crear una cuenta</Text>
             </TouchableOpacity>
 
-            {isLoggedIn && <Text>Iniciado la sesion</Text>}
           </View>
         </View>
 
