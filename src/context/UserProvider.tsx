@@ -9,6 +9,8 @@ interface UserData {
     idEmpresa: number;
     idFinca: number;
     idParcela: number;
+    idRol: number;
+    estado: boolean;
 }
 
 // Se define la interfaz para el contexto
@@ -24,7 +26,9 @@ export const UserContext = createContext<UserContextProps>({
         correo: "",
         idEmpresa: 0,
         idFinca: 0,
-        idParcela: 0
+        idParcela: 0,
+        idRol: 0,
+        estado: false
     },
     setUserData: () => { }
 });
@@ -41,24 +45,11 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
         correo: "",
         idEmpresa: 0,
         idFinca: 0,
-        idParcela: 0
+        idParcela: 0,
+        idRol: 0,
+        estado: false
     });
 
-    // Cargar datos almacenados al iniciar la aplicación
-    useEffect(() => {
-        const loadUserData = async () => {
-            try {
-                const storedData = await AsyncStorage.getItem('userData');
-                if (storedData) {
-                    setUserData(JSON.parse(storedData));
-                }
-            } catch (error) {
-                console.error('Error al cargar datos almacenados:', error);
-            }
-        };
-
-        loadUserData();
-    }, []);
 
     // Guardar datos cuando se actualiza el contexto
     useEffect(() => {
