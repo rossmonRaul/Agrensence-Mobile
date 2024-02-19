@@ -3,6 +3,7 @@ import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-
 import { styles } from './inicio.styles';
 import { useNavigation } from '@react-navigation/native';
 import useLogin from '../../hooks/useLogin';
+import { Screen_Names } from '../../constants';
 
 export const IncioScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -10,11 +11,6 @@ export const IncioScreen: React.FC = () => {
   const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin();
 
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigation.navigate('Register' as never);
-    }
-  }, [isLoggedIn, navigation]);
 
   return (
     <View style={styles.container}>
@@ -55,7 +51,7 @@ export const IncioScreen: React.FC = () => {
           </View>
 
           <View style={styles.createAccountContainer} >
-            <TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
+            <TouchableOpacity onPress={() => navigation.navigate(Screen_Names.Register as never)}>
               <Text style={styles.createAccountText} >Crear una cuenta</Text>
             </TouchableOpacity>
 
