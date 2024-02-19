@@ -1,14 +1,19 @@
 import React, { useContext, useState } from 'react';
+import { Alert } from 'react-native';
 import { ValidarUsuario } from '../servicios/ServicioUsuario';
 import { UserContext } from '../context/UserProvider';
+import { useNavigation } from '@react-navigation/native';
+import { Screen_Names } from '../constants';
 
 // Se define el hook que gestionará la lógica de inicio de sesión
 const useLogin = () => {
+    const navigation = useNavigation();
     const { userData, setUserData } = useContext(UserContext);
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+    let estado = false;
     // Se define la función para manejar el proceso de inicio de sesión
     const handleLogin = async () => {
         //Se utilizan algunas validaciones 
@@ -36,17 +41,29 @@ const useLogin = () => {
             alert('Credenciales incorrectas.');
             return;
         }
+
+        if (userFound.estado === 1) estado = true
+
         //  Si el usuario inicia sesión agrega los datos al context
         if (userFound.mensaje === "Usuario encontrado.") {
-            alert('Inicio sesión correctamente.');
             setUserData({
                 identificacion: userFound.identificacion,
                 correo: userFound.correo,
                 idEmpresa: userFound.idEmpresa,
                 idFinca: userFound.idFinca,
                 idParcela: userFound.idParcela,
+                idRol: userFound.idRol,
+                estado: estado,
             });
             setIsLoggedIn(true)
+            Alert.alert('¡Inicio sesión correctamente!', '', [
+                {
+                    text: 'OK',
+                    onPress: () => {
+                        navigation.navigate(Screen_Names.Menu as never);
+                    },
+                },
+            ]);
         }
     }
 
