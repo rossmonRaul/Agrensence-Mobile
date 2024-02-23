@@ -7,7 +7,7 @@ import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../../hooks/useFetchDropDownData';
 
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
-import { ActualizarUsuarioAdministrador, CambiarEstadoUsuario } from '../../../servicios/ServicioUsuario';
+import { ActualizarUsuarioAdministrador, CambiarEstadoUsuario, ActualizarContrasenaUsuario } from '../../../servicios/ServicioUsuario';
 import { ScreenProps } from '../../../constants';
 import { validatePassword } from '../../../utils/validationPasswordUtil';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -145,17 +145,32 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     };
     //  Se define una función para manejar la modificacion de usuario
     const handleModifyUser = async () => {
+        if (formulario.contrasena != formulario.confirmarContrasena) {
+            alert('Las contraseñas no coinciden.')
+        }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
-        const formData = {
-            identificacion: formulario.identificacion,
-            contrasena: formulario.contrasena,
-            idEmpresa: formulario.idEmpresa,
+        let formData = {
         };
 
+        if (userData.idRol === 1) {
+            formData = {
+                identificacion: formulario.identificacion,
+                contrasena: formulario.contrasena,
+                idEmpresa: formulario.idEmpresa,
+            };
+        }
+        if (userData.idRol === 2) {
+            formData = {
+                identificacion: formulario.identificacion,
+                contrasena: formulario.contrasena
+            };
+        }
 
         //  Se realiza la modificación del usuario
-        const responseInsert = await ActualizarUsuarioAdministrador(formData);
+        let responseInsert;
 
+        if (userData.idRol === 1) responseInsert = await ActualizarUsuarioAdministrador(formData);
+        if (userData.idRol === 2) responseInsert = await ActualizarContrasenaUsuario(formData)
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert(
@@ -247,13 +262,16 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                             </>
                         ) : (
                             <>
-                                <DropdownComponent
-                                    placeholder="EmpresaInterface"
-                                    data={empresaData}
-                                    iconName="building-o"
-                                    value={formulario.idEmpresa}
-                                    onChange={(item) => (setEmpresa(item.value as never), updateFormulario('empresa', item.value))}
-                                />
+                                {userData.idRol === 1 &&
+                                    <DropdownComponent
+                                        placeholder="Empresa"
+                                        data={empresaData}
+                                        iconName="building-o"
+                                        value={formulario.idEmpresa}
+                                        onChange={(item) => (setEmpresa(item.value as never), updateFormulario('empresa', item.value))}
+                                    />
+                                }
+
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
