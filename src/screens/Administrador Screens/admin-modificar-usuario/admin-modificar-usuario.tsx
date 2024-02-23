@@ -8,7 +8,7 @@ import { EmpresaInterface, FincaInterface, ParcelaInterface } from '../../../int
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
-import { ActualizarContrasenaUsuario, CambiarEstadoUsuarioFincaParcela, AsignarNuevaFincaParcela } from '../../../servicios/ServicioUsuario';
+import { ActualizarContrasenaUsuario, CambiarEstadoUsuarioFincaParcela, AsignarNuevaFincaParcela, AsignarFincaParcela } from '../../../servicios/ServicioUsuario';
 import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../../hooks/useAuth';
@@ -22,6 +22,7 @@ interface RouteParams {
     idRol: number;
     idFinca: number;
     idParcela: number;
+    idUsuarioFincaParcela: number;
 }
 
 
@@ -30,7 +31,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
     const { userData } = useAuth();
-    const { identificacion, idEmpresa, idRol, idFinca, idParcela } = route.params as RouteParams;
+    const { identificacion, idEmpresa, idRol, idFinca, idParcela, idUsuarioFincaParcela } = route.params as RouteParams;
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
     const [isFormVisible, setFormVisible] = useState(false);
@@ -187,7 +188,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminUserList.screenName);
+                        navigation.navigate(ScreenProps.Menu.screenName);
                     },
                 },
             ]);
@@ -200,10 +201,14 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             identificacion: formulario.identificacion,
-            contrasena: formulario.contrasena,
+            idUsuario: idUsuarioFincaParcela,
+            idFinca: finca,
+            idParcela: parcela,
         };
+        console.log(formData);
         //  Se realiza la modificación de usuario
-        const responseInsert = await ActualizarContrasenaUsuario(formData);
+        const responseInsert = await AsignarFincaParcela(formData);
+        console.log(responseInsert)
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
@@ -215,7 +220,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                         text: 'OK',
                         onPress: () => {
                             navigation.navigate(
-                                ScreenProps.AdminUserList.screenName as never
+                                ScreenProps.Menu.screenName
                             );
                         },
                     },
@@ -249,45 +254,37 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                         setFormVisible(true);
                                     }}
                                 >
-                                    <Text style={styles.buttonText}>Modificar contraseña</Text>
+                                    <Text style={styles.buttonText}>Modificar finca y parcela</Text>
                                 </TouchableOpacity>
                             </>
-                        ) : (
-                            <>
-                                <Text style={styles.formText} >Identificación</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    editable={false}
-                                    placeholder="Identificación"
-                                    value={formulario.identificacion}
-                                    onChangeText={(text) => updateFormulario('identificacion', text)}
+                        ) : (<>
+                            {empresa &&
+                                <DropdownComponent
+                                    placeholder="Finca"
+                                    data={fincaDataSort}
+                                    value={finca}
+                                    iconName='map-marker'
+                                    onChange={handleValueFinca}
                                 />
-                                <Text style={styles.formText} >Contraseña</Text>
-                                <TextInput style={styles.input}
-                                    secureTextEntry={true}
-                                    value={formulario.contrasena}
-                                    placeholder="Contraseña"
-                                    onChangeText={(text) => updateFormulario('contrasena', text)}
+                            }
+                            {finca &&
+                                <DropdownComponent
+                                    placeholder="Parcela"
+                                    data={parcelaDataSort}
+                                    iconName='map-marker'
+                                    value={parcela}
+                                    onChange={(item) => (setParcela(item.value as never))}
                                 />
-                                <Text style={styles.formText} >Confirmar contraseña</Text>
-                                <TextInput style={styles.input}
-                                    secureTextEntry={true}
-                                    value={formulario.confirmarContrasena}
-                                    placeholder="Confirmar contraseña"
-                                    onChangeText={(text) => updateFormulario('confirmarContrasena', text)}
-                                />
-
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => {
-                                        handleModifyUser();
-                                    }}
-                                >
-                                    <Text style={styles.buttonText}>Enviar</Text>
-                                </TouchableOpacity>
-
-                            </>
-                        )}
+                            }
+                            {parcela && <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => {
+                                    handleModifyUser()
+                                }}
+                            >
+                                <Text style={styles.buttonText}>Modificar nueva finca y parcela</Text>
+                            </TouchableOpacity>}
+                        </>)}
                         <View style={styles.secondForm}>
                             {!isSecondFormVisible ? (<>
                                 <TouchableOpacity
