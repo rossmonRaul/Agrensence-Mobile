@@ -3,14 +3,24 @@ import { TouchableOpacity } from 'react-native';
 import { styles } from './BackButton.styles';
 import { AntDesign } from '@expo/vector-icons';
 
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 interface BackButtonProps {
-    onPress: () => void;
+    screenName: string;
+    color: string;
 }
 
-export const BackButtonComponent: React.FC<BackButtonProps> = ({ onPress }) => {
+export const BackButtonComponent: React.FC<BackButtonProps> = ({ screenName, color }) => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+
+    const handleBackPress = () => {
+        navigation.navigate(screenName);
+    };
+
     return (
-        <TouchableOpacity onPress={onPress} style={styles.backButton}>
-            <AntDesign name="left" size={34} color="#264d49" />
+        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+            <AntDesign name="left" size={34} color={color} />
         </TouchableOpacity>
-    )
-}
+    );
+};
