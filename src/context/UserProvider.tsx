@@ -1,22 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text } from 'react-native';
-
-// Se define la interfaz para los datos del usuario
-interface UserData {
-    identificacion: string;
-    correo: string;
-    idEmpresa: number;
-    idFinca: number;
-    idParcela: number;
-    idRol: number;
-    estado: boolean;
-}
+import { UserDataInterface } from '../interfaces/userDataInterface';
 
 // Se define la interfaz para el contexto
 interface UserContextProps {
-    userData: UserData;
-    setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+    userData: UserDataInterface;
+    setUserData: React.Dispatch<React.SetStateAction<UserDataInterface>>;
 }
 
 // Se crea el contexto con las interfaces definidas
@@ -40,7 +30,7 @@ interface UserContextProviderProps {
 
 // Se crea un componente proveedor
 export const UserContextProvider: React.FC<UserContextProviderProps> = ({ children }) => {
-    const [userData, setUserData] = useState<UserData>({
+    const [userData, setUserData] = useState<UserDataInterface>({
         identificacion: "",
         correo: "",
         idEmpresa: 0,
@@ -55,6 +45,8 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
     useEffect(() => {
         const saveUserData = async () => {
             try {
+                //await AsyncStorage.clear();
+
                 await AsyncStorage.setItem('userData', JSON.stringify(userData));
             } catch (error) {
                 console.error('Error al guardar datos:', error);
