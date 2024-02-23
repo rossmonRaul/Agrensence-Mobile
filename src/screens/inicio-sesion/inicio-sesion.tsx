@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './inicio.styles';
+import { styles } from './inicio-sesion.styles';
 import { useNavigation } from '@react-navigation/native';
 import useLogin from '../../hooks/useLogin';
-import { Screen_Names } from '../../constants';
+import { ScreenProps } from '../../constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export const IncioScreen: React.FC = () => {
-  const navigation = useNavigation();
+export const IncioSesionScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin();
 
@@ -51,7 +52,7 @@ export const IncioScreen: React.FC = () => {
           </View>
 
           <View style={styles.createAccountContainer} >
-            <TouchableOpacity onPress={() => navigation.navigate(Screen_Names.Register as never)}>
+            <TouchableOpacity onPress={() => navigation.navigate(ScreenProps.Register.screenName)}>
               <Text style={styles.createAccountText} >Crear una cuenta</Text>
             </TouchableOpacity>
 

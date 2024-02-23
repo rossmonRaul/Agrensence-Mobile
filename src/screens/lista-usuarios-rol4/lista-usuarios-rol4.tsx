@@ -1,27 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './asignar-usuarios.styles'
+import { styles } from './lista-usuarios-rol4.styles'
 import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
-import { ObtenerUsuariosRolNoAsignado } from '../../servicios/ServicioUsuario';
+import { ObtenerUsuariosPorRol4 } from '../../servicios/ServicioUsuario';
 import { processData } from '../../utils/processData';
 import { CustomRectangle } from '../../components/CustomRectangle/CustomRectangle';
 import { useNavigation } from '@react-navigation/native';
-import { Screen_Names } from '../../constants';
-import { NavigationProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenProps } from '../../constants';
+import { useAuth } from '../../hooks/useAuth';
+import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
 
-type AppParamList = {
-    AssignEmpresa: { identificacion: string };
-};
-export const AsignarUsuariosScreen: React.FC = () => {
-    const navigation = useNavigation();
+export const ListaUsuarioRol4Screen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     //  Estado para los datos originales sin filtrar
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     //  Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const handleBackPress = () => {
-        console.log('Botón de retroceso presionado');
-    };
+    const { userData } = useAuth();
 
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
@@ -31,15 +28,12 @@ export const AsignarUsuariosScreen: React.FC = () => {
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (
-        navigation: NavigationProp<AppParamList>,
-        identificacion: string
-    ) => {
-        navigation.navigate('AssignEmpresa', { identificacion: identificacion });
+    const handleRectanglePress = (identificacion: string) => {
+        navigation.navigate(ScreenProps.AssignCompany.screenName, { identificacion: identificacion });
     };
 
     useEffect(() => {
-        ObtenerUsuariosRolNoAsignado()
+        ObtenerUsuariosPorRol4()
             .then((response) => {
                 //  Filtrar y formatear los datos originales
                 const filteredData = response.map((item) => ({
@@ -70,9 +64,9 @@ export const AsignarUsuariosScreen: React.FC = () => {
 
     return (
         <View style={styles.container} >
-            <BackButtonComponent onPress={handleBackPress} />
+            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Asignar usuarios</Text>
+                <Text style={styles.textAbove} >Lista de usuarios</Text>
             </View>
 
             <View style={styles.searchContainer}>
@@ -88,13 +82,14 @@ export const AsignarUsuariosScreen: React.FC = () => {
 
             <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                 {apiData.map((item, index) => (
-                    <TouchableOpacity key={item.identificacion} onPress={() => handleRectanglePress(navigation as never, item.identificacion)}>
+                    <TouchableOpacity key={item.identificacion} onPress={() => handleRectanglePress(item.identificacion)}>
                         <CustomRectangle
                             key={item.identificacion}
                             data={processData([item], keyMapping)?.data || []} />
                     </TouchableOpacity>
                 ))}
             </ScrollView>
+            <BottomNavBar />
 
         </View>
     );

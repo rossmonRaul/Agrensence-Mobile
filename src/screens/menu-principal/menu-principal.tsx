@@ -1,26 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import { styles } from './menu.styles';
+import { styles } from './menu-principal.styles';
 import { SquareIcon } from '../../components/IconSquare/IconSquare';
 import { Company_Props } from '../../constants';
 import { UserContext } from '../../context/UserProvider';
-
-
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../hooks/useAuth';
+import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
 export const MenuScreen: React.FC = () => {
-    const { userData } = React.useContext(UserContext);
+    const { userData } = useAuth();
     const userRole = userData.idRol;
+    const navigation = useNavigation();
 
-    // Aqui va la logica para luego mandarla a otras pantallas segun el recuadro que se presione
-    const HandleSquarePress = () => {
-        console.log('Cuadro Presiona');
+    //  Aqui va la se logra ir a otras pantallas segun el recuadro que se presione
+    const HandleSquarePress = (screen: string) => {
+        if (screen !== '') {
+            navigation.navigate(screen as never);
+        } else {
+            alert('Pantalla aun no disponible')
+        }
     }
 
-    //Se renderiza los cuadros con sus respectivos iconos
-
+    //  Se renderiza los cuadros con sus respectivos iconos
     const renderRows = () => {
         let filteredCompanyProps = Company_Props;
         if (userRole === 1) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 13 || company.id === 14);
+            filteredCompanyProps = Company_Props.filter(company => company.id === 11 || company.id === 13 || company.id === 14 || company.id === 15);
         }
         if (userRole === 2) {
             filteredCompanyProps = Company_Props.slice(0, 12);
@@ -29,7 +34,7 @@ export const MenuScreen: React.FC = () => {
             filteredCompanyProps = Company_Props.slice(0, 10);
         }
         if (userRole === 4) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 14);
+            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 15);
         }
 
 
@@ -41,7 +46,7 @@ export const MenuScreen: React.FC = () => {
                     {rowItems.map((company) => (
                         <SquareIcon
                             key={company.id}
-                            onPress={() => HandleSquarePress()}
+                            onPress={() => HandleSquarePress(company.screen)}
                             iconImg={company.iconImage}
                             text={company.text}
                         />
@@ -54,15 +59,17 @@ export const MenuScreen: React.FC = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <ScrollView
-                style={styles.rowContainer}
-                showsVerticalScrollIndicator={false}
-            >
+        <>
+            <View style={styles.container}>
+                <ScrollView
+                    style={styles.rowContainer}
+                    showsVerticalScrollIndicator={false}
+                >
 
-                {renderRows()}
-            </ScrollView>
-
-        </View>
+                    {renderRows()}
+                </ScrollView>
+            </View>
+            <BottomNavBar />
+        </>
     );
 };

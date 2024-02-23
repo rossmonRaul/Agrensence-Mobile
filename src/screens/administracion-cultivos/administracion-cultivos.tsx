@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './admin-cultivos.styles'
+import { styles } from './administracion-cultivos'
 import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { IconRectangle } from '../../components/IconRectangle/IconRectangle';
 import { Admin_cultivation } from '../../constants';
-
+import { ScreenProps } from '../../constants';
 export const AdministracionCultivos: React.FC = () => {
 
     const handleBackPress = () => {
@@ -17,7 +17,7 @@ export const AdministracionCultivos: React.FC = () => {
 
     return (
         <View style={styles.container} >
-            <BackButtonComponent onPress={handleBackPress} />
+            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
             <View style={styles.textAboveContainer}>
                 <Text style={styles.textAbove} >Administración de cultivos</Text>
             </View>

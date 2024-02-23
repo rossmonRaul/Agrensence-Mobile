@@ -1,22 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './registrar.styles';
+import { styles } from './registrar-usuario.styles';
 import { useNavigation } from '@react-navigation/native';
-import DropdownComponent from '../../components/Dropdown/Dropwdown';
 import { isEmail } from 'validator'
-
-import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../hooks/useFetchDropDownData';
-
-import { ObtenerEmpresas } from '../../servicios/ServicioEmpresa';
-import { ObtenerFincas } from '../../servicios/ServicioFinca';
-import { ObtenerParcelas } from '../../servicios/ServicioParcela';
-import { InsertarUsuario } from '../../servicios/ServicioUsuario';
-
-import { Screen_Names } from '../../constants';
+import { GuardarUsuario } from '../../servicios/ServicioUsuario';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ScreenProps } from '../../constants';
 import { validatePassword } from '../../utils/validationPasswordUtil';
-
-export const RegistrarScreen: React.FC = () => {
-    const navigation = useNavigation();
+export const RegistrarUsuarioScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -73,7 +65,7 @@ export const RegistrarScreen: React.FC = () => {
             };
 
             //  Se inserta el identificacion en la base de datos
-            const responseInsert = await InsertarUsuario(formData);
+            const responseInsert = await GuardarUsuario(formData);
 
             // Se muestra una alerta de éxito o error según la respuesta obtenida
             if (responseInsert.indicador === 0) {
@@ -81,7 +73,7 @@ export const RegistrarScreen: React.FC = () => {
                     {
                         text: 'OK',
                         onPress: () => {
-                            navigation.navigate(Screen_Names.Login as never);
+                            navigation.navigate(ScreenProps.Login.screenName);
                         },
                     },
                 ]);
@@ -144,7 +136,7 @@ export const RegistrarScreen: React.FC = () => {
 
                     <View style={styles.loginButtonContainer} >
 
-                        <TouchableOpacity onPress={() => { navigation.navigate('Login' as never) }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate(ScreenProps.Login.screenName) }}>
                             <Text style={styles.loginButtonText} >Iniciar sesión</Text>
                         </TouchableOpacity>
 

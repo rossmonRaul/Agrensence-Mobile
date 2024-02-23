@@ -1,41 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './AsignarEmpresa.styles';
+import React, { useState } from 'react';
+import { View, ImageBackground, TouchableOpacity, Text, Alert } from 'react-native';
+import { styles } from './admin-asignar-empresa-usuario.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import DropdownComponent from '../../components/Dropdown/Dropwdown';
-import { ActualizarUsuario } from '../../servicios/ServicioUsuario';
-
-import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../hooks/useFetchDropDownData';
-
-import { ObtenerEmpresas } from '../../servicios/ServicioEmpresa';
-import { ObtenerFincas } from '../../servicios/ServicioFinca';
-import { ObtenerParcelas } from '../../servicios/ServicioParcela';
-import { Screen_Names } from '../../constants';
-
-//  Se definen las interfaces para representar la estructura de datos de las empresas, fincas y parcelas
-interface Empresa {
-    nombre: string;
-    idEmpresa: number;
-}
-
-interface Finca {
-    idFinca: number;
-    nombre: string;
-    idEmpresa: number;
-}
-interface Parcela {
-    nombre: string;
-    idParcela: number;
-    idFinca: number;
-}
+import DropdownComponent from '../../../components/Dropdown/Dropwdown';
+import { AsignarEmpresaFincaYParcela } from '../../../servicios/ServicioUsuario';
+import { BackButtonComponent } from '../../../components/BackButton/BackButton';
+import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../../hooks/useFetchDropDownData';
+import { useAuth } from '../../../hooks/useAuth';
+import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
+import { ObtenerFincas } from '../../../servicios/ServicioFinca';
+import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
+import { ScreenProps } from '../../../constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { EmpresaInterface, FincaInterface, ParcelaInterface } from '../../../interfaces/empresaInterfaces';
+import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 
 interface RouteParams {
     identificacion: string;
 }
 
 
-export const AsignarEmpresaScreen: React.FC = () => {
-    const navigation = useNavigation();
+export const AdminAsignarEmpresaScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { userData } = useAuth();
     const route = useRoute();
     const { identificacion } = route.params as RouteParams;
     /*  Se definen los estados para controlar la visibilidad 
@@ -53,7 +40,7 @@ export const AsignarEmpresaScreen: React.FC = () => {
 
     /*  Estan son las Props para obtener datos de empresas, 
         fincas y parcelas mediante el hook useFetchDropdownData */
-    const obtenerEmpresasProps: UseFetchDropdownDataProps<Empresa> = {
+    const obtenerEmpresasProps: UseFetchDropdownDataProps<EmpresaInterface> = {
         fetchDataFunction: ObtenerEmpresas,
         setDataFunction: setEmpresaData,
         labelKey: 'nombre',
@@ -61,7 +48,7 @@ export const AsignarEmpresaScreen: React.FC = () => {
         idKey: 'idEmpresa',
     };
 
-    const obtenerFincaProps: UseFetchDropdownDataProps<Finca> = {
+    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
         fetchDataFunction: ObtenerFincas,
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
@@ -69,7 +56,7 @@ export const AsignarEmpresaScreen: React.FC = () => {
         idKey: 'idEmpresa',
     };
 
-    const obtenerParcelaProps: UseFetchDropdownDataProps<Parcela> = {
+    const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
         fetchDataFunction: ObtenerParcelas,
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
@@ -100,12 +87,10 @@ export const AsignarEmpresaScreen: React.FC = () => {
         setParcela(null);
     }
 
-    // Función para validar la primera parte formulario
 
-
-    // Se defina una función para manejar el registro del identificacion
+    //  Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
-        // Se valida que la empresa, finca y parcela estén seleccionadas
+        //  Se valida que la empresa, finca y parcela estén seleccionadas
         if (!empresa) {
             alert('Ingrese una empresa');
             return
@@ -122,24 +107,20 @@ export const AsignarEmpresaScreen: React.FC = () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             identificacion: identificacion,
-            idRol: 3,
             idEmpresa: empresa,
             idFinca: finca,
-            idParcela: parcela,
-            estado: 1
+            idParcela: parcela
         };
-        console.log(formData);
 
         //  Se inserta el identificacion en la base de datos
-        const responseInsert = await ActualizarUsuario(formData);
-        console.log(responseInsert);
-        // Se muestra una alerta de éxito o error según la respuesta obtenida
+        const responseInsert = await AsignarEmpresaFincaYParcela(formData);
+        //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se actualizo el usuario correcamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(Screen_Names.Menu as never);
+                        navigation.navigate(ScreenProps.Menu.screenName);
                     },
                 },
             ]);
@@ -151,11 +132,11 @@ export const AsignarEmpresaScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ImageBackground
-                source={require('../../assets/images/siembros_imagen.jpg')}
+                source={require('../../../assets/images/siembros_imagen.jpg')}
                 style={styles.upperContainer}
             >
             </ImageBackground>
-
+            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
                 <View>
                     <Text style={styles.createAccountText} >Asignar empresa</Text>
@@ -200,6 +181,8 @@ export const AsignarEmpresaScreen: React.FC = () => {
                 </View>
 
             </View>
+            <BottomNavBar />
+
         </View>
     );
 }

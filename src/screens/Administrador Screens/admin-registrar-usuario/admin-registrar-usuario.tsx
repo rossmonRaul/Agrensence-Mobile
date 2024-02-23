@@ -1,29 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './admin-registrar.styles';
+import { styles } from './admin-registrar-usuario.styles';
 import { useNavigation } from '@react-navigation/native';
-import DropdownComponent from '../../components/Dropdown/Dropwdown';
+import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { isEmail } from 'validator'
 
-import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../hooks/useFetchDropDownData';
+import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../../hooks/useFetchDropDownData';
+import { EmpresaInterface } from '../../../interfaces/empresaInterfaces';
+import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
+import { GuardarUsuarioPorSuperUsuario } from '../../../servicios/ServicioUsuario';
+import { ScreenProps } from '../../../constants';
+import { validatePassword } from '../../../utils/validationPasswordUtil';
+import { useAuth } from '../../../hooks/useAuth';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BackButtonComponent } from '../../../components/BackButton/BackButton';
+import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 
-import { ObtenerEmpresas } from '../../servicios/ServicioEmpresa';
-import { ObtenerFincas } from '../../servicios/ServicioFinca';
-import { ObtenerParcelas } from '../../servicios/ServicioParcela';
-import { AdminInsertarUsuario } from '../../servicios/ServicioUsuario';
-import { Screen_Names } from '../../constants';
-import { validatePassword } from '../../utils/validationPasswordUtil';
-
-//  Se definen las interfaces para representar la estructura de datos de las empresas, fincas y parcelas
-interface Empresa {
-    nombre: string;
-    idEmpresa: number;
-}
-
-
-
-export const AdminRegistrarScreen: React.FC = () => {
-    const navigation = useNavigation();
+export const AdminRegistrarUsuarioScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { userData } = useAuth();
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
@@ -41,6 +36,7 @@ export const AdminRegistrarScreen: React.FC = () => {
         empresa: ''
     });
 
+
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -51,7 +47,7 @@ export const AdminRegistrarScreen: React.FC = () => {
 
     /*  Estan son las Props para obtener datos de empresas, 
         fincas y parcelas mediante el hook useFetchDropdownData */
-    const obtenerEmpresasProps: UseFetchDropdownDataProps<Empresa> = {
+    const obtenerEmpresasProps: UseFetchDropdownDataProps<EmpresaInterface> = {
         fetchDataFunction: ObtenerEmpresas,
         setDataFunction: setEmpresaData,
         labelKey: 'nombre',
@@ -106,7 +102,7 @@ export const AdminRegistrarScreen: React.FC = () => {
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
 
-        // Se valida que la empresa, finca y parcela estén seleccionadas
+        //  Se valida que la empresa, finca y parcela estén seleccionadas
         if (!formulario.empresa) {
             alert('Ingrese una empresa');
             return
@@ -121,14 +117,14 @@ export const AdminRegistrarScreen: React.FC = () => {
         };
 
         //  Se inserta el identificacion en la base de datos
-        const responseInsert = await AdminInsertarUsuario(formData);
-        // Se muestra una alerta de éxito o error según la respuesta obtenida
+        const responseInsert = await GuardarUsuarioPorSuperUsuario(formData);
+        //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 0) {
             Alert.alert('¡Se creo el usuario correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(Screen_Names.Menu as never);
+                        navigation.navigate(ScreenProps.Menu.screenName as never);
                     },
                 },
             ]);
@@ -140,11 +136,11 @@ export const AdminRegistrarScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <ImageBackground
-                source={require('../../assets/images/siembros_imagen.jpg')}
+                source={require('../../../assets/images/siembros_imagen.jpg')}
                 style={styles.upperContainer}
             >
             </ImageBackground>
-
+            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
                 <View>
                     <Text style={styles.createAccountText} >Crea una cuenta</Text>
@@ -199,7 +195,7 @@ export const AdminRegistrarScreen: React.FC = () => {
                     ) : (
                         <>
                             <DropdownComponent
-                                placeholder="Empresa"
+                                placeholder="EmpresaInterface"
                                 data={empresaData}
                                 iconName="building-o"
                                 value={empresa}
@@ -213,14 +209,11 @@ export const AdminRegistrarScreen: React.FC = () => {
                             >
                                 <Text style={styles.buttonText}>Enviar</Text>
                             </TouchableOpacity>}
-
                         </>
-
                     )}
-
                 </View>
-
             </View>
+            <BottomNavBar />
         </View>
     );
 }

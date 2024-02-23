@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     rowContainer: {
         flex: 1,
         marginTop: 10,
-        paddingBottom: 20
+        marginBottom: 10,
     },
     row: {
         flex: 1,
