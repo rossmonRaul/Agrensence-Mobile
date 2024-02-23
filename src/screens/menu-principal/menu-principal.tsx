@@ -7,17 +7,23 @@ import { UserContext } from '../../context/UserProvider';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../hooks/useAuth';
 import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 export const MenuScreen: React.FC = () => {
     const { userData } = useAuth();
     const userRole = userData.idRol;
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     //  Aqui va la se logra ir a otras pantallas segun el recuadro que se presione
-    const HandleSquarePress = (screen: string) => {
-        if (screen !== '') {
-            navigation.navigate(screen as never);
+    const HandleSquarePress = (company: any) => {
+        if (company.screen !== '') {
+            if (company.datoValidacion !== undefined) {
+                navigation.navigate(company.screen, { datoValidacion: company.datoValidacion });
+            } else {
+                navigation.navigate(company.screen);
+            }
         } else {
-            alert('Pantalla aun no disponible')
+            alert('Pantalla aún no disponible');
         }
     }
 
@@ -25,16 +31,16 @@ export const MenuScreen: React.FC = () => {
     const renderRows = () => {
         let filteredCompanyProps = Company_Props;
         if (userRole === 1) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 11 || company.id === 13 || company.id === 14 || company.id === 15);
+            filteredCompanyProps = Company_Props.filter(company => company.id === 11 || company.id === 13 || company.id === 14 || company.id === 16);
         }
         if (userRole === 2) {
-            filteredCompanyProps = Company_Props.slice(0, 12);
+            filteredCompanyProps = Company_Props.slice(0, 13);
         }
         if (userRole === 3) {
             filteredCompanyProps = Company_Props.slice(0, 10);
         }
         if (userRole === 4) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 15);
+            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 16);
         }
 
 
@@ -46,7 +52,7 @@ export const MenuScreen: React.FC = () => {
                     {rowItems.map((company) => (
                         <SquareIcon
                             key={company.id}
-                            onPress={() => HandleSquarePress(company.screen)}
+                            onPress={() => HandleSquarePress(company)}
                             iconImg={company.iconImage}
                             text={company.text}
                         />
