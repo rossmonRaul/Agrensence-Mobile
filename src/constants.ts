@@ -30,11 +30,12 @@ export const Company_Props = [
     { id: 8, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
     { id: 9, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de Calidad', screen: '' },
     { id: 10, iconImage: require('./assets/images/icons/preferencias.png'), text: 'Preferencias', screen: '' },
-    { id: 11, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName },
+    { id: 11, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Asignar finca y parcela', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
     { id: 12, iconImage: require('./assets/images/icons/asignar-usuario.png'), text: 'Asignar usuarios', screen: ScreenProps.ListUsersRol4.screenName },
-    { id: 13, iconImage: require('./assets/images/icons/crear-usuario.png'), text: 'Crear usuario administrador', screen: ScreenProps.AdminRegisterUser.screenName },
-    { id: 14, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Lista de compañias', screen: ScreenProps.CompanyList.screenName },
-    { id: 15, iconImage: '', text: '', screen: '' }
+    { id: 13, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
+    { id: 14, iconImage: require('./assets/images/icons/crear-usuario.png'), text: 'Crear usuario administrador', screen: ScreenProps.AdminRegisterUser.screenName },
+    { id: 15, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Lista de compañias', screen: ScreenProps.CompanyList.screenName },
+    { id: 16, iconImage: '', text: '', screen: '' }
 ]
 export const Admin_cultivation = [
     { id: 1, iconImage: require('./assets/images/icons/rotacion-cultivos.png'), text: 'Rotación de cultivos según estacionalidad' },
