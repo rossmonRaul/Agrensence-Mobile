@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { ValidarUsuario } from '../servicios/ServicioUsuario';
 import { UserContext } from '../context/UserProvider';
 import { useNavigation } from '@react-navigation/native';
-import { Screen_Names } from '../constants';
+import { ScreenProps } from '../constants';
 
 // Se define el hook que gestionará la lógica de inicio de sesión
 const useLogin = () => {
@@ -32,17 +32,21 @@ const useLogin = () => {
         };
 
         const userFound = await ValidarUsuario(formData)
-
         if (userFound.mensaje === "Usuario no encontrado.") {
-            alert('Usuario no encontrado.');
+            alert('Este usuario no se ha encontrado.');
             return;
         }
         if (userFound.mensaje === 'Credenciales incorrectas.') {
             alert('Credenciales incorrectas.');
             return;
         }
-
+        if (userFound.mensaje === 'Usuario o empresa inactivos.') {
+            alert('¡Hola! Parece que aún no hemos activado tu cuenta.');
+            return;
+        }
         if (userFound.estado === 1) estado = true
+
+
 
         //  Si el usuario inicia sesión agrega los datos al context
         if (userFound.mensaje === "Usuario encontrado.") {
@@ -60,7 +64,7 @@ const useLogin = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(Screen_Names.Menu as never);
+                        navigation.navigate(ScreenProps.Menu.screenName as never);
                     },
                 },
             ]);
