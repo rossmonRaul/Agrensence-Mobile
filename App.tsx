@@ -25,7 +25,7 @@ const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
     const handleBackButton = () => {
-      return true;
+      return false;
     };
 
     BackHandler.addEventListener('hardwareBackPress', handleBackButton);
