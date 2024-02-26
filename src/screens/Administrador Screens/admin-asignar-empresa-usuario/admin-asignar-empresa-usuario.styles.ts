@@ -46,6 +46,11 @@ export const styles = StyleSheet.create({
     buttonContainer: {
         paddingTop: 20,
     },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     createAccountText: {
         fontSize: 26,
         fontFamily: 'CatamaranBold',
