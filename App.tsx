@@ -22,6 +22,19 @@ import { AdminAsignarEmpresaScreen } from "./src/screens/Administrador Screens/a
 
 
 const Stack = createNativeStackNavigator();
+const AppNavigator = ({ navigation }) => {
+  useEffect(() => {
+    const handleBackButton = () => {
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    };
+  }, []);
+}
 
 const App: React.FC = () => {
   const { fontsLoaded, fontLoadingError } = useFontsLoader();
@@ -70,6 +83,7 @@ const App: React.FC = () => {
     loadScreenProps();
   }, []);
 
+
   if (fontLoadingError) {
     return (
       <View style={styles.loadingView}>
@@ -102,7 +116,7 @@ const App: React.FC = () => {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName={userData.idRol !== 0 ? ScreenProps.Menu.screenName : ScreenProps.Login.screenName}
-          screenOptions={{ headerShown: false, gestureEnabled: false, }}
+          screenOptions={{ headerShown: false, gestureEnabled: false, headerLeft: () => null, }}
         >
           <Stack.Screen name={ScreenProps.Login.screenName} component={IncioSesionScreen} />
           <Stack.Screen name={ScreenProps.Register.screenName} component={RegistrarUsuarioScreen} />
