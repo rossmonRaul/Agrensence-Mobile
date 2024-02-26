@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ImageBackground, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from './admin-asignar-empresa-usuario.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -14,7 +14,7 @@ import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EmpresaInterface, FincaInterface, ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
-
+import { Ionicons } from '@expo/vector-icons'
 interface RouteParams {
     identificacion: string;
 }
@@ -27,7 +27,7 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
     const { identificacion } = route.params as RouteParams;
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
-    const [empresa, setEmpresa] = useState(null);
+    const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
     const [parcela, setParcela] = useState(null);
 
@@ -37,6 +37,7 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
     const [parcelaDataOriginal, setParcelaDataOriginal] = useState<DropdownData[]>([]);
     const [fincaDataSort, setFincaDataSort] = useState<DropdownData[]>([]);
     const [parcelaDataSort, setParcelaDataSort] = useState<DropdownData[]>([]);
+    const [handleEmpresaCalled, setHandleEmpresaCalled] = useState(false);
 
     /*  Estan son las Props para obtener datos de empresas, 
         fincas y parcelas mediante el hook useFetchDropdownData */
@@ -71,12 +72,12 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
     useFetchDropdownData(obtenerParcelaProps);
 
     //  Se definen funciones para manejar el cambio de valor en los dropdowns
-    const handleValueEmpresa = (itemValue: any) => {
-        setEmpresa(itemValue.value);
-        let fincaSort = fincaDataOriginal.filter(item => item.id === itemValue.id);
+    const handleValueEmpresa = (idEmpresa: number) => {
+        setEmpresa(idEmpresa);
+        let fincaSort = fincaDataOriginal.filter(item => item.id === idEmpresa.toString());
         setFincaDataSort(fincaSort);
-        setFinca(null)
-        setParcela(null)
+        setFinca(null);
+        setParcela(null);
     }
 
 
@@ -90,11 +91,7 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
 
     //  Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
-        //  Se valida que la empresa, finca y parcela estén seleccionadas
-        if (!empresa) {
-            alert('Ingrese una empresa');
-            return
-        }
+        //  Se valida que la finca y parcela estén seleccionadas
         if (!finca) {
             alert('Ingrese una finca');
             return
@@ -128,6 +125,14 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
             alert('!Oops! Parece que algo salió mal')
         }
     };
+    //  Se utiliza useEffect para llamar a handleValueEmpresa solo una vez al montar el componente
+    useEffect(() => {
+        if (!handleEmpresaCalled && fincaDataOriginal.length > 0) {
+            handleValueEmpresa(userData.idEmpresa);
+            setHandleEmpresaCalled(true);
+        }
+    }, [userData.idEmpresa, fincaDataOriginal, handleEmpresaCalled]);
+
 
     return (
         <View style={styles.container}>
@@ -139,18 +144,12 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
                 <View>
-                    <Text style={styles.createAccountText} >Asignar empresa</Text>
+                    <Text style={styles.createAccountText} >Habilitar usuario</Text>
                 </View>
 
                 <View style={styles.formContainer}>
 
-                    <DropdownComponent
-                        placeholder="Empresa"
-                        data={empresaData}
-                        iconName="building-o"
-                        value={empresa}
-                        onChange={handleValueEmpresa}
-                    />
+
                     {empresa &&
                         <DropdownComponent
                             placeholder="Finca"
@@ -176,7 +175,10 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
                             handleRegister();
                         }}
                     >
-                        <Text style={styles.buttonText}>Enviar</Text>
+                        <View style={styles.buttonContent}>
+                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                        </View>
                     </TouchableOpacity>}
                 </View>
 

@@ -15,12 +15,14 @@ import { EmpresaInterface } from '../../../interfaces/empresaInterfaces';
 import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
+import { Ionicons } from '@expo/vector-icons';
 
 interface RouteParams {
     identificacion: string;
     idEmpresa: string;
     idRol: number;
     idFinca: number;
+    estado: string;
     idParcela: number;
 }
 
@@ -30,7 +32,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
     const { userData } = useAuth();
-    const { identificacion, idEmpresa, idRol, idFinca, idParcela } = route.params as RouteParams;
+    const { identificacion, idEmpresa, estado, idRol, idFinca, idParcela } = route.params as RouteParams;
     const [isFormVisible, setFormVisible] = useState(false);
 
     /*  Se definen los estados para controlar la visibilidad 
@@ -98,15 +100,15 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         return isValid
     }
 
-    const handleDeleteUser = async () => {
+    const handleChangeAccess = async () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             identificacion: formulario.identificacion,
         };
         //  Se muestra una alerta con opción de aceptar o cancelar
         Alert.alert(
-            'Confirmar desactivación de usuario',
-            '¿Estás seguro de que deseas desactivar este usuario?',
+            'Confirmar el cambio de acceso de usuario',
+            '¿Estás seguro de que deseas cambiar el acceso este usuario?',
             [
                 {
                     text: 'Cancelar',
@@ -215,7 +217,10 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                                     setFormVisible(true);
                                 }}
                             >
-                                <Text style={styles.buttonText}>Modificar contraseña</Text>
+                                <View style={styles.buttonContent}>
+                                    <Ionicons name="lock-closed-outline" size={20} color="white" style={styles.iconStyle} />
+                                    <Text style={styles.buttonText}> Modificar cuenta</Text>
+                                </View>
                             </TouchableOpacity>
                         </>
                     ) : (<>
@@ -244,19 +249,37 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                                     onChangeText={(text) => updateFormulario('confirmarContrasena', text)}
                                 />
 
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={async () => {
-                                        const isValid = validateFirstForm();
+                                {userData.idRol === 1 ?
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={async () => {
+                                            const isValid = validateFirstForm();
 
-                                        if (isValid) {
-                                            setSecondFormVisible(true);
-                                        }
+                                            if (isValid) {
+                                                setSecondFormVisible(true);
+                                            }
 
-                                    }}
-                                >
-                                    <Text style={styles.buttonText}>Siguiente</Text>
-                                </TouchableOpacity>
+                                        }}
+                                    >
+
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}> Siguiente</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => {
+                                            handleModifyUser();
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}> Guardar cambios</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
 
 
                             </>
@@ -278,21 +301,40 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                                         handleModifyUser();
                                     }}
                                 >
-                                    <Text style={styles.buttonText}>Enviar</Text>
+                                    <View style={styles.buttonContent}>
+                                        <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}> Guardar cambios</Text>
+                                    </View>
                                 </TouchableOpacity>
                             </>
 
                         )}</>)}
                 </View>
-                <TouchableOpacity
-                    style={styles.buttonDelete}
-                    onPress={() => {
-                        handleDeleteUser();
-                    }}
-                >
-                    <Text style={styles.buttonText}>Cambiar estado de acceso</Text>
-                </TouchableOpacity>
-
+                {estado === 'Activo' ? (
+                    <TouchableOpacity
+                        style={styles.buttonDelete}
+                        onPress={() => {
+                            handleChangeAccess();
+                        }}
+                    >
+                        <View style={styles.buttonContent}>
+                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                            <Text style={styles.buttonText}> Inhabilitar acceso</Text>
+                        </View>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => {
+                            handleChangeAccess();
+                        }}
+                    >
+                        <View style={styles.buttonContent}>
+                            <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
+                            <Text style={styles.buttonText}> Habilitar acceso</Text>
+                        </View>
+                    </TouchableOpacity>
+                )}
             </View>
             <BottomNavBar />
 

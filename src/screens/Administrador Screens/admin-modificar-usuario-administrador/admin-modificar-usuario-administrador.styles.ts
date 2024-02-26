@@ -34,6 +34,7 @@ export const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#548256',
+        marginBottom: 10,
         padding: 8,
         alignItems: 'center',
         borderRadius: 12,
@@ -52,6 +53,11 @@ export const styles = StyleSheet.create({
     },
     buttonContainer: {
         paddingTop: 20,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     createAccountText: {
         fontSize: 26,

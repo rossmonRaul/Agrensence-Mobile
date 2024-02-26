@@ -14,24 +14,23 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
-
+import { Ionicons } from '@expo/vector-icons';
 
 interface RouteParams {
     identificacion: string;
     idEmpresa: number;
     idRol: number;
     idFinca: number;
+    estado: string;
     idParcela: number;
     idUsuarioFincaParcela: number;
 }
-
-
 
 export const AdminModificarUsuarioScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
     const { userData } = useAuth();
-    const { identificacion, idEmpresa, idRol, idFinca, idParcela, idUsuarioFincaParcela } = route.params as RouteParams;
+    const { identificacion, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = route.params as RouteParams;
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
     const [isFormVisible, setFormVisible] = useState(false);
@@ -251,7 +250,8 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
-                                        setFormVisible(true);
+                                        setFormVisible(true),
+                                            setIsSecondFormVisible(false)
                                     }}
                                 >
                                     <Text style={styles.buttonText}>Modificar finca y parcela</Text>
@@ -282,7 +282,10 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                     handleModifyUser()
                                 }}
                             >
-                                <Text style={styles.buttonText}>Modificar nueva finca y parcela</Text>
+                                <View style={styles.buttonContent}>
+                                    <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                    <Text style={styles.buttonText}>Guardar cambios</Text>
+                                </View>
                             </TouchableOpacity>}
                         </>)}
                         <View style={styles.secondForm}>
@@ -290,7 +293,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
-                                        setIsSecondFormVisible(true);
+                                        setIsSecondFormVisible(true), setFormVisible(false)
                                     }}
                                 >
                                     <Text style={styles.buttonText}>Agregar nueva finca y parcela</Text>
@@ -320,22 +323,40 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                         handleFincaParcela()
                                     }}
                                 >
-                                    <Text style={styles.buttonText}>Agregar nueva finca y parcela</Text>
+                                    <View style={styles.buttonContent}>
+                                        <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}>Guardar cambios</Text>
+                                    </View>
                                 </TouchableOpacity>}
                             </>)}
                         </View>
 
                     </>
-                    <TouchableOpacity
+
+                    {estado === 'Activo' ? <TouchableOpacity
                         style={styles.buttonDelete}
                         onPress={() => {
                             handleChangeAccess();
                         }}
                     >
-                        <Text style={styles.buttonText}>Cambiar estado de acceso</Text>
+                        <View style={styles.buttonContent}>
+                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                            <Text style={styles.buttonText}> Inhabilitar acceso</Text>
+                        </View>
                     </TouchableOpacity>
-
-
+                        :
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => {
+                                handleChangeAccess();
+                            }}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
+                                <Text style={styles.buttonText}>Habilitar acceso</Text>
+                            </View>
+                        </TouchableOpacity>
+                    }
 
                 </View>
 

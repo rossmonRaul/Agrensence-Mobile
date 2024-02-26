@@ -9,10 +9,11 @@ import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { CambiarEstadoEmpresa } from '../../../servicios/ServicioEmpresa';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
+import { Ionicons } from '@expo/vector-icons'
 interface RouteParams {
     idEmpresa: string;
     nombre: string;
+    estado: string;
 }
 
 
@@ -20,7 +21,7 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
     const route = useRoute();
-    const { idEmpresa, nombre } = route.params as RouteParams;
+    const { idEmpresa, nombre, estado } = route.params as RouteParams;
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idEmpresa: idEmpresa,
@@ -143,16 +144,37 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                         style={styles.button}
                         onPress={async () => { handleModifyCompany() }}
                     >
-                        <Text style={styles.buttonText}>Modificar empresa</Text>
+                        <View style={styles.buttonContent}>
+                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                        </View>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.buttonDelete}
-                        onPress={() => {
-                            handleChangeAccess();
-                        }}
-                    >
-                        <Text style={styles.buttonText}>Cambiar estado de empresa</Text>
-                    </TouchableOpacity>
+
+                    {estado === 'Activo'
+                        ? <TouchableOpacity
+                            style={styles.buttonDelete}
+                            onPress={() => {
+                                handleChangeAccess();
+                            }}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                                <Text style={styles.buttonText}> Inhabilitar acceso</Text>
+                            </View>
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => {
+                                handleChangeAccess();
+                            }}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
+                                <Text style={styles.buttonText}>Habilitar acceso</Text>
+                            </View>
+                        </TouchableOpacity>
+                    }
                 </View>
             </View>
             <BottomNavBar />

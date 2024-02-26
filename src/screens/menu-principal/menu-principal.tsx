@@ -3,7 +3,6 @@ import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { styles } from './menu-principal.styles';
 import { SquareIcon } from '../../components/IconSquare/IconSquare';
 import { Company_Props } from '../../constants';
-import { UserContext } from '../../context/UserProvider';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../hooks/useAuth';
 import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
@@ -31,16 +30,17 @@ export const MenuScreen: React.FC = () => {
     const renderRows = () => {
         let filteredCompanyProps = Company_Props;
         if (userRole === 1) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 11 || company.id === 13 || company.id === 14 || company.id === 16);
+            filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 103);
         }
+
         if (userRole === 2) {
-            filteredCompanyProps = Company_Props.slice(0, 13);
+            filteredCompanyProps = Company_Props.filter(company => (company.id >= 1 && company.id <= 10) || (company.id >= 50 && company.id <= 52) || company.id === 200);
         }
         if (userRole === 3) {
             filteredCompanyProps = Company_Props.slice(0, 10);
         }
         if (userRole === 4) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 16);
+            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 199);
         }
 
 

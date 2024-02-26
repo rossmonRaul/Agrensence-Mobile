@@ -23,6 +23,11 @@ export const styles = StyleSheet.create({
         paddingTop: 10,
         justifyContent: 'center',
     },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     input: {
         height: 40,
         borderColor: '#548256',
@@ -35,6 +40,7 @@ export const styles = StyleSheet.create({
     button: {
         backgroundColor: '#548256',
         padding: 8,
+        marginBottom: 10,
         alignItems: 'center',
         borderRadius: 12,
     },

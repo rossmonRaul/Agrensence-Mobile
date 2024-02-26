@@ -27,8 +27,8 @@ export const ListaEmpresaScreen: React.FC = () => {
         'Estado': 'estado',
     };
 
-    const handleRectanglePress = (idEmpresa: string, nombre: string) => {
-        navigation.navigate(ScreenProps.AdminModifyCompany.screenName, { idEmpresa: idEmpresa, nombre: nombre });
+    const handleRectanglePress = (idEmpresa: string, nombre: string, estado: string) => {
+        navigation.navigate(ScreenProps.AdminModifyCompany.screenName, { idEmpresa: idEmpresa, nombre: nombre, estado: estado });
     };
 
     useEffect(() => {
@@ -63,7 +63,7 @@ export const ListaEmpresaScreen: React.FC = () => {
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Modificar empresas</Text>
+                <Text style={styles.textAbove} >Lista de empresas</Text>
             </View>
 
             <View style={styles.searchContainer}>
@@ -79,7 +79,7 @@ export const ListaEmpresaScreen: React.FC = () => {
 
             <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                 {apiData.map((item, index) => (
-                    <TouchableOpacity key={item.idEmpresa} onPress={() => handleRectanglePress(item.idEmpresa, item.nombre)}>
+                    <TouchableOpacity key={item.idEmpresa} onPress={() => handleRectanglePress(item.idEmpresa, item.nombre, item.estado)}>
                         <CustomRectangle
                             key={item.idEmpresa}
                             data={processData([item], keyMapping)?.data || []}

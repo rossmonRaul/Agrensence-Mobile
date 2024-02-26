@@ -7,6 +7,7 @@ import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
+import { Ionicons } from '@expo/vector-icons'
 
 export const AdminRegistrarEmpresaScreen: React.FC = () => {
     const navigation = useNavigation();
@@ -81,7 +82,10 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
                         style={styles.button}
                         onPress={async () => { handleRegistrarCompany() }}
                     >
-                        <Text style={styles.buttonText}>Crear empresa</Text>
+                        <View style={styles.buttonContent}>
+                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                            <Text style={styles.buttonText}>Guardar registro</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>

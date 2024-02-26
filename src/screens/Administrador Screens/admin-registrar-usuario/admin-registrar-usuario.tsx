@@ -15,6 +15,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
+import { Ionicons } from '@expo/vector-icons'
 
 export const AdminRegistrarUsuarioScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -195,7 +196,7 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                     ) : (
                         <>
                             <DropdownComponent
-                                placeholder="EmpresaInterface"
+                                placeholder="Empresa"
                                 data={empresaData}
                                 iconName="building-o"
                                 value={empresa}
@@ -207,7 +208,10 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                                     handleRegister();
                                 }}
                             >
-                                <Text style={styles.buttonText}>Enviar</Text>
+                                <View style={styles.buttonContent}>
+                                    <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                    <Text style={styles.buttonText}>Guardar registro</Text>
+                                </View>
                             </TouchableOpacity>}
                         </>
                     )}
