@@ -11,6 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
+import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 
 export const ListaEmpresaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -62,6 +63,7 @@ export const ListaEmpresaScreen: React.FC = () => {
     return (
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+            <AddButtonComponent screenName={ScreenProps.AdminRegisterCompany.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
                 <Text style={styles.textAbove} >Lista de empresas</Text>
             </View>

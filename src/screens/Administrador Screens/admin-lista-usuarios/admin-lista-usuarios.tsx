@@ -12,7 +12,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
-
+import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 interface RouteParams {
     datoValidacion?: string;
 }
@@ -126,6 +126,9 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     return (
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+            {userData.idRol === 1 &&
+                <AddButtonComponent screenName={ScreenProps.AdminRegisterUser.screenName} color={'#274c48'} />
+            }
             <View style={styles.textAboveContainer}>
                 <Text style={styles.textAbove} >Lista de usuarios</Text>
             </View>
