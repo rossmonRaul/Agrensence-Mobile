@@ -41,9 +41,7 @@ export const Company_Props = [
     { id: 52, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
 
     //SuperAdmin
-    { id: 100, iconImage: require('./assets/images/icons/crear-usuario.png'), text: 'Crear usuario administrador', screen: ScreenProps.AdminRegisterUser.screenName },
-    { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Lista de empresas', screen: ScreenProps.CompanyList.screenName },
-    { id: 102, iconImage: require('./assets/images/icons/crear-compania.png'), text: 'Crear empresa', screen: ScreenProps.AdminRegisterCompany.screenName },
+    { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
     { id: 200, iconImage: '', text: '', screen: '' }
 ]
