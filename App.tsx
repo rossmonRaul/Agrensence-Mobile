@@ -1,30 +1,88 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ActivityIndicator, Text, View } from 'react-native';
-
-import { IncioScreen } from './src/screens/inicio/inicio';
-import { RegistrarScreen } from './src/screens/registrar/registrar';
-import { EmpresaScreen } from './src/screens/empresa/empresa';
-
-import { Screen_Names } from './src/constants';
+import { ActivityIndicator, BackHandler, Text, View } from 'react-native';
+import { ScreenProps } from './src/constants';
 import { useFontsLoader } from './src/hooks/useFontsLoader';
-import { styles } from './src/screens/inicio/inicio.styles';
+import { styles } from './src/screens/inicio-sesion/inicio-sesion.styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContextProvider } from './src/context/UserProvider';
+import { IncioSesionScreen } from "./src/screens/inicio-sesion/inicio-sesion";
+import { RegistrarUsuarioScreen } from "./src/screens/registrar-usuario/registrar-usuario";
+import { MenuScreen } from "./src/screens/menu-principal/menu-principal";
+import { ListaUsuarioRol4Screen } from "./src/screens/lista-usuarios-rol4/lista-usuarios-rol4";
+import { ListaEmpresaScreen } from "./src/screens/Administrador Screens/admin-lista-empresas/admin-lista-empresas";
+import { AdminRegistrarUsuarioScreen } from "./src/screens/Administrador Screens/admin-registrar-usuario/admin-registrar-usuario";
+import { AdminRegistrarEmpresaScreen } from "./src/screens/Administrador Screens/admin-registrar-empresa/admin-registrar-empresa";
+import { AdminModificarUsuarioScreen } from "./src/screens/Administrador Screens/admin-modificar-usuario/admin-modificar-usuario";
+import { AdminModificarEmpresaScreen } from "./src/screens/Administrador Screens/admin-modificar-empresa/admin-modificar-empresa";
+import { AdminListaUsuarioScreen } from "./src/screens/Administrador Screens/admin-lista-usuarios/admin-lista-usuarios";
+import { AdminModificarUsuarioAdmnistradorScreen } from "./src/screens/Administrador Screens/admin-modificar-usuario-administrador/admin-modificar-usuario-administrador";
+import { AdminAsignarEmpresaScreen } from "./src/screens/Administrador Screens/admin-asignar-empresa-usuario/admin-asignar-empresa-usuario";
 
 
 const Stack = createNativeStackNavigator();
+const AppNavigator = ({ navigation }) => {
+  useEffect(() => {
+    const handleBackButton = () => {
+      return false;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    };
+  }, []);
+}
 
 const App: React.FC = () => {
-  let { fontsLoaded, fontLoadingError } = useFontsLoader();
-  const [timeoutReached, setTimeoutReached] = useState(false);
+  const { fontsLoaded, fontLoadingError } = useFontsLoader();
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState({
+    identificacion: "",
+    correo: "",
+    idEmpresa: 0,
+    idFinca: 0,
+    idParcela: 0,
+    idRol: 0,
+    estado: false
+  });
+  const [screenPropsLoaded, setScreenPropsLoaded] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeoutReached(true);
-    }, 2000);
+    const onBackPress = () => {
+      return true;
+    };
 
-    return () => clearTimeout(timer);
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+    return () => backHandler.remove();
   }, []);
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedData = await AsyncStorage.getItem('userData');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setUserData(parsedData);
+        }
+      } catch (error) {
+        console.error('Error al cargar datos almacenados:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const loadScreenProps = () => {
+
+      setScreenPropsLoaded(true);
+    };
+
+    loadUserData();
+    loadScreenProps();
+  }, []);
+
 
   if (fontLoadingError) {
     return (
@@ -34,7 +92,7 @@ const App: React.FC = () => {
     );
   }
 
-  if (!fontsLoaded && !timeoutReached) {
+  if (!fontsLoaded || loading || !screenPropsLoaded) {
     return (
       <View style={styles.loadingView}>
         <Text style={styles.loadingText}>Cargando las fuentes de letra</Text>
@@ -43,12 +101,38 @@ const App: React.FC = () => {
     );
   }
 
+  /*
+  <Stack.Navigator
+          initialRouteName={userData.idRol !== 0 ? ScreenProps.Menu.screenName : ScreenProps.Login.screenName}
+          screenOptions={{ headerShown: false }}
+        >
+        <Stack.Navigator
+          initialRouteName={ScreenProps.Login.screenName}
+          screenOptions={{ headerShown: false }}
+        >
+  */
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={Screen_Names.Login} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={Screen_Names.Login} component={IncioScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <UserContextProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName={userData.idRol !== 0 ? ScreenProps.Menu.screenName : ScreenProps.Login.screenName}
+          screenOptions={{ headerShown: false, gestureEnabled: false, headerLeft: () => null, }}
+        >
+          <Stack.Screen name={ScreenProps.Login.screenName} component={IncioSesionScreen} />
+          <Stack.Screen name={ScreenProps.Register.screenName} component={RegistrarUsuarioScreen} />
+          <Stack.Screen name={ScreenProps.Menu.screenName} component={MenuScreen} />
+          <Stack.Screen name={ScreenProps.AdminRegisterUser.screenName} component={AdminRegistrarUsuarioScreen} />
+          <Stack.Screen name={ScreenProps.AssignCompany.screenName} component={AdminAsignarEmpresaScreen} />
+          <Stack.Screen name={ScreenProps.AdminUserList.screenName} component={AdminListaUsuarioScreen} />
+          <Stack.Screen name={ScreenProps.CompanyList.screenName} component={ListaEmpresaScreen} />
+          <Stack.Screen name={ScreenProps.AdminModifyCompany.screenName} component={AdminModificarEmpresaScreen} />
+          <Stack.Screen name={ScreenProps.AdminRegisterCompany.screenName} component={AdminRegistrarEmpresaScreen} />
+          <Stack.Screen name={ScreenProps.ListUsersRol4.screenName} component={ListaUsuarioRol4Screen} />
+          <Stack.Screen name={ScreenProps.AdminModifyAdminUser.screenName} component={AdminModificarUsuarioAdmnistradorScreen} />
+          <Stack.Screen name={ScreenProps.AdminModifyUser.screenName} component={AdminModificarUsuarioScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserContextProvider>
   );
 };
 

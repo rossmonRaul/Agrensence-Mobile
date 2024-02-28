@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './inicio.styles';
+import { styles } from './inicio-sesion.styles';
 import { useNavigation } from '@react-navigation/native';
 import useLogin from '../../hooks/useLogin';
+import { ScreenProps } from '../../constants';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const Usuario = [
-  { username: 'usuario21', password: 'password22' },
-  { username: 'usuario2', password: 'password22' },
-];
+export const IncioSesionScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-export const IncioScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin();
 
-  const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin(Usuario);
 
 
   return (
@@ -33,12 +31,13 @@ export const IncioScreen: React.FC = () => {
           <Text style={styles.formText} >Usuario</Text>
           <TextInput
             style={styles.input}
-            placeholder="Usuario"
+            placeholder="Identificación o correo"
             value={username}
             onChangeText={(text) => setUsername(text)}
           />
           <Text style={styles.formText} >Contraseña</Text>
           <TextInput style={styles.input}
+            secureTextEntry={true}
             placeholder="Contraseña"
             value={password}
             onChangeText={(text) => setPassword(text)}
@@ -53,11 +52,10 @@ export const IncioScreen: React.FC = () => {
           </View>
 
           <View style={styles.createAccountContainer} >
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate(ScreenProps.Register.screenName)}>
               <Text style={styles.createAccountText} >Crear una cuenta</Text>
             </TouchableOpacity>
 
-            {isLoggedIn && <Text>Iniciado la sesion</Text>}
           </View>
         </View>
 

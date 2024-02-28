@@ -5,7 +5,7 @@
     "jsx": "react-native",
     "strict": true,
     "esModuleInterop": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
   },
   "exclude": [
     "node_modules"
