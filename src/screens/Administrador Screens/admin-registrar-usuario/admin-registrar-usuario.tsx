@@ -31,6 +31,7 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         identificacion: '',
+        nombre: '',
         correo: '',
         contrasena: '',
         confirmarContrasena: '',
@@ -67,13 +68,18 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
     const validateFirstForm = () => {
         let isValid = true;
 
-        if (!formulario.identificacion && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
+        if (!formulario.identificacion && !formulario.nombre && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
             alert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (isValid && !formulario.identificacion) {
-            alert('Ingrese un nombre de identificacion');
+            alert('Ingrese una identificacion');
+            isValid = false;
+            return
+        }
+        if (isValid && !formulario.nombre) {
+            alert('Ingrese un nombre completo');
             isValid = false;
             return
         }
@@ -112,6 +118,7 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             identificacion: formulario.identificacion,
+            nombre: formulario.nombre,
             correo: formulario.correo,
             contrasena: formulario.contrasena,
             idEmpresa: formulario.empresa,
@@ -156,6 +163,13 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                                 placeholder="Identificación"
                                 value={formulario.identificacion}
                                 onChangeText={(text) => updateFormulario('identificacion', text)}
+                            />
+                            <Text style={styles.formText} >Nombre</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Nombre Completo"
+                                value={formulario.nombre}
+                                onChangeText={(text) => updateFormulario('nombre', text)}
                             />
                             <Text style={styles.formText} >Correo electrónico</Text>
                             <TextInput

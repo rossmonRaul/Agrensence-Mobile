@@ -39,12 +39,14 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     if (userData.idRol === 1) {
         keyMapping = {
             'Identificación': 'identificacion',
+            'Nombre': 'nombre',
             'Correo': 'correo',
             'Estado': 'estado'
         };
     } else if (datoValidacion === '1' && userData.idRol === 2) {
         keyMapping = {
             'Identificación': 'identificacion',
+            'Nombre': 'nombre',
             'Correo': 'correo',
             'Estado': 'estado'
         };
@@ -52,6 +54,7 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     else if (userData.idRol === 2) {
         keyMapping = {
             'Identificación': 'identificacion',
+            'Nombre': 'nombre',
             'Correo': 'correo',
             'Estado': 'estado',
             'Finca': 'nombreFinca',
@@ -60,14 +63,14 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     }
     const handleRectanglePress = (item: any) => {
 
-        const { identificacion, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = item;
+        const { identificacion, nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = item;
         if (userData.idRol === 1) {
-            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, idEmpresa, estado, idRol, idFinca, idParcela });
+            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela });
         } else if (datoValidacion === '1' && userData.idRol === 2) {
-            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, idEmpresa, estado, idRol, idFinca, idParcela });
+            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela });
         }
         else if (userData.idRol === 2) {
-            navigation.navigate(ScreenProps.AdminModifyUser.screenName, { identificacion, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela });
+            navigation.navigate(ScreenProps.AdminModifyUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela });
         }
     };
 

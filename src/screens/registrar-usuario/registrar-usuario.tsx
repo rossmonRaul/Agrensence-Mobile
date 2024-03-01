@@ -13,6 +13,7 @@ export const RegistrarUsuarioScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         identificacion: '',
+        nombre: '',
         correo: '',
         contrasena: '',
         confirmarContrasena: ''
@@ -33,12 +34,16 @@ export const RegistrarUsuarioScreen: React.FC = () => {
     const handleRegister = async () => {
         let isValid = true;
 
-        if (!formulario.identificacion && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
+        if (!formulario.identificacion && !formulario.nombre && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
             alert('Por favor rellene el formulario');
             isValid = false;
         }
         if (isValid && !formulario.identificacion) {
             alert('Ingrese un nombre de identificacion');
+            isValid = false;
+        }
+        if (isValid && !formulario.nombre) {
+            alert('Ingrese un nombre de nombre');
             isValid = false;
         }
         if (isValid && (!formulario.correo || !isEmail(formulario.correo))) {
@@ -60,13 +65,14 @@ export const RegistrarUsuarioScreen: React.FC = () => {
             //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
             const formData = {
                 identificacion: formulario.identificacion,
+                nombre: formulario.nombre,
                 correo: formulario.correo,
                 contrasena: formulario.contrasena
             };
-
+            
             //  Se inserta el identificacion en la base de datos
             const responseInsert = await GuardarUsuario(formData);
-
+            
             // Se muestra una alerta de éxito o error según la respuesta obtenida
             if (responseInsert.indicador === 0) {
                 Alert.alert('¡Gracias por unirte a nuestra app!', '', [
@@ -103,6 +109,13 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                         placeholder="Identificación"
                         value={formulario.identificacion}
                         onChangeText={(text) => updateFormulario('identificacion', text)}
+                    />
+                    <Text style={styles.formText} >Nombre</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nombre Completo"
+                        value={formulario.nombre}
+                        onChangeText={(text) => updateFormulario('nombre', text)}
                     />
                     <Text style={styles.formText} >Correo electrónico</Text>
                     <TextInput

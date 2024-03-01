@@ -13,6 +13,7 @@ interface UserContextProps {
 export const UserContext = createContext<UserContextProps>({
     userData: {
         identificacion: "",
+        nombre: "",
         correo: "",
         idEmpresa: 0,
         idFinca: 0,
@@ -32,6 +33,7 @@ interface UserContextProviderProps {
 export const UserContextProvider: React.FC<UserContextProviderProps> = ({ children }) => {
     const [userData, setUserData] = useState<UserDataInterface>({
         identificacion: "",
+        nombre: "",
         correo: "",
         idEmpresa: 0,
         idFinca: 0,

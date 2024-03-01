@@ -8,7 +8,7 @@ import { EmpresaInterface, FincaInterface, ParcelaInterface } from '../../../int
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
-import { ActualizarContrasenaUsuario, CambiarEstadoUsuarioFincaParcela, AsignarNuevaFincaParcela, AsignarFincaParcela } from '../../../servicios/ServicioUsuario';
+import { ActualizarDatosUsuario, CambiarEstadoUsuarioFincaParcela, AsignarNuevaFincaParcela, AsignarFincaParcela } from '../../../servicios/ServicioUsuario';
 import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../../hooks/useAuth';
@@ -52,6 +52,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         identificacion: identificacion || '',
+        nombre: '',
         contrasena: '',
         confirmarContrasena: '',
         idEmpresa: idEmpresa || '',
