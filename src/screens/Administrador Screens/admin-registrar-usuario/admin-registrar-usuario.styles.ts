@@ -108,5 +108,8 @@ export const styles = StyleSheet.create({
     },
     dropdownView: {
         paddingBottom: 10,
+    },
+    rowContainer: {
+        width: '100%',
     }
 });

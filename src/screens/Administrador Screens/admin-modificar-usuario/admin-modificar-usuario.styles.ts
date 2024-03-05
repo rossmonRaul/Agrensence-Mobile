@@ -119,5 +119,8 @@ export const styles = StyleSheet.create({
     },
     secondForm: {
         paddingTop: 10,
+    },
+    rowContainer: {
+        width: '100%',
     }
 });

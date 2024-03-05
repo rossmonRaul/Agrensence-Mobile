@@ -120,5 +120,8 @@ export const styles = StyleSheet.create({
     scrollViewContainer: {
         flexGrow: 1,
         justifyContent: 'center',
+    },
+    rowContainer: {
+        width: '100%',
     }
 });

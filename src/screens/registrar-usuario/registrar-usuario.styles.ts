@@ -103,5 +103,13 @@ export const styles = StyleSheet.create({
     },
     dropdownView: {
         paddingBottom: 10,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    rowContainer: {
+        width: '100%',
     }
 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View,ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from './admin-registrar-usuario.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -143,6 +143,11 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
+                style={{ flex: 1 }}
+
+            >
             <ImageBackground
                 source={require('../../../assets/images/siembros_imagen.jpg')}
                 style={styles.upperContainer}
@@ -150,6 +155,8 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
             </ImageBackground>
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
+            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
+
                 <View>
                     <Text style={styles.createAccountText} >Crea una cuenta</Text>
                 </View>
@@ -230,7 +237,9 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                         </>
                     )}
                 </View>
+                </ScrollView>
             </View>
+            </KeyboardAvoidingView>
             <BottomNavBar />
         </View>
     );

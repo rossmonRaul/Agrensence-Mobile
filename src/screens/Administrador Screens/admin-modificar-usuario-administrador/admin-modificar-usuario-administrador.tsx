@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View,KeyboardAvoidingView,Platform,ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from './admin-modificar-usuario-administrador.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -204,6 +204,11 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
+                style={{ flex: 1 }}
+
+                >
             <ImageBackground
                 source={require('../../../assets/images/siembros_imagen.jpg')}
                 style={styles.upperContainer}
@@ -213,7 +218,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
 
             <View style={styles.lowerContainer}>
-            
+            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                 <View>
                     <Text style={styles.createAccountText} >Modificar cuenta</Text>
                 </View>
@@ -361,10 +366,10 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                         </View>
                     </TouchableOpacity>
                 )}
-                
+            </ScrollView>    
             </View>
             <BottomNavBar />
-
+            </KeyboardAvoidingView>
         </View>
     );
 }

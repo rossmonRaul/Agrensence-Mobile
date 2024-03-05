@@ -4,6 +4,11 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
+        alignItems: 'center'
+    },
+    listcontainer: {
+        flex: 1,
+        backgroundColor: '#ffffff',
         padding: 60,
         alignItems: 'center'
     },
