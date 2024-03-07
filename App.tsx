@@ -19,6 +19,12 @@ import { AdminModificarEmpresaScreen } from "./src/screens/Administrador Screens
 import { AdminListaUsuarioScreen } from "./src/screens/Administrador Screens/admin-lista-usuarios/admin-lista-usuarios";
 import { AdminModificarUsuarioAdmnistradorScreen } from "./src/screens/Administrador Screens/admin-modificar-usuario-administrador/admin-modificar-usuario-administrador";
 import { AdminAsignarEmpresaScreen } from "./src/screens/Administrador Screens/admin-asignar-empresa-usuario/admin-asignar-empresa-usuario";
+import { ListaFincasScreen } from "./src/screens/fincas/lista-fincas/lista-fincas";
+import { RegistrarFincaScreen } from "./src/screens/fincas/registrar-finca/registrar-finca";
+import { ModificarFincaScreen } from "./src/screens/fincas/modificar-finca/modificar-finca";
+import { ListaParcelasScreen } from "./src/screens/parcelas/lista-parcelas/lista-parcelas";
+import { RegistrarParcelaScreen } from "./src/screens/parcelas/registrar-parcela/registrar-parcela";
+import { ModificarParcelaScreen } from "./src/screens/parcelas/modificar-parcela/modificar-parcela";
 
 
 const Stack = createNativeStackNavigator();
@@ -130,6 +136,12 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListUsersRol4.screenName} component={ListaUsuarioRol4Screen} />
           <Stack.Screen name={ScreenProps.AdminModifyAdminUser.screenName} component={AdminModificarUsuarioAdmnistradorScreen} />
           <Stack.Screen name={ScreenProps.AdminModifyUser.screenName} component={AdminModificarUsuarioScreen} />
+          <Stack.Screen name={ScreenProps.ListEstate.screenName} component={ListaFincasScreen} />
+          <Stack.Screen name={ScreenProps.RegisterEstate.screenName} component={RegistrarFincaScreen} />
+          <Stack.Screen name={ScreenProps.ModifyEstate.screenName} component={ModificarFincaScreen} />
+          <Stack.Screen name={ScreenProps.ListPlot.screenName} component={ListaParcelasScreen} />
+          <Stack.Screen name={ScreenProps.RegisterPlot.screenName} component={RegistrarParcelaScreen} />
+          <Stack.Screen name={ScreenProps.ModifyPlot.screenName} component={ModificarParcelaScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
