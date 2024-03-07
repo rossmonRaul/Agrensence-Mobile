@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './administracion-cultivos'
+import { styles } from './administracion-cultivos.styles'
 import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { IconRectangle } from '../../components/IconRectangle/IconRectangle';
 import { Admin_cultivation } from '../../constants';

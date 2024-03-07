@@ -10,9 +10,11 @@ import { UserContextProvider } from './src/context/UserProvider';
 import { IncioSesionScreen } from "./src/screens/inicio-sesion/inicio-sesion";
 import { RegistrarUsuarioScreen } from "./src/screens/registrar-usuario/registrar-usuario";
 import { MenuScreen } from "./src/screens/menu-principal/menu-principal";
+import { MenuSueloScreen } from "./src/screens/menu-suelos/menu-suelos";
 import { ListaUsuarioRol4Screen } from "./src/screens/lista-usuarios-rol4/lista-usuarios-rol4";
 import { ListaEmpresaScreen } from "./src/screens/Administrador Screens/admin-lista-empresas/admin-lista-empresas";
 import { AdminRegistrarUsuarioScreen } from "./src/screens/Administrador Screens/admin-registrar-usuario/admin-registrar-usuario";
+import { AdministracionCultivos } from "./src/screens/administracion-cultivos/administracion-cultivos";
 import { AdminRegistrarEmpresaScreen } from "./src/screens/Administrador Screens/admin-registrar-empresa/admin-registrar-empresa";
 import { AdminModificarUsuarioScreen } from "./src/screens/Administrador Screens/admin-modificar-usuario/admin-modificar-usuario";
 import { AdminModificarEmpresaScreen } from "./src/screens/Administrador Screens/admin-modificar-empresa/admin-modificar-empresa";
@@ -127,9 +129,11 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.Login.screenName} component={IncioSesionScreen} />
           <Stack.Screen name={ScreenProps.Register.screenName} component={RegistrarUsuarioScreen} />
           <Stack.Screen name={ScreenProps.Menu.screenName} component={MenuScreen} />
+          <Stack.Screen name={ScreenProps.MenuFloor.screenName} component={MenuSueloScreen} />
           <Stack.Screen name={ScreenProps.AdminRegisterUser.screenName} component={AdminRegistrarUsuarioScreen} />
           <Stack.Screen name={ScreenProps.AssignCompany.screenName} component={AdminAsignarEmpresaScreen} />
           <Stack.Screen name={ScreenProps.AdminUserList.screenName} component={AdminListaUsuarioScreen} />
+          <Stack.Screen name={ScreenProps.AdminCrops.screenName} component={AdministracionCultivos} />
           <Stack.Screen name={ScreenProps.CompanyList.screenName} component={ListaEmpresaScreen} />
           <Stack.Screen name={ScreenProps.AdminModifyCompany.screenName} component={AdminModificarEmpresaScreen} />
           <Stack.Screen name={ScreenProps.AdminRegisterCompany.screenName} component={AdminRegistrarEmpresaScreen} />
