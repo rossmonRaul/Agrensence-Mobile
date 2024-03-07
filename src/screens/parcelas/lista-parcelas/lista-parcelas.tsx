@@ -8,7 +8,7 @@ import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
@@ -104,6 +104,13 @@ export const ListaParcelasScreen: React.FC = () => {
     useEffect(() => {
         obtenerParcelasPorFincaIds();
     }, [fincaDataSort]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // Lógica para recargar la página (por ejemplo, volver a obtener los datos)
+            obtenerParcelasPorFincaIds();
+        }, [userData.idEmpresa, fincaDataSort])
+    );
 
     //funcion para que enviarlo a modificar la parcela
     const handleRectanglePress = (idParcela: string, Nombre: string, Estado: string) => {
