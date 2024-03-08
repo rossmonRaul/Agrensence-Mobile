@@ -116,5 +116,12 @@ export const styles = StyleSheet.create({
     },
     dropdownView: {
         paddingBottom: 10,
+    },
+    scrollViewContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+    },
+    rowContainer: {
+        width: '100%',
     }
 });

@@ -39,12 +39,14 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     if (userData.idRol === 1) {
         keyMapping = {
             'Identificación': 'identificacion',
+            'Nombre': 'nombre',
             'Correo': 'correo',
             'Estado': 'estado'
         };
     } else if (datoValidacion === '1' && userData.idRol === 2) {
         keyMapping = {
             'Identificación': 'identificacion',
+            'Nombre': 'nombre',
             'Correo': 'correo',
             'Estado': 'estado'
         };
@@ -52,6 +54,7 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     else if (userData.idRol === 2) {
         keyMapping = {
             'Identificación': 'identificacion',
+            'Nombre': 'nombre',
             'Correo': 'correo',
             'Estado': 'estado',
             'Finca': 'nombreFinca',
@@ -60,14 +63,14 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     }
     const handleRectanglePress = (item: any) => {
 
-        const { identificacion, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = item;
+        const { identificacion, nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = item;
         if (userData.idRol === 1) {
-            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, idEmpresa, estado, idRol, idFinca, idParcela });
+            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela });
         } else if (datoValidacion === '1' && userData.idRol === 2) {
-            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, idEmpresa, estado, idRol, idFinca, idParcela });
+            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela });
         }
         else if (userData.idRol === 2) {
-            navigation.navigate(ScreenProps.AdminModifyUser.screenName, { identificacion, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela });
+            navigation.navigate(ScreenProps.AdminModifyUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela });
         }
     };
 
@@ -125,41 +128,48 @@ export const AdminListaUsuarioScreen: React.FC = () => {
 
     return (
         <View style={styles.container} >
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
-            {userData.idRol === 1 &&
-                <AddButtonComponent screenName={ScreenProps.AdminRegisterUser.screenName} color={'#274c48'} />
-            }
-            <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Lista de usuarios</Text>
+            <View style={styles.listcontainer}>
+                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+                {userData.idRol === 1 && 
+                    <AddButtonComponent screenName={ScreenProps.AdminRegisterUser.screenName} color={'#274c48'} />
+                }
+                {userData.idRol === 2 && datoValidacion === '1' &&
+                    <AddButtonComponent screenName={ScreenProps.Register.screenName} color={'#274c48'} />
+                }
+                <View style={styles.textAboveContainer}>
+                    <Text style={styles.textAbove} >Lista de usuarios</Text>
+                </View>
+
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Buscar información"
+                        onChangeText={(text) => handleSearch(text)}
+                    />
+                    <TouchableOpacity style={styles.searchIconContainer}>
+                        <Ionicons name="search" size={20} color="#333" />
+                    </TouchableOpacity>
+                </View>
+
+                <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
+                    {apiData.map((item, index) => {
+                        //  Esto verifica que si el idRol es 1 que utilice la identificación y si no el idUsuarioFincaParcela
+                        const modifiedIdentificacion = userData.idRol === 1 || userData.idRol == 2 && datoValidacion === '1' ? item.identificacion : item.idUsuarioFincaParcela;
+
+                        return (
+                            <TouchableOpacity key={modifiedIdentificacion} onPress={() => handleRectanglePress(item)}>
+                                <CustomRectangle
+                                    key={modifiedIdentificacion}
+                                    data={processData([{ ...item }], keyMapping)?.data || []}
+                                />
+                            </TouchableOpacity>
+                        );
+                    })}
+                </ScrollView>
             </View>
-
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Buscar información"
-                    onChangeText={(text) => handleSearch(text)}
-                />
-                <TouchableOpacity style={styles.searchIconContainer}>
-                    <Ionicons name="search" size={20} color="#333" />
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                {apiData.map((item, index) => {
-                    //  Esto verifica que si el idRol es 1 que utilice la identificación y si no el idUsuarioFincaParcela
-                    const modifiedIdentificacion = userData.idRol === 1 || userData.idRol == 2 && datoValidacion === '1' ? item.identificacion : item.idUsuarioFincaParcela;
-
-                    return (
-                        <TouchableOpacity key={modifiedIdentificacion} onPress={() => handleRectanglePress(item)}>
-                            <CustomRectangle
-                                key={modifiedIdentificacion}
-                                data={processData([{ ...item }], keyMapping)?.data || []}
-                            />
-                        </TouchableOpacity>
-                    );
-                })}
-            </ScrollView>
+            
             <BottomNavBar />
         </View>
+        
     );
 }

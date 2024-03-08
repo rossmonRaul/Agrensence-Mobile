@@ -40,8 +40,8 @@ export const ObtenerUsuariosPorIdEmpresa = async (data: any) => {
 
 /*Metodos 
 /*Metodos PUT */
-export const ActualizarContrasenaUsuario = async (data: any) => {
-    const url = `${API_URL}/api/v1.0/${controlador}/ActualizarContrasenaUsuario`;
+export const ActualizarDatosUsuario = async (data: any) => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ActualizarDatosUsuario`;
     return await ProcesarDatosApi('PUT', url, data);
 }
 export const ActualizarUsuarioAdministrador = async (data: any) => {

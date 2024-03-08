@@ -24,6 +24,7 @@ export const ListaUsuarioRol4Screen: React.FC = () => {
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
         'Identificación': 'identificacion',
+        'Nombre': 'nombre',
         'Correo': 'correo',
         'Estado': 'estado'
     };

@@ -77,5 +77,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-
+    rowContainer: {
+        width: '100%',
+    }
 });

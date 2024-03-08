@@ -23,11 +23,6 @@ export const styles = StyleSheet.create({
         paddingTop: 10,
         justifyContent: 'center',
     },
-    buttonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     input: {
         height: 40,
         borderColor: '#548256',
@@ -53,11 +48,15 @@ export const styles = StyleSheet.create({
         paddingTop: 20,
     },
     buttonDelete: {
-        marginTop: 10,
         backgroundColor: '#aa5458',
         padding: 8,
         alignItems: 'center',
         borderRadius: 12,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     createAccountText: {
         fontSize: 26,
@@ -116,11 +115,5 @@ export const styles = StyleSheet.create({
     },
     dropdownView: {
         paddingBottom: 10,
-    },
-    secondForm: {
-        paddingTop: 10,
-    },
-    rowContainer: {
-        width: '100%',
     }
 });

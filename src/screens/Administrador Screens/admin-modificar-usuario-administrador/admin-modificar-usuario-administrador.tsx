@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View,KeyboardAvoidingView,Platform,ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from './admin-modificar-usuario-administrador.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -7,7 +7,7 @@ import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../../hooks/useFetchDropDownData';
 
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
-import { ActualizarUsuarioAdministrador, CambiarEstadoUsuario, ActualizarContrasenaUsuario } from '../../../servicios/ServicioUsuario';
+import { ActualizarUsuarioAdministrador, CambiarEstadoUsuario, ActualizarDatosUsuario } from '../../../servicios/ServicioUsuario';
 import { ScreenProps } from '../../../constants';
 import { validatePassword } from '../../../utils/validationPasswordUtil';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,6 +19,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface RouteParams {
     identificacion: string;
+    nombre: string;
+    correo: string;
     idEmpresa: string;
     idRol: number;
     idFinca: number;
@@ -32,7 +34,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
     const { userData } = useAuth();
-    const { identificacion, idEmpresa, estado, idRol, idFinca, idParcela } = route.params as RouteParams;
+    const { identificacion,nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela } = route.params as RouteParams;
     const [isFormVisible, setFormVisible] = useState(false);
 
     /*  Se definen los estados para controlar la visibilidad 
@@ -46,6 +48,8 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         identificacion: identificacion || '',
+        nombre: nombre || '',
+        correo: correo || '',
         contrasena: '',
         confirmarContrasena: '',
         idEmpresa: idEmpresa || empresa || '',
@@ -81,7 +85,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         let isValid = true;
 
         if (isValid && !formulario.identificacion) {
-            alert('Ingrese un nombre de identificacion');
+            alert('Ingrese una identificacion');
             isValid = false;
             return
         }
@@ -157,6 +161,8 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         if (userData.idRol === 1) {
             formData = {
                 identificacion: formulario.identificacion,
+                nombre: formulario.nombre,
+                correo: formulario.correo,
                 contrasena: formulario.contrasena,
                 idEmpresa: formulario.idEmpresa,
             };
@@ -164,6 +170,8 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         if (userData.idRol === 2) {
             formData = {
                 identificacion: formulario.identificacion,
+                nombre: formulario.nombre,
+                correo: formulario.correo,
                 contrasena: formulario.contrasena
             };
         }
@@ -172,7 +180,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         let responseInsert;
 
         if (userData.idRol === 1) responseInsert = await ActualizarUsuarioAdministrador(formData);
-        if (userData.idRol === 2) responseInsert = await ActualizarContrasenaUsuario(formData)
+        if (userData.idRol === 2) responseInsert = await ActualizarDatosUsuario(formData)
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert(
@@ -196,14 +204,21 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
+                style={{ flex: 1 }}
+
+                >
             <ImageBackground
                 source={require('../../../assets/images/siembros_imagen.jpg')}
                 style={styles.upperContainer}
             >
             </ImageBackground>
+            
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
 
             <View style={styles.lowerContainer}>
+            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                 <View>
                     <Text style={styles.createAccountText} >Modificar cuenta</Text>
                 </View>
@@ -233,6 +248,22 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                                     placeholder="Identificación"
                                     value={formulario.identificacion}
                                     onChangeText={(text) => updateFormulario('identificacion', text)}
+                                />
+                                <Text style={styles.formText} >Nombre</Text>
+                                <TextInput
+                                    
+                                    style={styles.input}
+                                    placeholder="Nombre Completo"
+                                    value={formulario.nombre}
+                                    onChangeText={(text) => updateFormulario('nombre', text)}
+                                />
+                                <Text style={styles.formText} >Correo</Text>
+                                <TextInput
+                                    
+                                    style={styles.input}
+                                    placeholder="Correo"
+                                    value={formulario.correo}
+                                    onChangeText={(text) => updateFormulario('correo', text)}
                                 />
                                 <Text style={styles.formText} >Contraseña</Text>
                                 <TextInput style={styles.input}
@@ -335,9 +366,10 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                         </View>
                     </TouchableOpacity>
                 )}
+            </ScrollView>    
             </View>
             <BottomNavBar />
-
+            </KeyboardAvoidingView>
         </View>
     );
 }

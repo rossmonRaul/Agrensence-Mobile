@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, ImageBackground, ScrollView,Platform, KeyboardAvoidingView, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from './admin-modificar-usuario.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -8,7 +8,7 @@ import { EmpresaInterface, FincaInterface, ParcelaInterface } from '../../../int
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
-import { ActualizarContrasenaUsuario, CambiarEstadoUsuarioFincaParcela, AsignarNuevaFincaParcela, AsignarFincaParcela } from '../../../servicios/ServicioUsuario';
+import { ActualizarDatosUsuario, CambiarEstadoUsuarioFincaParcela, AsignarNuevaFincaParcela, AsignarFincaParcela } from '../../../servicios/ServicioUsuario';
 import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../../hooks/useAuth';
@@ -52,6 +52,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         identificacion: identificacion || '',
+        nombre: '',
         contrasena: '',
         confirmarContrasena: '',
         idEmpresa: idEmpresa || '',
@@ -204,10 +205,10 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
             idFinca: finca,
             idParcela: parcela,
         };
-        console.log(formData);
+        
         //  Se realiza la modificación de usuario
         const responseInsert = await AsignarFincaParcela(formData);
-        console.log(responseInsert)
+        
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
@@ -232,6 +233,11 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
+                style={{ flex: 1 }}
+
+                >
             <ImageBackground
                 source={require('../../../assets/images/siembros_imagen.jpg')}
                 style={styles.upperContainer}
@@ -239,66 +245,26 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
             </ImageBackground>
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
-                <View>
-                    <Text style={styles.createAccountText} >Modificar usuario</Text>
-                </View>
+                <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
+                    <View>
+                        <Text style={styles.createAccountText} >Modificar usuario</Text>
+                    </View>
 
-                <View style={styles.formContainer}>
-                    <>
-                        {!isFormVisible ? (
-                            <>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => {
-                                        setFormVisible(true),
-                                            setIsSecondFormVisible(false)
-                                    }}
-                                >
-                                    <Text style={styles.buttonText}>Modificar finca y parcela</Text>
-                                </TouchableOpacity>
-                            </>
-                        ) : (<>
-                            {empresa &&
-                                <DropdownComponent
-                                    placeholder="Finca"
-                                    data={fincaDataSort}
-                                    value={finca}
-                                    iconName='map-marker'
-                                    onChange={handleValueFinca}
-                                />
-                            }
-                            {finca &&
-                                <DropdownComponent
-                                    placeholder="Parcela"
-                                    data={parcelaDataSort}
-                                    iconName='map-marker'
-                                    value={parcela}
-                                    onChange={(item) => (setParcela(item.value as never))}
-                                />
-                            }
-                            {parcela && <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => {
-                                    handleModifyUser()
-                                }}
-                            >
-                                <View style={styles.buttonContent}>
-                                    <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                    <Text style={styles.buttonText}>Guardar cambios</Text>
-                                </View>
-                            </TouchableOpacity>}
-                        </>)}
-                        <View style={styles.secondForm}>
-                            {!isSecondFormVisible ? (<>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => {
-                                        setIsSecondFormVisible(true), setFormVisible(false)
-                                    }}
-                                >
-                                    <Text style={styles.buttonText}>Agregar nueva finca y parcela</Text>
-                                </TouchableOpacity>
-                            </>) : (<>
+                    <View style={styles.formContainer}>
+                        <>
+                            {!isFormVisible ? (
+                                <>
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => {
+                                            setFormVisible(true),
+                                                setIsSecondFormVisible(false)
+                                        }}
+                                    >
+                                        <Text style={styles.buttonText}>Modificar finca y parcela</Text>
+                                    </TouchableOpacity>
+                                </>
+                            ) : (<>
                                 {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
@@ -320,7 +286,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                 {parcela && <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
-                                        handleFincaParcela()
+                                        handleModifyUser()
                                     }}
                                 >
                                     <View style={styles.buttonContent}>
@@ -329,41 +295,82 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                     </View>
                                 </TouchableOpacity>}
                             </>)}
-                        </View>
+                            <View style={styles.secondForm}>
+                                {!isSecondFormVisible ? (<>
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => {
+                                            setIsSecondFormVisible(true), setFormVisible(false)
+                                        }}
+                                    >
+                                        <Text style={styles.buttonText}>Agregar nueva finca y parcela</Text>
+                                    </TouchableOpacity>
+                                </>) : (<>
+                                    {empresa &&
+                                        <DropdownComponent
+                                            placeholder="Finca"
+                                            data={fincaDataSort}
+                                            value={finca}
+                                            iconName='map-marker'
+                                            onChange={handleValueFinca}
+                                        />
+                                    }
+                                    {finca &&
+                                        <DropdownComponent
+                                            placeholder="Parcela"
+                                            data={parcelaDataSort}
+                                            iconName='map-marker'
+                                            value={parcela}
+                                            onChange={(item) => (setParcela(item.value as never))}
+                                        />
+                                    }
+                                    {parcela && <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => {
+                                            handleFincaParcela()
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                        </View>
+                                    </TouchableOpacity>}
+                                </>)}
+                            </View>
 
-                    </>
+                        </>
 
-                    {estado === 'Activo' ? <TouchableOpacity
-                        style={styles.buttonDelete}
-                        onPress={() => {
-                            handleChangeAccess();
-                        }}
-                    >
-                        <View style={styles.buttonContent}>
-                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                            <Text style={styles.buttonText}> Inhabilitar acceso</Text>
-                        </View>
-                    </TouchableOpacity>
-                        :
-                        <TouchableOpacity
-                            style={styles.button}
+                        {estado === 'Activo' ? <TouchableOpacity
+                            style={styles.buttonDelete}
                             onPress={() => {
                                 handleChangeAccess();
                             }}
                         >
                             <View style={styles.buttonContent}>
-                                <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
-                                <Text style={styles.buttonText}>Habilitar acceso</Text>
+                                <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                                <Text style={styles.buttonText}> Inhabilitar acceso</Text>
                             </View>
                         </TouchableOpacity>
-                    }
+                            :
+                            <TouchableOpacity
+                                style={styles.button}
+                                onPress={() => {
+                                    handleChangeAccess();
+                                }}
+                            >
+                                <View style={styles.buttonContent}>
+                                    <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
+                                    <Text style={styles.buttonText}>Habilitar acceso</Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
 
-                </View>
+                    </View>
 
-
+                </ScrollView>
             </View>
             <BottomNavBar />
-
+            </KeyboardAvoidingView>
         </View>
     );
 }

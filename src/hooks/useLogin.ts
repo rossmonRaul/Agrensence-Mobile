@@ -47,11 +47,11 @@ const useLogin = () => {
         if (userFound.estado === 1) estado = true
 
 
-
         //  Si el usuario inicia sesión agrega los datos al context
         if (userFound.mensaje === "Usuario encontrado.") {
             setUserData({
                 identificacion: userFound.identificacion,
+                nombre: userFound.nombre,
                 correo: userFound.correo,
                 idEmpresa: userFound.idEmpresa,
                 idFinca: userFound.idFinca,

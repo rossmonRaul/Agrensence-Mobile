@@ -1,31 +1,32 @@
 import React, { useState } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './admin-modificar-empresa.styles';
+import { styles } from './modificar-parcela.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ModificarEmpresa } from '../../../servicios/ServicioEmpresa';
+import { ModificarParcela, CambiarEstadoParcela } from '../../../servicios/ServicioParcela';
 import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
-import { CambiarEstadoEmpresa } from '../../../servicios/ServicioEmpresa';
+
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons'
 interface RouteParams {
-    idEmpresa: string;
+    idParcela: string;
     nombre: string;
     estado: string;
 }
 
-
-export const AdminModificarEmpresaScreen: React.FC = () => {
+export const ModificarParcelaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
     const route = useRoute();
-    const { idEmpresa, nombre, estado } = route.params as RouteParams;
+    const { idParcela, nombre, estado } = route.params as RouteParams;
+    
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
-        idEmpresa: idEmpresa,
-        empresa: nombre
+        idParcela: idParcela,
+        nombre: nombre,
+        estado: estado
     });
 
     //  Esta es una función para actualizar el estado del formulario
@@ -39,14 +40,14 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
     const handleChangeAccess = async () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
-            idEmpresa: formulario.idEmpresa,
+            idParcela: formulario.idParcela,
         };
 
 
         //  Se muestra una alerta con opción de aceptar o cancelar
         Alert.alert(
             'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado de la empresa?',
+            '¿Estás seguro de que deseas cambiar el estado de la parcela?',
             [
                 {
                     text: 'Cancelar',
@@ -55,19 +56,19 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                 {
                     text: 'Aceptar',
                     onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoEmpresa(formData);
-                        // Se ejecuta el cambio de estado
+                        //  Se ejecuta el servicio para cambiar el estado de la parcela
+                        const responseInsert = await CambiarEstadoParcela(formData);
+                        //Se valida si los datos recibidos de la api son correctos
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se actualizó el estado de la empresa correctamente!',
+                                '¡Se actualizó el estado de la parcela correctamente!',
                                 '',
                                 [
                                     {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.Menu.screenName
+                                                ScreenProps.ListPlot.screenName
                                             );
                                         },
                                     },
@@ -82,27 +83,27 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
             { cancelable: false }
         );
     };
-    //  Se defina una función para manejar el registro del identificacion
-    const handleModifyCompany = async () => {
+    //  Se defina una función para manejar el registro de la finca
+    const handleModifyPlot = async () => {
         //  Se valida que la empresa, finca y parcela estén seleccionadas
-        if (!formulario.empresa) {
-            alert('Ingrese una empresa');
+        if (!formulario.nombre) {
+            alert('Ingrese un nombre');
             return;
         }
 
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
-            idEmpresa: formulario.idEmpresa,
-            nombre: formulario.empresa,
+            idParcela: formulario.idParcela,
+            nombre: formulario.nombre,
         };
-
-        //  Se realiza la modificación de empresa
-        const responseInsert = await ModificarEmpresa(formData);
-
+        
+        //  Se realiza la modificación de parcela
+        const responseInsert = await ModificarParcela(formData);
+        
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert(
-                '¡Se modificó la empresa correctamente!',
+                '¡Se modificó la parcela correctamente!',
                 '',
                 [
                     {
@@ -128,26 +129,26 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                 style={styles.upperContainer}
             >
             </ImageBackground>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.ListPlot.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
                 <View>
-                    <Text style={styles.createAccountText} >Modificar empresa</Text>
+                    <Text style={styles.createAccountText} >Modificar parcela</Text>
                 </View>
                 <View style={styles.formContainer}>
-                    <Text style={styles.formText} >Nombre empresa</Text>
+                    <Text style={styles.formText} >Nombre parcela</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Nombre de empresa"
-                        value={formulario.empresa}
-                        onChangeText={(text) => updateFormulario('empresa', text)}
+                        placeholder="Nombre de parcela"
+                        value={formulario.nombre}
+                        onChangeText={(text) => updateFormulario('nombre', text)}
                     />
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={async () => { handleModifyCompany() }}
+                        onPress={async () => { handleModifyPlot() }}
                     >
                         <View style={styles.buttonContent}>
                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                            <Text style={styles.buttonText}> Guardar cambios</Text>
                         </View>
                     </TouchableOpacity>
 
@@ -160,7 +161,7 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                         >
                             <View style={styles.buttonContent}>
                                 <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                <Text style={styles.buttonText}> Inhabilitar acceso</Text>
+                                <Text style={styles.buttonText}> Inhabilitar parcela</Text>
                             </View>
                         </TouchableOpacity>
                         :
@@ -172,11 +173,12 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                         >
                             <View style={styles.buttonContent}>
                                 <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
-                                <Text style={styles.buttonText}>Habilitar acceso</Text>
+                                <Text style={styles.buttonText}> Habilitar parcela</Text>
                             </View>
                         </TouchableOpacity>
                     }
                 </View>
+                
             </View>
             <BottomNavBar />
         </View>
