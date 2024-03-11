@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { styles } from './menu-suelos.styles';
-import { IconRectangle } from '../../components/IconRectangle/IconRectangle';
-import { Admin_suelo} from '../../constants';
+import { IconRectangle } from '../../../components/IconRectangle/IconRectangle';
+import { Admin_suelo} from '../../../constants';
 import { useNavigation } from '@react-navigation/native';
-import { useAuth } from '../../hooks/useAuth';
-import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
-import { ScreenProps } from '../../constants';
+import { useAuth } from '../../../hooks/useAuth';
+import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
+import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { BackButtonComponent } from '../../components/BackButton/BackButton';
+import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 
 export const MenuSueloScreen: React.FC = () => {
     const { userData } = useAuth();

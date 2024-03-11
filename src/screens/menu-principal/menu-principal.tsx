@@ -34,15 +34,11 @@ export const MenuScreen: React.FC = () => {
         }
 
         if (userRole === 2) {
-            filteredCompanyProps = Company_Props.filter(company => (company.id >= 1 && company.id <= 10) || (company.id >= 50 && company.id <= 54) || company.id === 200);
+            filteredCompanyProps = Company_Props.filter(company => (company.id >= 50 && company.id <= 54) || company.id === 200);
         }
         if (userRole === 3) {
             filteredCompanyProps = Company_Props.slice(0, 10);
         }
-        if (userRole === 4) {
-            filteredCompanyProps = Company_Props.filter(company => company.id === 7 || company.id === 199);
-        }
-
 
         const rows = [];
         for (let i = 0; i < filteredCompanyProps.length; i += 2) {

@@ -22,10 +22,13 @@ export const ScreenProps = {
     ListPlot: { screenName: 'ListaParcelasScreen' },
     RegisterPlot: { screenName: 'RegistrarParcelaScreen' },
     ModifyPlot: { screenName: 'ModificarParcelaScreen' },
+    ListFertilizer: { screenName: 'ListaFertilizantesScreen' },
+    RegisterFertilizer: { screenName: 'RegistrarFertilizanteScreen' },
+    ModifyFertilizer: { screenName: 'ModificarFertilizanteScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
-export const IP_API = '192.168.1.35';
+export const IP_API = '192.168.1.33';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -64,7 +67,7 @@ export const Admin_cultivation = [
 ]
 
 export const Admin_suelo = [
-    { id: 1, iconImage: require('./assets/images/icons/rotacion-cultivos.png'), text: 'Rotación de cultivos según estacionalidad' },
+    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de Fertilizantes' , screen: ScreenProps.ListFertilizer.screenName },
     { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo' },
     { id: 3, iconImage: require('./assets/images/icons/montana.png'), text: 'Preparación del terreno y prácticas de conservación' },
     { id: 4, iconImage: require('./assets/images/icons/historial.png'), text: 'Historial de manejo  de residuos de la finca' },

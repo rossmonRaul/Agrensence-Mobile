@@ -10,7 +10,7 @@ import { UserContextProvider } from './src/context/UserProvider';
 import { IncioSesionScreen } from "./src/screens/inicio-sesion/inicio-sesion";
 import { RegistrarUsuarioScreen } from "./src/screens/registrar-usuario/registrar-usuario";
 import { MenuScreen } from "./src/screens/menu-principal/menu-principal";
-import { MenuSueloScreen } from "./src/screens/menu-suelos/menu-suelos";
+import { MenuSueloScreen } from "./src/screens/suelos/menu-suelos/menu-suelos";
 import { ListaUsuarioRol4Screen } from "./src/screens/lista-usuarios-rol4/lista-usuarios-rol4";
 import { ListaEmpresaScreen } from "./src/screens/Administrador Screens/admin-lista-empresas/admin-lista-empresas";
 import { AdminRegistrarUsuarioScreen } from "./src/screens/Administrador Screens/admin-registrar-usuario/admin-registrar-usuario";
@@ -27,6 +27,9 @@ import { ModificarFincaScreen } from "./src/screens/fincas/modificar-finca/modif
 import { ListaParcelasScreen } from "./src/screens/parcelas/lista-parcelas/lista-parcelas";
 import { RegistrarParcelaScreen } from "./src/screens/parcelas/registrar-parcela/registrar-parcela";
 import { ModificarParcelaScreen } from "./src/screens/parcelas/modificar-parcela/modificar-parcela";
+import { ListaFertilizantesScreen } from "./src/screens/suelos/manejo-fertilizantes/lista-manejo-fertilizantes/lista-manejo-fertilizantes";
+import { RegistrarFertilizanteScreen } from "./src/screens/suelos/manejo-fertilizantes/registrar-manejo-fertilizantes/registrar-manejo-fertilizantes";
+import { ModificarFertilizanteScreen } from "./src/screens/suelos/manejo-fertilizantes/modificar-manejo-fertilizante/modificar-manejo-fertilizantes";
 
 
 const Stack = createNativeStackNavigator();
@@ -146,6 +149,9 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListPlot.screenName} component={ListaParcelasScreen} />
           <Stack.Screen name={ScreenProps.RegisterPlot.screenName} component={RegistrarParcelaScreen} />
           <Stack.Screen name={ScreenProps.ModifyPlot.screenName} component={ModificarParcelaScreen} />
+          <Stack.Screen name={ScreenProps.ListFertilizer.screenName} component={ListaFertilizantesScreen} />
+          <Stack.Screen name={ScreenProps.RegisterFertilizer.screenName} component={RegistrarFertilizanteScreen} />
+          <Stack.Screen name={ScreenProps.ModifyFertilizer.screenName} component={ModificarFertilizanteScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
