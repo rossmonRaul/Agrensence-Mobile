@@ -12,15 +12,19 @@ import { InsertarManejoFertilizantes } from '../../../../servicios/ServicioFerti
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
-import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
+import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
+import { FontAwesome } from '@expo/vector-icons';
+
+
 
 export const RegistrarFertilizanteScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
-    const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
-    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
-    const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
+    const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
+    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
+    const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
@@ -151,35 +155,25 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
-            const formData = { idEmpresa: userData.idEmpresa };
+            const formData = { identificacion: userData.identificacion };
 
             try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosPorRol3(formData);
-            
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
-                    
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
-                
+                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
-                    
-                setParcelas(parcelas);
+                const fincasUnicas = datosInicialesObtenidos.map(item => ({
+                    idFinca: item.idFinca,
+                    nombreFinca: item.nombreFinca,
+                }));
+
+                setFincas(fincasUnicas);
+
+                const parcelasUnicas = datosInicialesObtenidos.map(item => ({
+                    idFinca: item.idFinca,
+                    idParcela: item.idParcela,
+                    nombre: item.nombreParcela,
+                }));
+                
+                setParcelas(parcelasUnicas);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -190,8 +184,9 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
+            
             const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
-
+            
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -215,7 +210,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     };
 
     //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
-    const formatDate = () => { 
+    const formatDate = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear().toString();
@@ -434,7 +429,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                     {/* Dropdown para Parcelas */}
                                     <DropdownComponent
                                         placeholder="Seleccione una Parcela"
-                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
                                         iconName="map-marker"
                                         onChange={(selectedItem) => {
