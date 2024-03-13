@@ -30,6 +30,9 @@ import { ModificarParcelaScreen } from "./src/screens/parcelas/modificar-parcela
 import { ListaFertilizantesScreen } from "./src/screens/suelos/manejo-fertilizantes/lista-manejo-fertilizantes/lista-manejo-fertilizantes";
 import { RegistrarFertilizanteScreen } from "./src/screens/suelos/manejo-fertilizantes/registrar-manejo-fertilizantes/registrar-manejo-fertilizantes";
 import { ModificarFertilizanteScreen } from "./src/screens/suelos/manejo-fertilizantes/modificar-manejo-fertilizante/modificar-manejo-fertilizantes";
+import { ListaCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/lista-calidad-suelo/lista-calidad-suelo";
+import { RegistrarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/registrar-calidad-suelo/registrar-calidad-suelo";
+import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/modificar-calidad-suelo/modificar-calidad-suelo";
 
 
 const Stack = createNativeStackNavigator();
@@ -152,6 +155,9 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListFertilizer.screenName} component={ListaFertilizantesScreen} />
           <Stack.Screen name={ScreenProps.RegisterFertilizer.screenName} component={RegistrarFertilizanteScreen} />
           <Stack.Screen name={ScreenProps.ModifyFertilizer.screenName} component={ModificarFertilizanteScreen} />
+          <Stack.Screen name={ScreenProps.ListQualityFloorScreen.screenName} component={ListaCalidadSueloScreen} />
+          <Stack.Screen name={ScreenProps.RegisterQualityFloorScreen.screenName} component={RegistrarCalidadSueloScreen} />
+          <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>

@@ -133,7 +133,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
     const keyMapping = {
         'Fecha': 'fecha',
         'Fertilizante': 'fertilizante',
-        'Aplicacion': 'aplicacion',
+        'Aplicación': 'aplicacion',
         'Dosis': 'dosis',
         'Cultivo Tratado': 'cultivoTratado',
         'Acciones Adicionales': 'accionesAdicionales',

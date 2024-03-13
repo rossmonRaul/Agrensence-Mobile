@@ -419,7 +419,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
 
                                         </View>
                                     )}
-                                    <Text style={styles.formText} >Aplicacion</Text>
+                                    <Text style={styles.formText} >Aplicación</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Aplicacion"

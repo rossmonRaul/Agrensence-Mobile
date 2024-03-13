@@ -16,10 +16,6 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { FontAwesome } from '@expo/vector-icons';
 
-interface DatepickerComponentProps {
-    value: Date;
-    onChange: (date: Date) => void;
-}
 
 
 export const RegistrarFertilizanteScreen: React.FC = () => {
@@ -30,6 +26,10 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     const [parcelas, setParcelas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
+
+    const [showPicker, setShowPicker] = useState(false);
+    const [date, setDate] = useState(new Date())
+    const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -117,7 +117,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Finca');
+            alert('Ingrese la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -136,14 +136,14 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
         
         //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await InsertarManejoFertilizantes(formData);
-        console.log(responseInsert)
+        
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se creo el manejo del fertilizante correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.MenuFloor.screenName as never);
                     },
                 },
             ]);
@@ -175,7 +175,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            const response = await ObtenerParcelas(); // Reemplaza con tu lógica para obtener parcelas
+            const response = await ObtenerParcelas(); 
             const parcelasFiltradas = response.filter(item => item.idFinca === fincaId);
 
             setParcelas(parcelasFiltradas);
@@ -186,12 +186,12 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     const handleFincaChange = (item: { label: string; value: string }) => {
         const fincaId = parseInt(item.value, 10);
         setSelectedFinca(item.value);
-        console.log(selectedFinca)
+        
         setSelectedParcela('Seleccione una Parcela')
         obtenerParcelasPorFinca(fincaId);
     };
 
-
+    //se formatea la fecha para que tenga el formato de español
     const formatSpanishDate = (date) => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -199,12 +199,11 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
         return `${day}/${month}/${year}`;
     };
-    const [showPicker, setShowPicker] = useState(false);
-    const [date, setDate] = useState(new Date())
-    const [isSecondFormVisible, setSecondFormVisible] = useState(false);
+    
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
     }
+    //se captura el evento de datetimepicker
     const onChange = ({ type }, selectedDate) => {
         if (type === "set" && selectedDate instanceof Date) {
             const formattedDate = formatSpanishDate(selectedDate);
@@ -218,7 +217,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
         }
     };
 
-
+    //en el caso de ser ios poder capturar la fecha
     const confirmIOSDate = () => {
         toggleDatePicker();
         updateFormulario('fecha', formatSpanishDate(date));
@@ -317,10 +316,10 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
                                         </View>
                                     )}
-                                    <Text style={styles.formText} >Aplicacion</Text>
+                                    <Text style={styles.formText} >Aplicación</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="Aplicacion"
+                                        placeholder="Aplicación"
                                         value={formulario.aplicacion}
                                         onChangeText={(text) => updateFormulario('aplicacion', text)}
                                     />

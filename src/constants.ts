@@ -25,6 +25,9 @@ export const ScreenProps = {
     ListFertilizer: { screenName: 'ListaFertilizantesScreen' },
     RegisterFertilizer: { screenName: 'RegistrarFertilizanteScreen' },
     ModifyFertilizer: { screenName: 'ModificarFertilizanteScreen' },
+    ListQualityFloorScreen: { screenName: 'ListaCalidadSueloScreen' },
+    RegisterQualityFloorScreen: { screenName: 'RegistrarCalidadSueloScreen' },
+    ModifyQualityFloorScreen: { screenName: 'ModificarCalidadSueloScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -68,7 +71,7 @@ export const Admin_cultivation = [
 
 export const Admin_suelo = [
     { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de Fertilizantes' , screen: ScreenProps.ListFertilizer.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo' },
+    { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
     { id: 3, iconImage: require('./assets/images/icons/montana.png'), text: 'Preparación del terreno y prácticas de conservación' },
     { id: 4, iconImage: require('./assets/images/icons/historial.png'), text: 'Historial de manejo  de residuos de la finca' },
 ]
