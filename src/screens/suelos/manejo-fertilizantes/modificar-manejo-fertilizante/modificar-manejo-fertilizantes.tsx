@@ -177,10 +177,14 @@ export const ModificarFertilizanteScreen: React.FC = () => {
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
-                const fincasUnicas = datosInicialesObtenidos.map(item => ({
-                    idFinca: item.idFinca,
-                    nombreFinca: item.nombreFinca,
-                }));
+                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                    .filter(item => item !== undefined)
+                    .map(item => item!.idFinca)))
+                    .map(idFinca => {
+                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                        return { idFinca, nombreFinca };
+                    });
                 
                 setFincas(fincasUnicas);
 
