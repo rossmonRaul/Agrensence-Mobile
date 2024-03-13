@@ -16,5 +16,7 @@ export interface FloorDataInterface {
     identificacionUsuario: string;
     finca: string;
     parcela: string;
+    idFinca: number;
+    idParcela: number;
     estado: boolean;
 }

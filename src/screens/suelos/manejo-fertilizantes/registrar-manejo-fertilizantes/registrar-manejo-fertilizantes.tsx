@@ -12,18 +12,15 @@ import { InsertarManejoFertilizantes } from '../../../../servicios/ServicioFerti
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
-import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
-import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
-import { FontAwesome } from '@expo/vector-icons';
-
-
+import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
 
 export const RegistrarFertilizanteScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
-    const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca: string }[] | []>([]);
-    const [parcelas, setParcelas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
+    const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
+    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
+    const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
@@ -102,7 +99,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
             alert('Por favor rellene el formulario');
             return
         }
-        
+
         if (!formulario.condicionalesambientales) {
             alert('Ingrese las Condiciones ambientales');
             return
@@ -124,7 +121,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
-            fechacreacion: formulario.fecha,
+            fechacreacion: formatDate(),
             aplicacion: formulario.aplicacion,
             cultivotratado: formulario.cultivotratado,
             fertilizante: formulario.fertilizante,
@@ -154,17 +151,35 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
+            const formData = { idEmpresa: userData.idEmpresa };
 
             try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-
-                const fincasUnicas = datosInicialesObtenidos.map(item => ({
-                    idFinca: item.idFinca,
-                    nombreFinca: item.nombreFinca,
-                }));
-
+                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosPorRol3(formData);
+            
+                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                    .filter(item => item !== undefined)
+                    .map(item => item!.idFinca)))
+                    .map(idFinca => {
+                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                        return { idFinca, nombreFinca };
+                    });
+                    
                 setFincas(fincasUnicas);
+                //Se obtienen las parcelas para poder hacer los filtros despues
+                
+
+                const parcelas = Array.from(new Set(datosInicialesObtenidos
+                    .filter(item => item !== undefined)
+                    .map(item => item!.idParcela)))
+                    .map(idParcela => {
+                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                        const idFinca = relacion ? relacion.idFinca : -1;
+                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                        return { idFinca, idParcela, nombreParcela };
+                    });
+                    
+                setParcelas(parcelas);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -175,10 +190,9 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            const response = await ObtenerParcelas(); 
-            const parcelasFiltradas = response.filter(item => item.idFinca === fincaId);
+            const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
 
-            setParcelas(parcelasFiltradas);
+            setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
         }
@@ -186,7 +200,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     const handleFincaChange = (item: { label: string; value: string }) => {
         const fincaId = parseInt(item.value, 10);
         setSelectedFinca(item.value);
-        
+
         setSelectedParcela('Seleccione una Parcela')
         obtenerParcelasPorFinca(fincaId);
     };
@@ -199,7 +213,16 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
         return `${day}/${month}/${year}`;
     };
-    
+
+    //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
+    const formatDate = () => { 
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString();
+
+        return `${year}-${month}-${day}`;
+    };
+
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
     }
@@ -221,6 +244,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     const confirmIOSDate = () => {
         toggleDatePicker();
         updateFormulario('fecha', formatSpanishDate(date));
+        setDate(date)
     }
 
     return (
@@ -401,7 +425,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
-                                    
+
                                             // Actualizar el formulario con la selección de la finca
                                             updateFormulario('idFinca', selectedItem.value);
                                         }}
@@ -410,26 +434,26 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                     {/* Dropdown para Parcelas */}
                                     <DropdownComponent
                                         placeholder="Seleccione una Parcela"
-                                        data={parcelas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
                                         iconName="map-marker"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la parcela
                                             setSelectedParcela(selectedItem.value);
-                                    
+
                                             // Actualizar el formulario con la selección de la parcela
                                             updateFormulario('idParcela', selectedItem.value);
                                         }}
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent'}]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
-                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle } />
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
                                                 <Text style={styles.buttonTextBack}> Atrás</Text>
                                             </View>
                                         </TouchableOpacity>

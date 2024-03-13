@@ -15,6 +15,6 @@ export interface RelacionFincaParcela {
     idParcela: number;
     idUsuarioFincaParcela: number;
     estado: number;
-    nombreFinca: string;
+    nombreFinca?: string;
     nombreParcela: string;
 }

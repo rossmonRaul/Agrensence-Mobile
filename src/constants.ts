@@ -31,7 +31,7 @@ export const ScreenProps = {
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
-export const IP_API = '192.168.1.33';
+export const IP_API = '192.168.1.34';
 
 export const API_URL = `http://${IP_API}:5271`
 
