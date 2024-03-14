@@ -137,7 +137,7 @@ export const styles = StyleSheet.create({
 
     },
     inputMultiline: {
-        height: 100,
+        height: 80,
         borderColor: '#548256',
         borderWidth: 2,
         marginBottom: 10,
