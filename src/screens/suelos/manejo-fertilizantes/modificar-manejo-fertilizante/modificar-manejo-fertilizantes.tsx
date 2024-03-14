@@ -498,7 +498,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         style={styles.inputMultiline}
                                         placeholder="Condiciones ambientales"
                                         value={formulario.condicionaesambientales}
-                                        onChangeText={(text) => updateFormulario('condicionalesambientales', text)}
+                                        onChangeText={(text) => updateFormulario('condicionalesAmbientales', text)}
                                         multiline
                                         numberOfLines={5}
                                     />
