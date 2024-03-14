@@ -58,7 +58,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
         fertilizante: fertilizante,
         dosis: dosis,
         accionesadicionales: accionesAdicionales,
-        condicionaesambientales: condicionesAmbientales,
+        condicionesAmbientales: condicionesAmbientales,
         observaciones: Observaciones,
     });
 
@@ -116,12 +116,12 @@ export const ModificarFertilizanteScreen: React.FC = () => {
     // Se define una función para manejar el registro del manejo de fertilizantes
     const handleRegister = async () => {
 
-        if (!formulario.condicionaesambientales && !formulario.observaciones) {
+        if (!formulario.condicionesAmbientales && !formulario.observaciones) {
             alert('Por favor rellene el formulario');
             return
         }
 
-        if (!formulario.condicionaesambientales) {
+        if (!formulario.condicionesAmbientales) {
             alert('Ingrese las Condiciones ambientales');
             return
         }
@@ -149,7 +149,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
             fertilizante: formulario.fertilizante,
             dosis: formulario.dosis,
             accionesadicionales: formulario.accionesadicionales,
-            condicionesAmbientales: formulario.condicionaesambientales,
+            condicionesAmbientales: formulario.condicionesAmbientales,
             observaciones: formulario.observaciones,
         };
         
@@ -497,8 +497,8 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                     <TextInput
                                         style={styles.inputMultiline}
                                         placeholder="Condiciones ambientales"
-                                        value={formulario.condicionaesambientales}
-                                        onChangeText={(text) => updateFormulario('condicionalesAmbientales', text)}
+                                        value={formulario.condicionesAmbientales}
+                                        onChangeText={(text) => updateFormulario('condicionesAmbientales', text)}
                                         multiline
                                         numberOfLines={5}
                                     />
