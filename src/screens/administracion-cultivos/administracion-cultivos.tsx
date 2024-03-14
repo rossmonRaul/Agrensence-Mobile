@@ -25,9 +25,8 @@ export const AdministracionCultivos: React.FC = () => {
             <View style={styles.rowContainer}>
 
                 {Admin_cultivation.map((item) => (
-                    <View style={styles.row}>
+                    <View style={styles.row} key={item.id}>
                         <IconRectangle
-                            key={item.id}
                             onPress={HandleRectanglePress}
                             iconImg={item.iconImage}
                             text={item.text}
