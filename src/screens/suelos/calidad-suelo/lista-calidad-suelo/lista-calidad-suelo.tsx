@@ -23,6 +23,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
     const [fincas, setFincas] = useState<{ idFinca: number }[] | []>([]);
     const [apiData, setApiData] = useState<FloorDataInterface[]>([]);
     const [calidadSueloFiltradosData, setCalidadSueloFiltradosData] = useState<any[]>([]);
+    const [calidadSuelo, setCalidadSuelo] = useState<any[]>([]);
 
     //para poder hacer el filtro de los datos del api
     useEffect(() => {
@@ -31,9 +32,10 @@ export const ListaCalidadSueloScreen: React.FC = () => {
     
         // Filtrar las medicionesSueloFiltradas por los IDs de las fincas del usuario
         const medicionesSuelofiltradas = apiData.filter(item => idFincasUsuario.includes(item.idFinca));
-    
+        
         // Actualizar el estado con las mediciones filtradas
         setCalidadSueloFiltradosData(medicionesSuelofiltradas);
+        setCalidadSuelo(medicionesSuelofiltradas)
     }, [apiData, fincas]);
     
 
@@ -44,7 +46,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
             try {
 
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosPorRol3(formData);
-            
+                
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))
@@ -100,14 +102,14 @@ export const ListaCalidadSueloScreen: React.FC = () => {
     const handleSearch = (query: string) => {
         const lowercaseQuery = query.toLowerCase();
 
-        const filteredData = apiData.filter((item) => {
+        const filteredData = calidadSueloFiltradosData.filter((item) => {
             return (
                 item.usuario.toLowerCase().includes(lowercaseQuery) ||
                 item.parcela.toLowerCase().includes(lowercaseQuery) ||
                 item.finca.toLowerCase().includes(lowercaseQuery)
             );
         });
-        setCalidadSueloFiltradosData(filteredData);
+        setCalidadSuelo(filteredData);
     };
 
 
@@ -133,7 +135,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
                     </TouchableOpacity>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {calidadSueloFiltradosData.map((item, index) => {
+                    {calidadSuelo.map((item, index) => {
 
                         return (
                             <TouchableOpacity key={item.idMedicionesSuelo} onPress={() => handleRectanglePress(item.idMedicionesSuelo,

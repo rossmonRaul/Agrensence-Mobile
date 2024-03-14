@@ -26,7 +26,7 @@ interface RouteParams {
     dosis: string;
     accionesAdicionales: string;
     condicionesAmbientales: string;
-    observaciones: string;
+    Observaciones: string;
     estado: string;
 }
 
@@ -39,7 +39,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
     const { idmanejoFertilizantes, idFinca, idParcela, fecha, aplicacion, cultivoTratado,
         fertilizante, dosis, accionesAdicionales, condicionesAmbientales,
-        observaciones, estado } = route.params as RouteParams;
+        Observaciones, estado } = route.params as RouteParams;
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<ParcelaInterface[]>([]);
@@ -59,7 +59,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
         dosis: dosis,
         accionesadicionales: accionesAdicionales,
         condicionaesambientales: condicionesAmbientales,
-        observaciones: observaciones,
+        observaciones: Observaciones,
     });
 
 

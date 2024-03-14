@@ -168,7 +168,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
             idmanejoFertilizantes: idManejoFertilizantes, idFinca: idFinca, idParcela: idParcela,
             fecha: Fecha, fertilizante: Fertilizante, aplicacion: Aplicacion, dosis: Dosis,
             cultivoTratado: CultivoTratado, accionesAdicionales: AccionesAdicionales,
-            condicionesAmbientales: CondicionesAmbientales, observaciones: Observaciones, estado: Estado
+            condicionesAmbientales: CondicionesAmbientales, Observaciones: Observaciones, estado: Estado
         });
     };
 
