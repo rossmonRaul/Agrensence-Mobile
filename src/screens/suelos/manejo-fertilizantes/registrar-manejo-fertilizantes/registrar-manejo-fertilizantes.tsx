@@ -404,7 +404,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-                                    <Text style={styles.formText} >Dosis</Text>
+                                    <Text style={styles.formText} >Observaciones</Text>
                                     <TextInput
                                         style={styles.inputMultiline}
                                         placeholder="Observaciones"

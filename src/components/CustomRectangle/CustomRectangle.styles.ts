@@ -2,9 +2,9 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     rectangle: {
-        borderBottomWidth: 2,
+        borderBottomWidth: 3,
         width: 300,
-        borderColor: '#c7c7c7',
+        borderColor: '#274c48',
         padding: 10,
     },
     text: {
