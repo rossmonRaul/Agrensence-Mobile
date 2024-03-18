@@ -8,3 +8,13 @@ export interface UserDataInterface {
     idRol: number;
     estado: boolean;
 }
+
+export interface RelacionFincaParcela {
+    identificacion: string;
+    idFinca: number;
+    idParcela: number;
+    idUsuarioFincaParcela: number;
+    estado: number;
+    nombreFinca?: string;
+    nombreParcela: string;
+}

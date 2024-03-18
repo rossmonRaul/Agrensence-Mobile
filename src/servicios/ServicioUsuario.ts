@@ -73,3 +73,9 @@ export const CambiarEstadoUsuario = async (data: any) => {
 }
 
 
+
+export const ObtenerUsuariosAsignadosPorIdentificacion = async (data: any) => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerUsuariosAsignadosPorIdentificacion`;
+    return await ProcesarDatosApi('POST', url, data);
+}
+
