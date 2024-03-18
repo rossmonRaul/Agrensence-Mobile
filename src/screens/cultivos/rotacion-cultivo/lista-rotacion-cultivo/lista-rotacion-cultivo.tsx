@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from './lista-rotacion-cultivo.styles';
-import { BackButtonComponent } from '../../../components/BackButton/BackButton';
+import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
-import { ObtenerFincas } from '../../../servicios/ServicioFinca';
-import { processData } from '../../../utils/processData';
-import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
+import { ObtenerFincas } from '../../../../servicios/ServicioFinca';
+import { processData } from '../../../../utils/processData';
+import { CustomRectangle } from '../../../../components/CustomRectangle/CustomRectangle';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ScreenProps } from '../../../constants';
-import { useAuth } from '../../../hooks/useAuth';
-import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
-import { AddButtonComponent } from '../../../components/AddButton/AddButton';
-import { ObtenerUsuariosPorRol3 } from '../../../servicios/ServicioUsuario';
-import { ObtenerRotacionCultivoSegunEstacionalidad } from '../../../servicios/ServicioCultivos';
-import { RelacionFincaParcela } from '../../../interfaces/userDataInterface';
+import { ScreenProps } from '../../../../constants';
+import { useAuth } from '../../../../hooks/useAuth';
+import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
+import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
+import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
+import { ObtenerRotacionCultivoSegunEstacionalidad } from '../../../../servicios/ServicioCultivos';
+import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 
 export const ListaRotacionCultivosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();

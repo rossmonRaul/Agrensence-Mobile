@@ -33,8 +33,8 @@ import { ModificarFertilizanteScreen } from "./src/screens/suelos/manejo-fertili
 import { ListaCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/lista-calidad-suelo/lista-calidad-suelo";
 import { RegistrarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/registrar-calidad-suelo/registrar-calidad-suelo";
 import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/modificar-calidad-suelo/modificar-calidad-suelo";
-
-
+import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/lista-rotacion-cultivo/lista-rotacion-cultivo';
+import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -158,6 +158,8 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListQualityFloorScreen.screenName} component={ListaCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.RegisterQualityFloorScreen.screenName} component={RegistrarCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
+          <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
