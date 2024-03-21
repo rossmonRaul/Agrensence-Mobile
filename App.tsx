@@ -35,6 +35,8 @@ import { RegistrarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/
 import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/modificar-calidad-suelo/modificar-calidad-suelo";
 import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/lista-rotacion-cultivo/lista-rotacion-cultivo';
 import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
+import { ModificarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/modificar-rotacion-cultivo/modificar-rotacion-cultivo';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -160,6 +162,7 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
