@@ -62,4 +62,8 @@ export const styles = StyleSheet.create({
         backgroundColor: '#e0e0e0',
         borderRadius: 8,
     },
+    dropDownContainer: {
+        justifyContent: 'center',
+        minWidth: 300,
+    },
 })
