@@ -77,7 +77,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         if (formulario.cultivo.trim() === '') {
             isValid = false;
             alert('Por favor ingrese el Cultivo.');
-            return isValid;
+            return;
+        } else if (formulario.cultivo.trim().length > 50) {
+            isValid = false;
+            alert('El Cultivo no puede tener más de 50 caracteres.');
+            return;
         }
 
         // Validación de la Epoca Siembra
@@ -106,6 +110,10 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
             isValid = false;
             alert('Por favor ingrese el Cultivo siguiente.');
             return isValid;
+        } else if (formulario.cultivoSiguiente.trim().length > 50) {
+            isValid = false;
+            alert('El Cultivo siguiente no puede tener más de 50 caracteres.');
+            return;
         }
 
         return isValid;
@@ -151,7 +159,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.MenuFloor.screenName as never);
+                        navigation.navigate(ScreenProps.CropRotationList.screenName as never);
                     },
                 },
             ]);
@@ -344,6 +352,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                 <>
                                     <Text style={styles.formText} >Cultivo</Text>
                                     <TextInput
+                                        maxLength={50}
                                         style={styles.input}
                                         placeholder="Arroz, Maíz, Papá..."
                                         value={formulario.cultivo}
@@ -553,6 +562,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
 
                                     <Text style={styles.formText} >Cultivo siguiente</Text>
                                     <TextInput
+                                        maxLength={50}
                                         style={styles.input}
                                         placeholder="Arroz, Maíz, Papá..."
                                         value={formulario.cultivoSiguiente}
