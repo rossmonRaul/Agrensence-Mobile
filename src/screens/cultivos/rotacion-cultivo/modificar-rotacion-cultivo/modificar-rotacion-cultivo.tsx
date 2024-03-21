@@ -61,6 +61,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
     const [parcelaDataSort, setParcelaDataSort] = useState<DropdownData[]>([]);
     const [handleEmpresaCalled, setHandleEmpresaCalled] = useState(false);
 
+
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
@@ -77,8 +78,8 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
-        idFinca: finca,
-        idParcela: parcela,
+        idFinca: idFinca || '',
+        idParcela: idParcela || '',
         identificacionUsuario: userData.identificacion,
         cultivo: cultivo,
         epocaSiembra: epocaSiembra || '',
@@ -131,6 +132,8 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
 
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
+            idFinca: formulario.idFinca,
+            idParcela: formulario.idParcela,
             idRotacionCultivoSegunEstacionalidad: idRotacionCultivoSegunEstacionalidad,
             identificacionUsuario: userData.identificacion,
             cultivo: formulario.cultivo,
@@ -191,6 +194,27 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
 
         obtenerDatosIniciales();
     }, []);
+    useEffect(() => {
+        // Buscar la finca correspondiente, esto se hace para cargar las parcelas que se necesitan en dropdown porque
+        // el fertilizante ya tiene una finca asignada
+        const fincaInicial = fincas.find(finca => finca.idFinca === parseInt(idFinca));
+
+        // Establecer el nombre de la finca inicial como selectedFinca
+        setSelectedFinca(fincaInicial?.nombreFinca || null);
+
+        //obtener las parcelas de la finca que trae el fertilizantes
+        const ObtenerParcelasIniciales = async () => {
+            try {
+
+                const parcelasFiltradas = parcelas.filter(item => item.idFinca === parseInt(idFinca));
+
+                setParcelasFiltradas(parcelasFiltradas)
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        ObtenerParcelasIniciales();
+    }, [idFinca, fincas]);
 
 
     //se formatea la fecha para que tenga el formato de español
@@ -251,6 +275,33 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             updateFormulario(picker === 'siembra' ? 'epocaSiembra' : picker === 'cosecha' ? 'tiempoCosecha' : 'epocaSiembraCultivoSiguiente', formattedDate);
         }
     };
+    const validateFirstForm = () => {
+        let isValid = true;
+        // Validación del campo Cultivo
+        if (formulario.cultivo.trim() === '') {
+            isValid = false;
+            alert('Por favor ingrese el Cultivo.');
+            return;
+        } else if (formulario.cultivo.trim().length > 50) {
+            isValid = false;
+            alert('El Cultivo no puede tener más de 50 caracteres.');
+            return;
+        }
+
+        if (formulario.cultivoSiguiente.trim() === '') {
+            isValid = false;
+            alert('Por favor ingrese el Cultivo siguiente.');
+            return isValid;
+        } else if (formulario.cultivoSiguiente.trim().length > 50) {
+            isValid = false;
+            alert('El Cultivo siguiente no puede tener más de 50 caracteres.');
+            return;
+        }
+
+        return isValid;
+
+    }
+
     const handleChangeAccess = async () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
@@ -375,261 +426,300 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                         </View>
 
                         <View style={styles.formContainer}>
-                            <Text style={styles.formText} >Cultivo</Text>
-                            <TextInput
-                                maxLength={50}
-                                style={styles.input}
-                                placeholder="Arroz, Maíz, Papá..."
-                                value={formulario.cultivo}
-                                onChangeText={(text) => updateFormulario('cultivo', text)}
-                            />
-                            <Text style={styles.formText}>Epoca Siembra</Text>
-
-                            {!showPickerSiembra && (
-                                <Pressable
-                                    onPress={() => toggleDatePicker('siembra')}
-
-                                >
+                            {!isSecondFormVisible ? (
+                                <>
+                                    <Text style={styles.formText} >Cultivo</Text>
                                     <TextInput
+                                        maxLength={50}
                                         style={styles.input}
-                                        placeholder='00/00/00'
-                                        value={formulario.epocaSiembra}
-                                        onChangeText={(text) => updateFormulario('epocaSiembra', text)}
-                                        editable={false}
-                                        onPressIn={() => toggleDatePicker('siembra')}
+                                        placeholder="Arroz, Maíz, Papá..."
+                                        value={formulario.cultivo}
+                                        onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
-                                </Pressable>
+                                    <Text style={styles.formText}>Epoca Siembra</Text>
 
-                            )}
+                                    {!showPickerSiembra && (
+                                        <Pressable
+                                            onPress={() => toggleDatePicker('siembra')}
 
-                            {showPickerSiembra && (
-                                <DateTimePicker
-                                    mode="date"
-                                    display='spinner'
-                                    value={dateSiembra}
-                                    onChange={(event, selectedDate) => onChange(event, selectedDate, 'siembra')}
-                                    style={styles.dateTimePicker}
-                                    minimumDate={new Date('2015-1-2')}
-                                />
-                            )}
-                            {showPickerSiembra && Platform.OS === 'ios' && (
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-around"
-                                    }}
-                                >
-                                    <TouchableOpacity style={[
-                                        styles.buttonPicker,
-                                        styles.pickerButton,
-                                        { backgroundColor: "#11182711" },
-                                    ]}
-                                        onPress={toggleDatePicker}
-                                    >
+                                        >
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder='00/00/00'
+                                                value={formulario.epocaSiembra}
+                                                onChangeText={(text) => updateFormulario('epocaSiembra', text)}
+                                                editable={false}
+                                                onPressIn={() => toggleDatePicker('siembra')}
+                                            />
+                                        </Pressable>
 
-                                        <Text style={[
-                                            styles.buttonTextPicker,
-                                            { color: "#075985" }
-                                        ]}>Cancelar</Text>
+                                    )}
 
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={[
-                                        styles.buttonPicker,
-                                        styles.pickerButton,
-                                        { backgroundColor: "#11182711" },
-                                    ]}
-                                        onPress={confirmIOSDate}
-                                    >
+                                    {showPickerSiembra && (
+                                        <DateTimePicker
+                                            mode="date"
+                                            display='spinner'
+                                            value={dateSiembra}
+                                            onChange={(event, selectedDate) => onChange(event, selectedDate, 'siembra')}
+                                            style={styles.dateTimePicker}
+                                            minimumDate={new Date('2015-1-2')}
+                                        />
+                                    )}
+                                    {showPickerSiembra && Platform.OS === 'ios' && (
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                justifyContent: "space-around"
+                                            }}
+                                        >
+                                            <TouchableOpacity style={[
+                                                styles.buttonPicker,
+                                                styles.pickerButton,
+                                                { backgroundColor: "#11182711" },
+                                            ]}
+                                                onPress={toggleDatePicker}
+                                            >
 
-                                        <Text style={[
-                                            styles.buttonTextPicker,
-                                            { color: "#075985" }
-                                        ]}>Confirmar</Text>
+                                                <Text style={[
+                                                    styles.buttonTextPicker,
+                                                    { color: "#075985" }
+                                                ]}>Cancelar</Text>
 
-                                    </TouchableOpacity>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={[
+                                                styles.buttonPicker,
+                                                styles.pickerButton,
+                                                { backgroundColor: "#11182711" },
+                                            ]}
+                                                onPress={confirmIOSDate}
+                                            >
 
-                                </View>
-                            )}
+                                                <Text style={[
+                                                    styles.buttonTextPicker,
+                                                    { color: "#075985" }
+                                                ]}>Confirmar</Text>
+
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    )}
 
 
-                            <Text style={styles.formText} >Epoca de siembra siguiente</Text>
-                            {!showPickerEpocaSiembra && (
-                                <Pressable
-                                    onPress={() => toggleDatePicker('siguienteSiembra')}
+                                    <Text style={styles.formText} >Epoca de siembra siguiente</Text>
+                                    {!showPickerEpocaSiembra && (
+                                        <Pressable
+                                            onPress={() => toggleDatePicker('siguienteSiembra')}
 
-                                >
+                                        >
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder='00/00/00'
+                                                value={formulario.epocaSiembraCultivoSiguiente}
+                                                onChangeText={(text) => updateFormulario('epocaSiembraCultivoSiguiente', text)}
+                                                editable={false}
+                                                onPressIn={() => toggleDatePicker('siguienteSiembra')}
+                                            />
+                                        </Pressable>
+
+                                    )}
+                                    {showPickerEpocaSiembra && (
+                                        <DateTimePicker
+                                            mode="date"
+                                            display='spinner'
+                                            value={dateEpocaSiembra}
+                                            onChange={(event, selectedDate) => onChange(event, selectedDate, 'siguienteSiembra')}
+                                            style={styles.dateTimePicker}
+                                            minimumDate={new Date('2015-1-2')}
+                                        />
+                                    )}
+                                    {showPickerEpocaSiembra && Platform.OS === 'ios' && (
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                justifyContent: "space-around"
+                                            }}
+                                        >
+                                            <TouchableOpacity style={[
+                                                styles.buttonPicker,
+                                                styles.pickerButton,
+                                                { backgroundColor: "#11182711" },
+                                            ]}
+                                                onPress={() => toggleDatePicker('siguienteSiembra')}
+                                            >
+
+                                                <Text style={[
+                                                    styles.buttonTextPicker,
+                                                    { color: "#075985" }
+                                                ]}>Cancelar</Text>
+
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={[
+                                                styles.buttonPicker,
+                                                styles.pickerButton,
+                                                { backgroundColor: "#11182711" },
+                                            ]}
+                                                onPress={() => confirmIOSDate('epocaSiembra')}
+                                            >
+
+                                                <Text style={[
+                                                    styles.buttonTextPicker,
+                                                    { color: "#075985" }
+                                                ]}>Confirmar</Text>
+
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    )}
+                                    <Text style={styles.formText} >Tiempo cosecha</Text>
+                                    {!showPickerTiempoCosecha && (
+                                        <Pressable
+                                            onPress={() => toggleDatePicker('cosecha')}
+
+                                        >
+                                            <TextInput
+                                                style={styles.input}
+                                                placeholder='00/00/00'
+                                                value={formulario.tiempoCosecha}
+                                                onChangeText={(text) => updateFormulario('tiempoCosecha', text)}
+                                                editable={false}
+                                                onPressIn={() => toggleDatePicker('cosecha')}
+                                            />
+                                        </Pressable>
+
+                                    )}
+
+                                    {showPickerTiempoCosecha && (
+                                        <DateTimePicker
+                                            mode="date"
+                                            display='spinner'
+                                            value={dateTiempoCosecha}
+                                            onChange={(event, selectedDate) => onChange(event, selectedDate, 'cosecha')}
+                                            style={styles.dateTimePicker}
+                                            minimumDate={new Date('2015-1-2')}
+                                        />
+                                    )}
+                                    {showPickerTiempoCosecha && Platform.OS === 'ios' && (
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                justifyContent: "space-around"
+                                            }}
+                                        >
+                                            <TouchableOpacity style={[
+                                                styles.buttonPicker,
+                                                styles.pickerButton,
+                                                { backgroundColor: "#11182711" },
+                                            ]}
+                                                onPress={() => toggleDatePicker('cosecha')}
+                                            >
+
+                                                <Text style={[
+                                                    styles.buttonTextPicker,
+                                                    { color: "#075985" }
+                                                ]}>Cancelar</Text>
+
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={[
+                                                styles.buttonPicker,
+                                                styles.pickerButton,
+                                                { backgroundColor: "#11182711" },
+                                            ]}
+                                                onPress={() => confirmIOSDate('cosecha')}
+                                            >
+
+                                                <Text style={[
+                                                    styles.buttonTextPicker,
+                                                    { color: "#075985" }
+                                                ]}>Confirmar</Text>
+
+                                            </TouchableOpacity>
+
+                                        </View>
+                                    )}
+
+
+                                    <Text style={styles.formText} >Cultivo siguiente</Text>
                                     <TextInput
+                                        maxLength={50}
                                         style={styles.input}
-                                        placeholder='00/00/00'
-                                        value={formulario.epocaSiembraCultivoSiguiente}
-                                        onChangeText={(text) => updateFormulario('epocaSiembraCultivoSiguiente', text)}
-                                        editable={false}
-                                        onPressIn={() => toggleDatePicker('siguienteSiembra')}
+                                        placeholder="Arroz, Maíz, Papá..."
+                                        value={formulario.cultivoSiguiente}
+                                        onChangeText={(text) => updateFormulario('cultivoSiguiente', text)}
                                     />
-                                </Pressable>
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={async () => {
+                                            const isValid = validateFirstForm();
 
-                            )}
-                            {showPickerEpocaSiembra && (
-                                <DateTimePicker
-                                    mode="date"
-                                    display='spinner'
-                                    value={dateEpocaSiembra}
-                                    onChange={(event, selectedDate) => onChange(event, selectedDate, 'siguienteSiembra')}
-                                    style={styles.dateTimePicker}
-                                    minimumDate={new Date('2015-1-2')}
-                                />
-                            )}
-                            {showPickerEpocaSiembra && Platform.OS === 'ios' && (
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-around"
-                                    }}
-                                >
-                                    <TouchableOpacity style={[
-                                        styles.buttonPicker,
-                                        styles.pickerButton,
-                                        { backgroundColor: "#11182711" },
-                                    ]}
-                                        onPress={() => toggleDatePicker('siguienteSiembra')}
+                                            if (isValid) {
+                                                setSecondFormVisible(true);
+                                            }
+
+                                        }}
                                     >
-
-                                        <Text style={[
-                                            styles.buttonTextPicker,
-                                            { color: "#075985" }
-                                        ]}>Cancelar</Text>
-
+                                        <Text style={styles.buttonText}>Siguiente</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={[
-                                        styles.buttonPicker,
-                                        styles.pickerButton,
-                                        { backgroundColor: "#11182711" },
-                                    ]}
-                                        onPress={() => confirmIOSDate('epocaSiembra')}
-                                    >
+                                </>
 
-                                        <Text style={[
-                                            styles.buttonTextPicker,
-                                            { color: "#075985" }
-                                        ]}>Confirmar</Text>
+                            ) : (<>
 
-                                    </TouchableOpacity>
-
-                                </View>
-                            )}
-                            <Text style={styles.formText} >Tiempo cosecha</Text>
-                            {!showPickerTiempoCosecha && (
-                                <Pressable
-                                    onPress={() => toggleDatePicker('cosecha')}
-
-                                >
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder='00/00/00'
-                                        value={formulario.tiempoCosecha}
-                                        onChangeText={(text) => updateFormulario('tiempoCosecha', text)}
-                                        editable={false}
-                                        onPressIn={() => toggleDatePicker('cosecha')}
+                                {empresa &&
+                                    <DropdownComponent
+                                        placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={finca}
+                                        iconName='map-marker'
+                                        onChange={handleValueFinca}
                                     />
-                                </Pressable>
-
-                            )}
-
-                            {showPickerTiempoCosecha && (
-                                <DateTimePicker
-                                    mode="date"
-                                    display='spinner'
-                                    value={dateTiempoCosecha}
-                                    onChange={(event, selectedDate) => onChange(event, selectedDate, 'cosecha')}
-                                    style={styles.dateTimePicker}
-                                    minimumDate={new Date('2015-1-2')}
-                                />
-                            )}
-                            {showPickerTiempoCosecha && Platform.OS === 'ios' && (
-                                <View
-                                    style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-around"
-                                    }}
-                                >
-                                    <TouchableOpacity style={[
-                                        styles.buttonPicker,
-                                        styles.pickerButton,
-                                        { backgroundColor: "#11182711" },
-                                    ]}
-                                        onPress={() => toggleDatePicker('cosecha')}
-                                    >
-
-                                        <Text style={[
-                                            styles.buttonTextPicker,
-                                            { color: "#075985" }
-                                        ]}>Cancelar</Text>
-
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={[
-                                        styles.buttonPicker,
-                                        styles.pickerButton,
-                                        { backgroundColor: "#11182711" },
-                                    ]}
-                                        onPress={() => confirmIOSDate('cosecha')}
-                                    >
-
-                                        <Text style={[
-                                            styles.buttonTextPicker,
-                                            { color: "#075985" }
-                                        ]}>Confirmar</Text>
-
-                                    </TouchableOpacity>
-
-                                </View>
-                            )}
-
-
-                            <Text style={styles.formText} >Cultivo siguiente</Text>
-                            <TextInput
-                                maxLength={50}
-                                style={styles.input}
-                                placeholder="Arroz, Maíz, Papá..."
-                                value={formulario.cultivoSiguiente}
-                                onChangeText={(text) => updateFormulario('cultivoSiguiente', text)}
-                            />
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={async () => {
-                                    handleModify()
-                                }}
-                            >
-
-                                <View style={styles.buttonContent}>
-                                    <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                    <Text style={styles.buttonText}>Guardar cambios</Text>
-                                </View>
-                            </TouchableOpacity>
-                            {estado === 'Activo'
-                                ? <TouchableOpacity
-                                    style={styles.buttonDelete}
-                                    onPress={() => {
-                                        handleChangeAccess();
-                                    }}
-                                >
-                                    <View style={styles.buttonContent}>
-                                        <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Desactivar</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                :
-                                <TouchableOpacity
+                                }
+                                {finca &&
+                                    <DropdownComponent
+                                        placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                        iconName='map-marker'
+                                        value={parcela}
+                                        onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
+                                    />
+                                }
+                                {parcela && <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
-                                        handleChangeAccess();
+                                        handleModify();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>
-                                        <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Activar</Text>
+                                        <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}>Guardar cambios</Text>
                                     </View>
-                                </TouchableOpacity>
-                            }
+                                </TouchableOpacity>}
+                                {estado === 'Activo'
+                                    ? <TouchableOpacity
+                                        style={styles.buttonDelete}
+                                        onPress={() => {
+                                            handleChangeAccess();
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}>Desactivar</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => {
+                                            handleChangeAccess();
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}>Activar</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                }
+                            </>
+                            )}
+
                         </View>
                     </ScrollView>
                 </View>

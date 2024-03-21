@@ -201,9 +201,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
 
         obtenerDatosIniciales();
     }, []);
+
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
+
+            const parcelasFiltradas = parcelas.filter(item => item.idFinca == fincaId);
 
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
@@ -303,6 +305,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
     }, [userData.idEmpresa, fincaDataOriginal, handleEmpresaCalled]);
     const handleValueFinca = (itemValue: any) => {
         setFinca(itemValue.value);
+        obtenerParcelasPorFinca(itemValue.value);
         let parcelaSort = parcelaDataOriginal.filter(item => item.id === itemValue.value);
         setParcelaDataSort(parcelaSort)
         setParcela(null);
@@ -588,7 +591,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                 {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
-                                        data={fincaDataSort}
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={finca}
                                         iconName='map-marker'
                                         onChange={handleValueFinca}
@@ -597,7 +600,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                 {finca &&
                                     <DropdownComponent
                                         placeholder="Parcela"
-                                        data={parcelaDataSort}
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         iconName='map-marker'
                                         value={parcela}
                                         onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
