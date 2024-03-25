@@ -36,7 +36,9 @@ import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/
 import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/lista-rotacion-cultivo/lista-rotacion-cultivo';
 import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
 import { ModificarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/modificar-rotacion-cultivo/modificar-rotacion-cultivo';
-
+import { ListaProductividadScreen } from './src/screens/cultivos/productividad/lista-productividad/lista-productividad';
+import { RegistrarProductividadScreen } from './src/screens/cultivos/productividad/registrar-productividad/registrar-productividad';
+import { ModificarProductividadScreen } from './src/screens/cultivos/productividad/modificar-productividad/modificar-productividad';
 import { ListaPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/lista-preparacion-terreno/lista-preparacion-terreno';
 import { ModificarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/modificar-preparacion-terreno/modificar-preparacion-terreno';
 import { RegistrarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/registrar-preparacion-terreno/registrar-preparacion-terreno';
@@ -167,11 +169,12 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
-
+          <Stack.Screen name={ScreenProps.ListProductivity.screenName} component={ListaProductividadScreen} />
+          <Stack.Screen name={ScreenProps.RegisterProductivity.screenName} component={RegistrarProductividadScreen} />
+          <Stack.Screen name={ScreenProps.ModifyProductivity.screenName} component={ModificarProductividadScreen} />
           <Stack.Screen name={ScreenProps.ListLandPreparation.screenName} component={ListaPreparacionTerrenoScreen} />
           <Stack.Screen name={ScreenProps.RegisterLandPreparation.screenName} component={RegistrarPreparacionTerrenoScreen} />
           <Stack.Screen name={ScreenProps.ModifyLandPreparation.screenName} component={ModificarPreparacionTerrenoScreen} />
-          
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>

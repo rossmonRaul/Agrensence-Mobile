@@ -34,10 +34,14 @@ export const ScreenProps = {
     ListLandPreparation: { screenName: 'ListaPreparacionTerrenoScreen' },
     RegisterLandPreparation: { screenName: 'RegistrarPreparacionTerrenoScreen' },
     ModifyLandPreparation: { screenName: 'ModificarPreparacionTerrenoScreen' },
+    ListProductivity: { screenName: 'ListaProductividadScreen'},
+    RegisterProductivity: { screenName: 'RegistrarProductividadScreen'},
+    ModifyProductivity: { screenName: 'ModificarProductividadScreen'}
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
-export const IP_API = '192.168.100.20';
+
+export const IP_API = '192.168.100.28';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -70,7 +74,7 @@ export const Company_Props = [
 
 export const Admin_cultivation = [
     { id: 1, iconImage: require('./assets/images/icons/rotacion-cultivos.png'), text: 'Rotación de cultivos según estacionalidad', screen: ScreenProps.CropRotationList.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo', screen: "" },
+    { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo', screen: ScreenProps.ListProductivity.screenName},
     { id: 3, iconImage: require('./assets/images/icons/montana.png'), text: 'Preparación del terreno y prácticas de conservación', screen: ScreenProps.ListLandPreparation.screenName },
     { id: 4, iconImage: require('./assets/images/icons/historial.png'), text: 'Historial de manejo  de residuos de la finca', screen: "" },
 ]
