@@ -16,7 +16,7 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { RelacionFincaParcela, UserDataInterface } from '../../../../interfaces/userDataInterface';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { FertilizerDataInterface } from '../../../../interfaces/fertilizanteInterface';
-import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
+import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 
 export const ListaFertilizantesScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -34,11 +34,11 @@ export const ListaFertilizantesScreen: React.FC = () => {
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
-            const formData = { idEmpresa: userData.idEmpresa };
+            const formData = {identificacion  : userData.identificacion};
 
             try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosPorRol3(formData);
-                
+                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+                console.log(datosInicialesObtenidos)
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))
