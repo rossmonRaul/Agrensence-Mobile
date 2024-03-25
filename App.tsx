@@ -37,6 +37,10 @@ import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cul
 import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
 import { ModificarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/modificar-rotacion-cultivo/modificar-rotacion-cultivo';
 
+import { ListaPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/lista-preparacion-terreno/lista-preparacion-terreno';
+import { ModificarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/modificar-preparacion-terreno/modificar-preparacion-terreno';
+import { RegistrarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/registrar-preparacion-terreno/registrar-preparacion-terreno';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -163,6 +167,11 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
+
+          <Stack.Screen name={ScreenProps.ListLandPreparation.screenName} component={ListaPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.RegisterLandPreparation.screenName} component={RegistrarPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.ModifyLandPreparation.screenName} component={ModificarPreparacionTerrenoScreen} />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
