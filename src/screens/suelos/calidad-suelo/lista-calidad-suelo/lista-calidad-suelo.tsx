@@ -55,7 +55,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
                         return { idParcela, nombreParcela };
                     });
-                    
+                setParcelas(parcelasUnicas)   
                 const medicionesSuelo = await ObtenerMedicionesSuelo();
                 
                 //si es 0 es inactivo sino es activo resetea los datos
