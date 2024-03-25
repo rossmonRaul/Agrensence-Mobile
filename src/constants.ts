@@ -30,10 +30,14 @@ export const ScreenProps = {
     ModifyQualityFloorScreen: { screenName: 'ModificarCalidadSueloScreen' },
     CropRotationList: { screenName: 'CropRotationList' },
     InsertCropRotation: { screenName: 'InsertCropRotation' },
+    HidricMenu: { screenName: 'MenuHidricoScreen' },
+    WatchListWaterScreen: { screenName: 'ListaSeguimientoAguaScreen' },
+    RegisterUseWaterScreen: { screenName: 'RegistrarUsoAguaScreen' },
+    ModifyUseWatterScreen: { screenName: 'ModificarUsoAguaScreen' }
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
-export const IP_API = '192.168.0.12';
+export const IP_API = '192.168.0.6';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -42,7 +46,7 @@ export const Company_Props = [
     //Usuarios
     { id: 1, iconImage: require('./assets/images/icons/suelos.png'), text: 'Suelos', screen: ScreenProps.MenuFloor.screenName },
     { id: 2, iconImage: require('./assets/images/icons/cultivos.png'), text: 'Cultivos', screen: ScreenProps.AdminCrops.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: '' },
+    { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: ScreenProps.HidricMenu.screenName },
     { id: 4, iconImage: require('./assets/images/icons/clima.png'), text: 'Clima', screen: '' },
     { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: '' },
     { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: '' },
@@ -75,4 +79,11 @@ export const Admin_suelo = [
     { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de Fertilizantes', screen: ScreenProps.ListFertilizer.screenName },
     { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
     { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
+]
+
+
+export const Admin_hidrico = [
+    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Seguimiento del agua', screen: ScreenProps.WatchListWaterScreen.screenName },
+    // { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
+    // { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
 ]

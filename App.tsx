@@ -35,6 +35,11 @@ import { RegistrarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/
 import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/modificar-calidad-suelo/modificar-calidad-suelo";
 import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/lista-rotacion-cultivo/lista-rotacion-cultivo';
 import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
+import { MenuHidricoScreen } from './src/screens/hidrico/menu-hidrico/menu-hidrico';
+import { ListaSeguimientoAguaScreen } from './src/screens/hidrico/seguimiento-agua/lista-seguimiento-agua/lista-seguimiento-agua';
+import { RegistrarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/registrar-seguimiento-agua/registrar-seguimiento-agua';
+import { ModificarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/modificar-seguimiento-agua/modificar-seguimiento-agua';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -160,6 +165,10 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.HidricMenu.screenName} component={MenuHidricoScreen} />
+          <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
+          <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
+          <Stack.Screen name={ScreenProps.ModifyUseWatterScreen.screenName} component={ModificarUsoAguaScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
