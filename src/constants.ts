@@ -30,6 +30,7 @@ export const ScreenProps = {
     ModifyQualityFloorScreen: { screenName: 'ModificarCalidadSueloScreen' },
     CropRotationList: { screenName: 'CropRotationList' },
     InsertCropRotation: { screenName: 'InsertCropRotation' },
+    ModifyCropRotation: { screenName: 'ModifyCropRotation' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno

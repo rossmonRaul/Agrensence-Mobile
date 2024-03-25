@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     textAbove: {
         fontFamily: 'CatamaranBold',
         fontSize: 24,
-        color: '#274c48',
+        color: '#548256',
         alignSelf: 'flex-start',
     },
     titleContainer: {
@@ -61,5 +61,9 @@ export const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#e0e0e0',
         borderRadius: 8,
+    },
+    dropDownContainer: {
+        justifyContent: 'center',
+        minWidth: 300,
     },
 })
