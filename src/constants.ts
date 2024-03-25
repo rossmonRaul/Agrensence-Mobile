@@ -36,7 +36,10 @@ export const ScreenProps = {
     ModifyLandPreparation: { screenName: 'ModificarPreparacionTerrenoScreen' },
     ListProductivity: { screenName: 'ListaProductividadScreen'},
     RegisterProductivity: { screenName: 'RegistrarProductividadScreen'},
-    ModifyProductivity: { screenName: 'ModificarProductividadScreen'}
+    ModifyProductivity: { screenName: 'ModificarProductividadScreen'},
+    ResidueList: { screenName: 'ListaManejoResiduosScreen' },
+    RegisterResidue: { screenName: 'RegistrarResiduosScreen' },
+    ModifyResidue: { screenName: 'ModificarResiduosScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -76,7 +79,7 @@ export const Admin_cultivation = [
     { id: 1, iconImage: require('./assets/images/icons/rotacion-cultivos.png'), text: 'Rotación de cultivos según estacionalidad', screen: ScreenProps.CropRotationList.screenName },
     { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo', screen: ScreenProps.ListProductivity.screenName},
     { id: 3, iconImage: require('./assets/images/icons/montana.png'), text: 'Preparación del terreno y prácticas de conservación', screen: ScreenProps.ListLandPreparation.screenName },
-    { id: 4, iconImage: require('./assets/images/icons/historial.png'), text: 'Historial de manejo  de residuos de la finca', screen: "" },
+    { id: 4, iconImage: require('./assets/images/icons/historial.png'), text: 'Historial de manejo  de residuos de la finca', screen: ScreenProps.ResidueList.screenName },
 ]
 
 export const Admin_suelo = [
