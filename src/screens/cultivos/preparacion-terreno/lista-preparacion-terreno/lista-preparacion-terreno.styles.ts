@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
     textAbove: {
         fontFamily: 'CatamaranBold',
         fontSize: 24,
-        color: '#548256',
+        color: '#274c48',
         alignSelf: 'flex-start',
     },
     titleContainer: {
@@ -42,10 +42,9 @@ export const styles = StyleSheet.create({
         alignSelf: 'flex-end'
     },
     searchContainer: {
-        marginTop: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
+        paddingTop: 10,
+        justifyContent: 'center',
+        minWidth: 300,
     },
     searchInput: {
         width: '90%',
@@ -61,9 +60,5 @@ export const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#e0e0e0',
         borderRadius: 8,
-    },
-    dropDownContainer: {
-        justifyContent: 'center',
-        minWidth: 300,
     },
 })

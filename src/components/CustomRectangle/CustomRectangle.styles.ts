@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
     rectangle: {
         borderBottomWidth: 3,
         width: 300,
-        borderColor: '#274c48',
+        borderColor: '#548256',
         padding: 10,
     },
     text: {

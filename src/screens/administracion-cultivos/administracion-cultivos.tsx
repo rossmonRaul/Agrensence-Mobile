@@ -29,7 +29,7 @@ export const AdministracionCultivos: React.FC = () => {
 
     return (
         <View style={styles.container} >
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
                 <Text style={styles.textAbove} >Administración de cultivos</Text>
             </View>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from './modificar-calidad-suelo.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ScreenProps } from '../../../../constants';
 import { useAuth } from '../../../../hooks/useAuth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -10,6 +11,9 @@ import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
 import { FontAwesome } from '@expo/vector-icons';
 import { ModificarMedicionesSuelo, CambiarEstadoMedicionesSuelo } from '../../../../servicios/ServicioCalidadSuelo';
+import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
+import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
+import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 
 //datos desde la lista para mostrarlos en los input
 interface RouteParams {
@@ -26,6 +30,8 @@ interface RouteParams {
     lombrices: number;
     observaciones: string;
     calidadAgua: number;
+    idFinca: string;
+    idParcela:string;
     estado: string;
 }
 export const ModificarCalidadSueloScreen: React.FC = () => {
@@ -40,9 +46,13 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
     const { idMedicionesSuelo, medicionesCalidadSuelo, respiracionSuelo, infiltracion,
         densidadAparente, conductividadElectrica,
         ph, nitratosSuelo, estabilidadAgregados, desleimiento, lombrices,
-        observaciones, calidadAgua, estado } = route.params as RouteParams;
+        observaciones, calidadAgua, idFinca, idParcela, estado } = route.params as RouteParams;
 
-
+        const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
+        const [parcelas, setParcelas] = useState<ParcelaInterface[]>([]);
+        const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
+        const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
+        const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         medicionesCalidadSuelo: medicionesCalidadSuelo,
@@ -57,6 +67,8 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
         lombrices: lombrices,
         observaciones: observaciones,
         calidadAgua: calidadAgua,
+        idFinca:idFinca,
+        idParcela:idParcela,
     });
 
 
@@ -160,6 +172,14 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
             alert('Ingrese la Calidad del Agua');
             return
         }
+        if (!formulario.idFinca || formulario.idFinca === null) {
+            alert('Ingrese la Finca');
+            return
+        }
+        if (!formulario.idParcela || formulario.idParcela === null) {
+            alert('Ingrese la Parcela');
+            return
+        }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idMedicionesSuelo: idMedicionesSuelo,
@@ -175,6 +195,8 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
             lombrices: formulario.lombrices,
             observaciones: formulario.observaciones,
             calidadAgua: formulario.calidadAgua,
+            idFinca: formulario.idFinca,
+            idParcela: formulario.idParcela,
         };
         
         //  Se ejecuta el servicio de de modificar calidad de suelo
@@ -242,7 +264,93 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
             { cancelable: false }
         );
     };
+    useEffect(() => {
+        const obtenerDatosIniciales = async () => {
+            // Lógica para obtener datos desde la API
+            const formData = { identificacion: userData.identificacion };
+            try {
+                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
+                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                    .filter(item => item !== undefined)
+                    .map(item => item!.idFinca)))
+                    .map(idFinca => {
+                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                        return { idFinca, nombreFinca };
+                    });
+                
+                setFincas(fincasUnicas);
+
+                const parcelasUnicas = datosInicialesObtenidos.map(item => ({
+                    idFinca: item.idFinca,
+                    idParcela: item.idParcela,
+                    nombre: item.nombreParcela,
+                }));
+
+                setParcelas(parcelasUnicas)
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        obtenerDatosIniciales();
+
+
+    }, []);
+
+    useEffect(() => {
+        // Buscar la finca correspondiente, esto se hace para cargar las parcelas que se necesitan en dropdown porque
+        // el fertilizante ya tiene una finca asignada
+        const fincaInicial = fincas.find(finca => finca.idFinca === parseInt(idFinca));
+
+        // Establecer el nombre de la finca inicial como selectedFinca
+        setSelectedFinca(fincaInicial?.nombreFinca || null);
+
+        //obtener las parcelas de la finca que trae el fertilizantes
+        const ObtenerParcelasIniciales = async () => {
+            try {
+
+                const parcelasFiltradas = parcelas.filter(item => item.idFinca === parseInt(idFinca));
+
+                setParcelasFiltradas(parcelasFiltradas)
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        ObtenerParcelasIniciales();
+
+    }, [idFinca, fincas]);
+    // esto es para cargar el nombre de la parcela con id Parcela que ya viene con el fertilizante
+    useEffect(() => {
+        // Buscar la parcela correspondiente
+        const parcelaInicial = parcelas.find(parcela => parcela.idParcela === parseInt(idParcela));
+
+        // Establecer el nombre de la parcela inicial como selectedFinca
+        setSelectedParcela(parcelaInicial?.nombre || null);
+    }, [idParcela, parcelas]);
+
+    //se obtienen las parcelas con la finca
+    const obtenerParcelasPorFinca = async (fincaId: number) => {
+        try {
+            const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
+
+            setParcelasFiltradas(parcelasFiltradas);
+        } catch (error) {
+            console.error('Error fetching parcelas:', error);
+        }
+    };
+    //funcion para la accion de dropdown
+    const handleFincaChange = (item: { label: string; value: string }) => {
+        const fincaId = parseInt(item.value, 10);
+        setSelectedFinca(item.value);
+        //se acctualiza el id parcela para que seleccione otra vez la parcela
+        updateFormulario('idParcela', '');
+        setSelectedParcela('Seleccione una Parcela')
+        //se obtienen las parcelas de la finca
+        obtenerParcelasPorFinca(fincaId);
+    };
 
     return (
         <View style={styles.container}>
@@ -435,6 +543,36 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                             {!isSecondFormVisible && isThirdFormVisible && (
 
                                 <>
+                                <Text style={styles.formText} >Finca</Text>
+                                    {/* Dropdown para Fincas */}
+                                    <DropdownComponent
+                                        placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={selectedFinca}
+                                        iconName="map-marker"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la finca
+                                            handleFincaChange(selectedItem);
+
+                                            // Actualizar el formulario con la selección de la finca
+                                            updateFormulario('idFinca', selectedItem.value);
+                                        }}
+                                    />
+                                    <Text style={styles.formText} >Parcela</Text>
+                                    {/* Dropdown para Parcelas */}
+                                    <DropdownComponent
+                                        placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                        value={selectedParcela}
+                                        iconName="map-marker"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la parcela
+                                            setSelectedParcela(selectedItem.value);
+
+                                            // Actualizar el formulario con la selección de la parcela
+                                            updateFormulario('idParcela', selectedItem.value);
+                                        }}
+                                    />
 
                                     <Text style={styles.formText} >Observaciones</Text>
                                     <TextInput

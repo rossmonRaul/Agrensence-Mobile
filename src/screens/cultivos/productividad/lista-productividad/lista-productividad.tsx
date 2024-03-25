@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-manejo-fertilizantes.styles'
+import { styles } from './lista-productividad-style'
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
-import { Ionicons } from '@expo/vector-icons';
-import { ObtenerFertilizantes } from '../../../../servicios/ServicioFertilizantes';
 import { processData } from '../../../../utils/processData';
 import { CustomRectangle } from '../../../../components/CustomRectangle/CustomRectangle';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -15,15 +13,16 @@ import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { RelacionFincaParcela, UserDataInterface } from '../../../../interfaces/userDataInterface';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
-import { FertilizerDataInterface } from '../../../../interfaces/fertilizanteInterface';
+import { ProduccionDataInterdace } from '../../../../interfaces/produccionInterface';
+import { ObtenerProductividadCultivos } from '../../../../servicios/ServicioCultivos';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 
-export const ListaFertilizantesScreen: React.FC = () => {
+export const ListaProductividadScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
-    const [apiData, setApiData] = useState<FertilizerDataInterface[]>([]);
-    const [fertilizantesFiltradosData, setfertilizantesFiltrados] = useState<any[]>([]);
+    const [apiData, setApiData] = useState<ProduccionDataInterdace[]>([]);
+    const [productividadFiltradaData, setProductividadFiltrada] = useState<any[]>([]);
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{idFinca: number;idParcela: number;nombreParcela?: string;}[]>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
@@ -35,7 +34,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
             const formData = {identificacion  : userData.identificacion};
-
+            
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
                 
@@ -64,9 +63,9 @@ export const ListaFertilizantesScreen: React.FC = () => {
                 
                 setParcelas(parcelas);
                 //se obtienen los fertilizantes para despues poder filtrarlos
-                const fertilizantes = await ObtenerFertilizantes();
+                const cultivos = await ObtenerProductividadCultivos();
                 //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = fertilizantes.map((item) => ({
+                const filteredData = cultivos.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
@@ -92,23 +91,24 @@ export const ListaFertilizantesScreen: React.FC = () => {
             console.error('Error fetching parcelas:', error);
         }
     };
+
     //se filtra para los fertilizantes por finca
-    const obtenerFertilizantesPorFinca = async (fincaId: number) => {
+    const obtenerProductividadPorFinca = async (fincaId: number) => {
         try {
 
-            const fertilizanteFiltrado = apiData.filter(item => item.idFinca === fincaId)
-            setfertilizantesFiltrados(fertilizanteFiltrado)
+            const productividadFiltrado = apiData.filter(item => item.idFinca === fincaId)
+            setProductividadFiltrada(productividadFiltrado)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
     //se filtra los feritilizantes por finca y parcela seleccionados en el dropdown
-    const obtenerFertilizantesPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
+    const obtenerProductividadPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
             
-            const fertilizanteFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
+            const productividadFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
             
-            setfertilizantesFiltrados(fertilizanteFiltrado);
+            setProductividadFiltrada(productividadFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -123,7 +123,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
         //se obtienen las parcelas de la finca seleccionada
         obtenerParcelasPorFinca(fincaId);
         ///se obtienen los fertilizantes de la finca seleccionada
-        obtenerFertilizantesPorFinca(fincaId);
+        obtenerProductividadPorFinca(fincaId);
     };
 
     //funcion para la accion del dropdown parcela
@@ -137,7 +137,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
         //si finca Id es null no se puede seleciona ni traer el y mostrar los fertilizantes 
         if (fincaId !== null) {
             
-            obtenerFertilizantesPorFincaYParcela(fincaId, parcelaId);
+            obtenerProductividadPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch fertilizantes.');
         }
@@ -146,29 +146,27 @@ export const ListaFertilizantesScreen: React.FC = () => {
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
-        'Fecha': 'fecha',
-        'Fertilizante': 'fertilizante',
-        'Aplicación': 'aplicacion',
-        'Dosis': 'dosis',
-        'Cultivo Tratado': 'cultivoTratado',
-        'Acciones Adicionales': 'accionesAdicionales',
-        'Condiciones Ambientales ': 'condicionesAmbientales',
-        'Observaciones': 'observaciones',
+        'Usuario': 'nombreUsuario',
+        'Cultivo': 'cultivo',
+        'Finca': 'finca',
+        'Parcela': 'parcela',
+        'Temporada': 'temporada',
+        'Área (ha)': 'area',
+        'Producción (ton)': 'produccion',
+        'Productividad': 'productividad',
         'Estado': 'estado',
     };
 
 
 
-    //funcion para que enviarlo a modificar la el manejo de fertilizantes
-    const handleRectanglePress = (idManejoFertilizantes: string, idFinca: string, idParcela: string, Fecha: string,
-        Fertilizante: string, Aplicacion: string, Dosis: string,
-        CultivoTratado: string, AccionesAdicionales: string,
-        CondicionesAmbientales: string, Observaciones: string, Estado: string) => {
-        navigation.navigate(ScreenProps.ModifyFertilizer.screenName, {
-            idmanejoFertilizantes: idManejoFertilizantes, idFinca: idFinca, idParcela: idParcela,
-            fecha: Fecha, fertilizante: Fertilizante, aplicacion: Aplicacion, dosis: Dosis,
-            cultivoTratado: CultivoTratado, accionesAdicionales: AccionesAdicionales,
-            condicionesAmbientales: CondicionesAmbientales, Observaciones: Observaciones, estado: Estado
+    //funcion para que enviarlo a modificar la productividad
+    const handleRectanglePress = (idManejoProductividadCultivo: string, idFinca: string, idParcela: string, cultivo: string,
+        temporada: string, area: number, produccion: number,
+        productividad: number, Estado: string) => {
+        navigation.navigate(ScreenProps.ModifyProductivity.screenName, {
+            idManejoProductividadCultivo: idManejoProductividadCultivo, idFinca: idFinca, idParcela: idParcela,
+            cultivo: cultivo, temporada: temporada, area: area, produccion: produccion,
+            productividad: productividad, estado: Estado
         });
     };
 
@@ -178,11 +176,11 @@ export const ListaFertilizantesScreen: React.FC = () => {
         <View style={styles.container} >
 
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.MenuFloor.screenName} color={'#274c48'} />
-                <AddButtonComponent screenName={ScreenProps.RegisterFertilizer.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#274c48'} />
+                <AddButtonComponent screenName={ScreenProps.RegisterProductivity.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de Fertilizantes</Text>
+                    <Text style={styles.textAbove} >Lista de Productividad</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
@@ -205,15 +203,14 @@ export const ListaFertilizantesScreen: React.FC = () => {
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {fertilizantesFiltradosData.map((item, index) => {
+                    {productividadFiltradaData.map((item, index) => {
 
                         return (
-                            <TouchableOpacity key={item.idManejoFertilizantes} onPress={() => handleRectanglePress(item.idManejoFertilizantes, item.idFinca, item.idParcela, item.fecha,
-                                item.fertilizante, item.aplicacion, item.dosis,
-                                item.cultivoTratado, item.accionesAdicionales,
-                                item.condicionesAmbientales, item.observaciones, item.estado)}>
+                            <TouchableOpacity key={item.idManejoProductividadCultivo} onPress={() => handleRectanglePress(item.idManejoProductividadCultivo, item.idFinca, item.idParcela, item.cultivo,
+                                item.temporada, item.area, item.produccion,
+                                item.productividad, item.estado)}>
                                 <CustomRectangle
-                                    key={item.idManejoFertilizantes}
+                                    key={item.idManejoProductividadCultivo}
                                     data={processData([item], keyMapping)?.data || []} />
                             </TouchableOpacity>
                         );

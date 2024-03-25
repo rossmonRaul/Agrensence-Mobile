@@ -35,6 +35,16 @@ import { RegistrarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/
 import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/modificar-calidad-suelo/modificar-calidad-suelo";
 import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/lista-rotacion-cultivo/lista-rotacion-cultivo';
 import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
+import { ModificarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/modificar-rotacion-cultivo/modificar-rotacion-cultivo';
+import { ListaProductividadScreen } from './src/screens/cultivos/productividad/lista-productividad/lista-productividad';
+import { RegistrarProductividadScreen } from './src/screens/cultivos/productividad/registrar-productividad/registrar-productividad';
+import { ModificarProductividadScreen } from './src/screens/cultivos/productividad/modificar-productividad/modificar-productividad';
+import { ListaPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/lista-preparacion-terreno/lista-preparacion-terreno';
+import { ModificarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/modificar-preparacion-terreno/modificar-preparacion-terreno';
+import { RegistrarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/registrar-preparacion-terreno/registrar-preparacion-terreno';
+import { ListaManejoResiduosScreen } from './src/screens/cultivos/manejo-residuos/lista-manejo-residuos/lista-manejo-residuos';
+import { RegistrarResiduosScreen } from './src/screens/cultivos/manejo-residuos/registrar-manejo-residuos/registrar-manejo-residuos';
+import { ModificarResiduosScreen } from './src/screens/cultivos/manejo-residuos/modificar-manejo-residuos/modificar-manejo-residuos';
 import { MenuHidricoScreen } from './src/screens/hidrico/menu-hidrico/menu-hidrico';
 import { ListaSeguimientoAguaScreen } from './src/screens/hidrico/seguimiento-agua/lista-seguimiento-agua/lista-seguimiento-agua';
 import { RegistrarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/registrar-seguimiento-agua/registrar-seguimiento-agua';
@@ -165,6 +175,16 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
           <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.ListProductivity.screenName} component={ListaProductividadScreen} />
+          <Stack.Screen name={ScreenProps.RegisterProductivity.screenName} component={RegistrarProductividadScreen} />
+          <Stack.Screen name={ScreenProps.ModifyProductivity.screenName} component={ModificarProductividadScreen} />
+          <Stack.Screen name={ScreenProps.ListLandPreparation.screenName} component={ListaPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.RegisterLandPreparation.screenName} component={RegistrarPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.ModifyLandPreparation.screenName} component={ModificarPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.ResidueList.screenName} component={ListaManejoResiduosScreen} />
+          <Stack.Screen name={ScreenProps.RegisterResidue.screenName} component={RegistrarResiduosScreen} />
+          <Stack.Screen name={ScreenProps.ModifyResidue.screenName} component={ModificarResiduosScreen} />
           <Stack.Screen name={ScreenProps.HidricMenu.screenName} component={MenuHidricoScreen} />
           <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
           <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
