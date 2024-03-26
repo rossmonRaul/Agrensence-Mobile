@@ -171,7 +171,7 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertCropRotation.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
                     <Text style={styles.textAbove} >Lista de rotación de cultivos</Text>
