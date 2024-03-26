@@ -63,17 +63,16 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
 
         // Actualizar el estado con las mediciones filtradas
         setRotacionCultivosFiltradosData(medicionesSuelofiltradas);
-        setRotacionCultivos(medicionesSuelofiltradas)
     }, [apiData, fincas]);
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
+
             try {
-
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-
+                //console.log(datosInicialesObtenidos)
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))
@@ -82,7 +81,10 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
+
                 setFincas(fincasUnicas);
+                //Se obtienen las parcelas para poder hacer los filtros despues
+
 
                 const parcelas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
@@ -95,14 +97,14 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                     });
 
                 setParcelas(parcelas);
-
-                const medicionesSuelo = await ObtenerRotacionCultivoSegunEstacionalidad();
-
+                //se obtienen la rotacion de cultivos para despues poder filtrarlos
+                const rotacionCultivosResponse = await ObtenerRotacionCultivoSegunEstacionalidad();
                 //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = medicionesSuelo.map((item) => ({
+                const filteredData = rotacionCultivosResponse.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
+
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -110,21 +112,22 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         };
 
         obtenerDatosIniciales();
-    }, [userData.identificacion]);
+    }, []);
 
 
 
-    const handleSearch = (query: string) => {
-        const lowercaseQuery = query.toLowerCase();
+    //funcion para poder filtrar las parcelas por finca
+    const obtenerParcelasPorFinca = async (fincaId: number) => {
+        try {
 
-        const filteredData = rotacionCultivosFiltradosData.filter((item) => {
-            return (
-                item.cultivo.toLowerCase().includes(lowercaseQuery) ||
-                item.cultivoSiguiente.toLowerCase().includes(lowercaseQuery)
-            );
-        });
-        setRotacionCultivos(filteredData);
+            const resultado = parcelas.filter(item => item.idFinca === fincaId);
+
+            setParcelasFiltradas(resultado);
+        } catch (error) {
+            console.error('Error fetching parcelas:', error);
+        }
     };
+
 
     //funcion para la accion del dropdown de finca
     const handleFincaChange = (item: { label: string; value: string }) => {
@@ -135,8 +138,8 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         setSelectedParcela('Seleccione una Parcela')
         //se obtienen las parcelas de la finca seleccionada
         obtenerParcelasPorFinca(fincaId);
-        ///se obtienen los fertilizantes de la finca seleccionada
-        obtenerFertilizantesPorFinca(fincaId);
+        ///se obtienen la rotacion de cultivos de la finca seleccionada
+        obtenerRotacionCultivosPorRotacionPorFinca(fincaId);
     };
 
     //funcion para la accion del dropdown parcela
@@ -150,42 +153,34 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         //si finca Id es null no se puede seleciona ni traer el y mostrar los fertilizantes 
         if (fincaId !== null) {
 
-            obtenerFertilizantesPorFincaYParcela(fincaId, parcelaId);
+            obtenerRotacionCultivosPorFincaYParcela(fincaId, parcelaId);
         } else {
-            console.warn('Selected Finca is null. Cannot fetch fertilizantes.');
+            console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
         }
     };
-    const obtenerParcelasPorFinca = async (fincaId: number) => {
+
+
+    const obtenerRotacionCultivosPorRotacionPorFinca = async (fincaId: number) => {
         try {
 
-            const resultado = parcelas.filter(item => item.idFinca === fincaId);
-
-            setParcelasFiltradas(resultado);
-        } catch (error) {
-            console.error('Error fetching parcelas:', error);
-        }
-    };
-    const obtenerFertilizantesPorFinca = async (fincaId: number) => {
-        try {
-
-            const rotacionFiltrada = apiData.filter(item => item.idFinca === fincaId)
-            setRotacionCultivosFiltradosData(rotacionFiltrada)
+            const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId)
+            setRotacionCultivos(rotacionCultivosFiltrado)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
-    //se filtra los feritilizantes por finca y parcela seleccionados en el dropdown
-    const obtenerFertilizantesPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
+    const obtenerRotacionCultivosPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
 
-            const rotacionFiltrada = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
+            const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
 
-            setRotacionCultivosFiltradosData(rotacionFiltrada);
+            setRotacionCultivos(rotacionCultivosFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
+
 
     return (
         <View style={styles.container}>
@@ -227,7 +222,7 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                 </View> */}
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {rotacionCultivosFiltradosData.map((item, index) => ( // Cambiar rotacionCultivos por rotacionCultivosFiltradosData
+                    {rotacionCultivos.map((item, index) => ( // Cambiar rotacionCultivos por rotacionCultivosFiltradosData
                         <TouchableOpacity key={item.idRotacionCultivoSegunEstacionalidad} onPress={() => handleRectanglePress(
                             item.idRotacionCultivoSegunEstacionalidad, item.idFinca, item.idParcela,
                             item.cultivo, item.epocaSiembra, item.tiempoCosecha, item.cultivoSiguiente,
