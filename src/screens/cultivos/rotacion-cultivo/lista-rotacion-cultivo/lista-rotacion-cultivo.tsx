@@ -21,11 +21,8 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
-    // Estado para los datos originales sin filtrar
-    const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const [rotacionCultivosFiltradosData, setRotacionCultivosFiltradosData] = useState<any[]>([]);
     const [rotacionCultivos, setRotacionCultivos] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
@@ -54,16 +51,6 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         });
     };
 
-    useEffect(() => {
-        // Obtener los IDs de las fincas del usuario
-        const idFincasUsuario = fincas.map(finca => finca.idFinca);
-
-        // Filtrar las medicionesSueloFiltradas por los IDs de las fincas del usuario
-        const medicionesSuelofiltradas = apiData.filter(item => idFincasUsuario.includes(item.idFinca));
-
-        // Actualizar el estado con las mediciones filtradas
-        setRotacionCultivosFiltradosData(medicionesSuelofiltradas);
-    }, [apiData, fincas]);
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -72,7 +59,6 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
 
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                //console.log(datosInicialesObtenidos)
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))
@@ -150,7 +136,7 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar los fertilizantes 
+        //si finca Id es null no se puede seleciona ni traer el y mostrar los rotacion de cultivos
         if (fincaId !== null) {
 
             obtenerRotacionCultivosPorFincaYParcela(fincaId, parcelaId);
