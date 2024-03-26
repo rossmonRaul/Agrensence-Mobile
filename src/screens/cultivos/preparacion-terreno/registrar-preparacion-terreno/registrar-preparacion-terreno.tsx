@@ -238,7 +238,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Manejo de fertilizante</Text>
+                            <Text style={styles.createAccountText} >Preparación de Terrenos</Text>
                         </View>
 
                         <View style={styles.formContainer}>

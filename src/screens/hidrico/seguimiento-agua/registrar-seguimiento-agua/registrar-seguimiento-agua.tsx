@@ -39,7 +39,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
         fecha: '',
         actividad: '',
         caudal: '',
-        consumo_Agua: '',
+        consumoAgua: '',
         observaciones: ''
     });
 
@@ -144,7 +144,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
             alert('Ingrese el caudal');
             return
         }
-        if (!formulario.consumo_Agua) {
+        if (!formulario.consumoAgua) {
             alert('Ingrese el consumo del agua');
             return
         }
@@ -161,7 +161,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
             fecha: formatDate(),
             actividad: formulario.actividad,
             caudal: formulario.caudal,
-            consumo_Agua: formulario.consumo_Agua,
+            consumoAgua: formulario.consumoAgua,
             observaciones: formulario.observaciones,
             usuarioCreacion: userData.identificacion
         };
@@ -305,7 +305,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                         >
                                             <TextInput
                                                 style={styles.input}
-                                                placeholder="00/00/00" 
+                                                placeholder="00/00/00"
                                                 value={formulario.fecha}
                                                 onChangeText={(text) => updateFormulario('fecha', text)}
                                                 editable={false}
@@ -406,10 +406,10 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Consumo de agua"
-                                        value={formulario.consumo_Agua}
+                                        value={formulario.consumoAgua}
                                         onChangeText={(text) => {
                                             const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
-                                            updateFormulario('consumo_Agua', numericText);
+                                            updateFormulario('consumoAgua', numericText);
                                         }}
                                         keyboardType="numeric"
                                     />

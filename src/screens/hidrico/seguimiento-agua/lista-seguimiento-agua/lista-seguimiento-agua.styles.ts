@@ -42,6 +42,11 @@ export const styles = StyleSheet.create({
         alignSelf: 'flex-end'
     },
     searchContainer: {
+        paddingTop: 10,
+        justifyContent: 'center',
+        minWidth: 300,
+    },
+    searchContainerInput: {
         marginTop: 20,
         flexDirection: 'row',
         alignItems: 'center',

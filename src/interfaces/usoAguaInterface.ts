@@ -1,7 +1,7 @@
 export interface WaterDataInterface {
     idRegistroSeguimientoUsoAgua: string;
-    idFinca: string;
-    idParcela: string;
+    idFinca: number;
+    idParcela: number;
     actividad: string;
     caudal: number;
     consumoAgua: number;
