@@ -49,6 +49,9 @@ import { MenuHidricoScreen } from './src/screens/hidrico/menu-hidrico/menu-hidri
 import { ListaSeguimientoAguaScreen } from './src/screens/hidrico/seguimiento-agua/lista-seguimiento-agua/lista-seguimiento-agua';
 import { RegistrarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/registrar-seguimiento-agua/registrar-seguimiento-agua';
 import { ModificarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/modificar-seguimiento-agua/modificar-seguimiento-agua';
+import { ListaMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riesgo/lista-monitoreo-eficiencia-riego/lista-monitoreo-eficiencia-riego';
+import { InsertarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riesgo/insertar-monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego';
+import { ModificarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riesgo/modificar-monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -189,6 +192,9 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
           <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
           <Stack.Screen name={ScreenProps.ModifyUseWatterScreen.screenName} component={ModificarUsoAguaScreen} />
+          <Stack.Screen name={ScreenProps.ListIrrigationEfficiency.screenName} component={ListaMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.InsertIrrigationEfficiency.screenName} component={InsertarMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.ModifyIrrigationEfficiency.screenName} component={ModificarMonitoreoEficienciaRiegoScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
