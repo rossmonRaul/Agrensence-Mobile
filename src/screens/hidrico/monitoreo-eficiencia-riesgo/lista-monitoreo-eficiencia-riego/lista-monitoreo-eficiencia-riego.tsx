@@ -107,7 +107,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                     estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No se encontraron fugas' : 'Se encontraron fugas',
-                    uniformidadRiego: item.uniformidadRiego === false ? 'No se observa distrubción' : 'Se observa distrubción',
+                    uniformidadRiego: item.uniformidadRiego === false ? 'No se observa uniformidad' : 'Se observa uniformidad',
                     estadoAspersores: item.estadoAspersores === false ? 'No estan obstruidos' : 'Estan obstruidos',
                     estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No se encuentran malezas u obstrucciones' : 'Se encuentran malezas u obstrucciones',
                 }));
