@@ -26,7 +26,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const [apiData, setApiData] = useState<any[]>([]);
 
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
-    const [rotacionCultivos, setRotacionCultivos] = useState<any[]>([]);
+    const [eficienciaRiego, setEficienciaRiego] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
@@ -171,7 +171,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId)
-            setRotacionCultivos(rotacionCultivosFiltrado)
+            setEficienciaRiego(rotacionCultivosFiltrado)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -184,7 +184,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
 
-            setRotacionCultivos(rotacionCultivosFiltrado);
+            setEficienciaRiego(rotacionCultivosFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -231,7 +231,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 </View> */}
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {rotacionCultivos.map((item, index) => ( // Cambiar rotacionCultivos por rotacionCultivosFiltradosData
+                    {eficienciaRiego.map((item, index) => (
                         <TouchableOpacity key={item.idMonitoreoEficienciaRiego} onPress={() => handleRectanglePress(
                             item.idMonitoreoEficienciaRiego, item.idFinca, item.idParcela, item.estado
                         )}>
