@@ -100,7 +100,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                     });
 
                 setParcelas(parcelas);
-                //se obtienen la rotacion de cultivos para despues poder filtrarlos
+                //se obtienen el monitoreo eficiencia riego para despues poder filtrarlos
                 const rotacionCultivosResponse = await ObtenerEficienciaRiego();
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = rotacionCultivosResponse.map((item) => ({
@@ -145,8 +145,8 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         setSelectedParcela('Seleccione una Parcela')
         //se obtienen las parcelas de la finca seleccionada
         obtenerParcelasPorFinca(fincaId);
-        ///se obtienen la rotacion de cultivos de la finca seleccionada
-        obtenerRotacionCultivosPorRotacionPorFinca(fincaId);
+        ///se obtienen el monitoreo eficiencia riego de la finca seleccionada
+        obtenerMonitoreoEficienciaRiegoPorRotacionPorFinca(fincaId);
     };
 
     //funcion para la accion del dropdown parcela
@@ -157,17 +157,17 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar los rotacion de cultivos
+        //si finca Id es null no se puede seleciona ni traer el y mostrar el monitoreo eficiencia riego
         if (fincaId !== null) {
 
-            obtenerRotacionCultivosPorFincaYParcela(fincaId, parcelaId);
+            obtenerMonitoreoEficienciaRiegoPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
         }
     };
 
-
-    const obtenerRotacionCultivosPorRotacionPorFinca = async (fincaId: number) => {
+    // filtra los datos de el monitoreo eficiencia riego por finca
+    const obtenerMonitoreoEficienciaRiegoPorRotacionPorFinca = async (fincaId: number) => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId)
@@ -177,7 +177,9 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         }
     };
 
-    const obtenerRotacionCultivosPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
+
+    // filtra los datos de el monitoreo eficiencia riego por finca y parcela
+    const obtenerMonitoreoEficienciaRiegoPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);

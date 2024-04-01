@@ -128,7 +128,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             nivelFreatico: formulario.nivelFreatico,
         };
 
-        //  Se ejecuta el servicio de insertar calidad de suelo
+        //  Se ejecuta el servicio de insertar el monitoreo de eficiencia de riego
         const responseInsert = await ActualizarRegistroEficienciaRiego(formData);
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
@@ -182,7 +182,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     }, []);
     useEffect(() => {
         // Buscar la finca correspondiente, esto se hace para cargar las parcelas que se necesitan en dropdown porque
-        // el fertilizante ya tiene una finca asignada
+        // el monitoreo de eficiencia de riego ya tiene una finca asignada
         const fincaInicial = fincas.find(finca => finca.idFinca === parseInt(idFinca));
 
         // Establecer el nombre de la finca inicial como selectedFinca

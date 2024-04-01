@@ -94,12 +94,6 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
     }
 
-    const validateSecondForm = () => {
-        let isValid = true;
-
-
-        return isValid
-    }
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
 
@@ -125,7 +119,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             nivelFreatico: formulario.nivelFreatico,
         };
 
-        //  Se ejecuta el servicio de insertar calidad de suelo
+        //  Se ejecuta el servicio de insertar el monitoreo de eficiencia de riego
         const responseInsert = await CrearRegistroEficienciaRiego(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
