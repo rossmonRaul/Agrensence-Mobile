@@ -100,7 +100,7 @@ export const Admin_suelo = [
 export const Admin_hidrico = [
     { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Seguimiento del agua', screen: ScreenProps.WatchListWaterScreen.screenName },
     { id: 2, iconImage: require('./assets/images/icons/eficiencia-riego.png'), text: 'Monitoreo de la eficiencia de riego', screen: ScreenProps.ListIrrigationEfficiency.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/destello.png'), text: 'Conductividad electrica del suelo', screen: ScreenProps.ListSoilElectricalConductivity.screenName },
-    // { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/destello.png'), text: 'Conductividad eléctrica del suelo', screen: ScreenProps.ListSoilElectricalConductivity.screenName },
+    // { id: 2, iconImage: require('./assets/images/icons/suelo.png'), t ext: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
     // { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
 ]
