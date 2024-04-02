@@ -12,6 +12,11 @@ export const ObtenerEficienciaRiego = async () => {
     return await ProcesarDatosApi('GET', url, '');
 }
 
+export const ObtenerConductividadElectricaEstresHidrico = async () => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerConductividadElectricaEstresHidrico`;
+    return await ProcesarDatosApi('GET', url, '');
+}
+
 export const CrearRegistroSeguimientoUsoAgua = async (data: any) => {
     const url = `${API_URL}/api/v1.0/${controlador}/CrearRegistroSeguimientoUsoAgua`;
     return await ProcesarDatosApi('POST', url, data);
