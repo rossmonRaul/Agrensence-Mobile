@@ -112,10 +112,10 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             idParcela: formulario.idParcela,
             usuarioCreacionModificacion: userData.identificacion,
             volumenAguaUtilizado: formulario.consumoAgua,
-            estadoTuberiasYAccesorios: formulario.estadoTuberias,
-            uniformidadRiego: formulario.uniformidadRiego,
-            estadoAspersores: formulario.estadoAspersores,
-            estadoCanalesRiego: formulario.estadoCanalesRiego,
+            estadoTuberiasYAccesorios: estadoTuberias,
+            uniformidadRiego: uniformidadRiego,
+            estadoAspersores: estadoAspersores,
+            estadoCanalesRiego: estadoCanalesRiego,
             nivelFreatico: formulario.nivelFreatico,
         };
 
