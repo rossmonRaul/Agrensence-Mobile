@@ -39,8 +39,8 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         'Volumen de agua utilizado': 'volumenAguaUtilizado',
         'Fugas': 'estadoTuberiasYAccesorios',
         'Uniformidad del riego': 'uniformidadRiego',
-        'Estado de los aspersores': 'estadoAspersores',
-        'Estado de canales de riego': 'estadoCanalesRiego',
+        'Obstrucciones en Aspersores': 'estadoAspersores',
+        'Obstrucciones en Canales': 'estadoCanalesRiego',
         'Nivel freático': 'nivelFreatico',
         'Estado': 'estado'
     };
@@ -106,10 +106,10 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 const filteredData = rotacionCultivosResponse.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                    estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No se encontraron fugas' : 'Se encontraron fugas',
-                    uniformidadRiego: item.uniformidadRiego === false ? 'No se observa uniformidad' : 'Se observa uniformidad',
-                    estadoAspersores: item.estadoAspersores === false ? 'No estan obstruidos' : 'Estan obstruidos',
-                    estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No se encuentran malezas u obstrucciones' : 'Se encuentran malezas u obstrucciones',
+                    estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No Tiene Fugas' : 'Tiene Fugas',
+                    uniformidadRiego: item.uniformidadRiego === false ? 'No Tiene Uniformidad' : 'Tiene Uniformidad',
+                    estadoAspersores: item.estadoAspersores === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
+                    estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
                 }));
                 setOriginalApiData(rotacionCultivosResponse);
                 setApiData(filteredData);

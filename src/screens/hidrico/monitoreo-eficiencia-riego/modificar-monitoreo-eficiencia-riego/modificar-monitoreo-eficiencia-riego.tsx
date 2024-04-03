@@ -355,7 +355,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
-                                    <Text style={styles.formText} >Volumen de agua utilizado</Text>
+                                    <Text style={styles.formText} >Consumo Agua (L)</Text>
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
@@ -368,7 +368,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         keyboardType="numeric"
                                     />
                                     <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Estado de las tuberías y accesorios</Text>
+                                        <Text style={styles.formText}>Fugas en el Sistema de Riego</Text>
                                         <CheckBox
                                             checked={estadoTuberiasModificar}
                                             checkedIcon='check-square-o'
@@ -381,7 +381,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     </View>
 
                                     <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Uniformidad del riego</Text>
+                                        <Text style={styles.formText}>Uniformidad de Riego</Text>
                                         <CheckBox
                                             checked={uniformidadRiegoModificar}
                                             checkedIcon='check-square-o'
@@ -394,7 +394,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     </View>
 
                                     <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Estado de los aspersores</Text>
+                                        <Text style={styles.formText}>Obstruccion en Aspersores</Text>
                                         <CheckBox
                                             checked={estadoAspersoresModificar}
                                             checkedIcon='check-square-o'
@@ -407,7 +407,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     </View>
 
                                     <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Estado de canales de riego</Text>
+                                        <Text style={styles.formText}>Obstrucción en Canales de Riego</Text>
                                         <CheckBox
                                             checked={estadoCanalesRiegoModificar}
                                             checkedIcon='check-square-o'
