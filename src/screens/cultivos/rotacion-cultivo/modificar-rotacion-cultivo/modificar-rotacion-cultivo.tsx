@@ -122,6 +122,9 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             return
         }
 
+        const epocaSiembraDate = parseDate(formulario.epocaSiembra);
+        const epocaSiembraCultivoSiguienteDate = parseDate(formulario.epocaSiembraCultivoSiguiente);
+        const tiempoCosechaDate = parseDate(formulario.tiempoCosecha);
 
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
@@ -130,12 +133,11 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             idRotacionCultivoSegunEstacionalidad: idRotacionCultivoSegunEstacionalidad,
             identificacionUsuario: userData.identificacion,
             cultivo: formulario.cultivo,
-            epocaSiembra: formatDate(dateSiembra),
-            tiempoCosecha: formatDate(dateTiempoCosecha),
+            epocaSiembra: epocaSiembraDate,
+            tiempoCosecha: tiempoCosechaDate,
             cultivoSiguiente: formulario.cultivoSiguiente,
-            epocaSiembraCultivoSiguiente: formatDate(dateEpocaSiembra)
+            epocaSiembraCultivoSiguiente: epocaSiembraCultivoSiguienteDate
         };
-
         //  Se ejecuta el servicio de insertar  de  la rotación de cultivo
         const responseInsert = await ModificarRotacionCultivoSegunEstacionalidad(formData);
 
@@ -195,7 +197,6 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         // Establecer el nombre de la finca inicial como selectedFinca
         setSelectedFinca(fincaInicial?.nombreFinca || null);
 
-
         //obtener las parcelas de la finca que trae el fertilizantes
         const ObtenerParcelasIniciales = async () => {
             try {
@@ -207,15 +208,16 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 console.error('Error fetching data:', error);
             }
         }
-
         ObtenerParcelasIniciales();
-    }, [idFinca, parcela, finca, fincas]);
 
+    }, [idFinca, fincas]);
     useEffect(() => {
+        // Buscar la parcela correspondiente
         const parcelaInicial = parcelas.find(parcela => parcela.idParcela === parseInt(idParcela));
-        setSelectedParcela(parcelaInicial?.nombre || null);
-    }, [finca, parcelasFiltradas]);
 
+        // Establecer el nombre de la parcela inicial como selectedFinca
+        setSelectedParcela(parcelaInicial?.nombre || null);
+    }, [idParcela, parcelas]);
 
     //se formatea la fecha para que tenga el formato de español
     const formatSpanishDate = (date) => {
@@ -226,6 +228,14 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         return `${day}/${month}/${year}`;
     };
 
+    const parseDate = (dateString) => {
+        const [day, month, year] = dateString.split('/');
+
+        // Verificar si el año ya tiene "20" al inicio
+        const fullYear = year.startsWith("20") ? year : `20${year}`;
+
+        return new Date(`${fullYear}-${month}-${day}`);
+    };
     //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
     const formatDate = (date: Date) => { // Aquí se crea un objeto Date a partir de la cadena dateString
         const day = date.getDate().toString().padStart(2, '0');
@@ -287,14 +297,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             alert('El Cultivo no puede tener más de 50 caracteres.');
             return;
         }
-        const parseDate = (dateString) => {
-            const [day, month, year] = dateString.split('/');
 
-            // Verificar si el año ya tiene "20" al inicio
-            const fullYear = year.startsWith("20") ? year : `20${year}`;
-
-            return new Date(`${fullYear}-${month}-${day}`);
-        };
 
         const epocaSiembraDate = parseDate(formulario.epocaSiembra);
         const epocaSiembraCultivoSiguienteDate = parseDate(formulario.epocaSiembraCultivoSiguiente);
@@ -420,13 +423,24 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             setHandleEmpresaCalled(true);
         }
     }, [userData.idEmpresa, fincaDataOriginal, handleEmpresaCalled]);
-    const handleValueFinca = (itemValue: any) => {
-        setFinca(itemValue.value);
-        let parcelaSort = parcelaDataOriginal.filter(item => item.id === itemValue.value);
-        setParcelaDataSort(parcelaSort)
-        setParcela(null);
-        updateFormulario('idFinca', itemValue.value)
-    }
+    const handleFincaChange = (item: { label: string; value: string }) => {
+        const fincaId = parseInt(item.value, 10);
+        setSelectedFinca(item.value);
+        //se acctualiza el id parcela para que seleccione otra vez la parcela
+        updateFormulario('idParcela', '');
+        setSelectedParcela('Seleccione una Parcela')
+        //se obtienen las parcelas de la finca
+        obtenerParcelasPorFinca(fincaId);
+    };
+    const obtenerParcelasPorFinca = async (fincaId: number) => {
+        try {
+            const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
+
+            setParcelasFiltradas(parcelasFiltradas);
+        } catch (error) {
+            console.error('Error fetching parcelas:', error);
+        }
+    };
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
         fetchDataFunction: ObtenerFincas,
         setDataFunction: setFincaDataOriginal,
@@ -487,7 +501,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                             <TextInput
                                                 style={styles.input}
                                                 placeholder='00/00/00'
-                                                value={formulario.epocaSiembra}
+                                                value={formulario.epocaSiembra || epocaSiembra}
                                                 onChangeText={(text) => updateFormulario('epocaSiembra', text)}
                                                 editable={false}
                                                 onPressIn={() => toggleDatePicker('siembra')}
@@ -708,17 +722,29 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                     <DropdownComponent
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
-                                        value={finca}
-                                        iconName='map-marker'
-                                        onChange={handleValueFinca}
+                                        value={selectedFinca}
+                                        iconName="map-marker"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la finca
+                                            handleFincaChange(selectedItem);
+
+                                            // Actualizar el formulario con la selección de la finca
+                                            updateFormulario('idFinca', selectedItem.value);
+                                        }}
                                     />
                                 }
                                 <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
-                                    iconName='map-marker'
-                                    value={parcela}
-                                    onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
+                                    value={selectedParcela}
+                                    iconName="map-marker"
+                                    onChange={(selectedItem) => {
+                                        // Manejar el cambio en la selección de la parcela
+                                        setSelectedParcela(selectedItem.value);
+
+                                        // Actualizar el formulario con la selección de la parcela
+                                        updateFormulario('idParcela', selectedItem.value);
+                                    }}
                                 />
                                 <TouchableOpacity
                                     style={styles.button}
