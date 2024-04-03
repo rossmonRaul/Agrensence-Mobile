@@ -170,7 +170,7 @@ export const ListaConductividadElectricaSueloScreen: React.FC = () => {
                 <BackButtonComponent screenName={ScreenProps.HidricMenu.screenName} color={'#274c48'} />
                 {/* <AddButtonComponent screenName={ScreenProps.InsertIrrigationEfficiency.screenName} color={'#274c48'} /> */}
                 <View style={styles.textAboveContainer}>
-                    {/* <Text style={styles.textAbove} >Lista de conductividad eléctrica del suelo</Text> */}
+                    <Text style={styles.textAbove} >Lista de conductividad eléctrica del suelo</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
