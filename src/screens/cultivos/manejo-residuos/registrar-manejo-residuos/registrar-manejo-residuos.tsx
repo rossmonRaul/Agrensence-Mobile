@@ -228,7 +228,7 @@ export const RegistrarResiduosScreen: React.FC = () => {
         if (type === "set" && selectedDate instanceof Date) {
             const formattedDate = formatSpanishDate(selectedDate);
             setDate(selectedDate);
-            updateFormulario('fecha', formattedDate);
+            updateFormulario('fechaGeneracion', formattedDate);
             if (Platform.OS === "android") {
                 toggleDatePicker();
             }
