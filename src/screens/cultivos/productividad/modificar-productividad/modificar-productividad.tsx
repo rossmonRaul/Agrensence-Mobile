@@ -94,8 +94,8 @@ export const ModificarProductividadScreen: React.FC = () => {
             return
         }
 
-        if (!/^\d+$/.test(formulario.area.toString())) {
-            alert('El área debe contener solo números');
+        if (!/^\d+(\.\d+)?$/.test(formulario.area.toString())) {
+            alert('El área debe contener solo números y si son decimales utilizar .');
             isValid = false;
             return;
         }
@@ -106,11 +106,13 @@ export const ModificarProductividadScreen: React.FC = () => {
             return
         }
 
-        if (!/^\d+$/.test(formulario.produccion.toString())) {
-            alert('La producción debe contener solo números');
+        if (!/^\d+(\.\d+)?$/.test(formulario.produccion.toString())) {
+            alert('La producción debe contener solo números válidos y si son decimales utilizar . ');
             isValid = false;
             return;
         }
+        
+        
 
         if (!formulario.productividad) {
             alert('Ingrese la productividad');
@@ -118,8 +120,8 @@ export const ModificarProductividadScreen: React.FC = () => {
             return
         }
 
-        if (!/^\d+$/.test(formulario.productividad.toString())) {
-            alert('La productividad debe contener solo números');
+        if (!/^\d+(\.\d+)?$/.test(formulario.productividad.toString())) {
+            alert('La productividad debe contener solo números y si son decimales utilizar .');
             isValid = false;
             return;
         }
