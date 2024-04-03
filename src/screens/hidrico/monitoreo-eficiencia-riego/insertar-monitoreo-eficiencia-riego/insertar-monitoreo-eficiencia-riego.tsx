@@ -240,7 +240,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Rotación de cultivo</Text>
+                            <Text style={styles.createAccountText} >Monitoreo eficiencia de riego</Text>
                         </View>
 
                         <View style={styles.formContainer}>

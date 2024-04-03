@@ -88,21 +88,63 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         const regexDate = /^\d{2}\/\d{2}\/\d{2}$/;
         if (!regexDate.test(formulario.epocaSiembra.trim())) {
             isValid = false;
-            alert('Por favor ingrese la Epoca Siembra en formato dd/mm/aa.');
+            alert('Por favor ingrese la Época Siembra en formato dd/mm/aa.');
             return isValid;
         }
 
         // Validación de la Epoca de siembra siguiente
         if (!regexDate.test(formulario.epocaSiembraCultivoSiguiente.trim())) {
             isValid = false;
-            alert('Por favor ingrese la Epoca de siembra siguiente en formato dd/mm/aa.');
+            alert('Por favor ingrese la Época de siembra siguiente en formato dd/mm/aa.');
             return isValid;
         }
+
+
 
         // Validación del Tiempo cosecha
         if (!regexDate.test(formulario.tiempoCosecha.trim())) {
             isValid = false;
             alert('Por favor ingrese el Tiempo cosecha en formato dd/mm/aa.');
+            return isValid;
+        }
+        // Convertir las fechas a objetos Date
+        const parseDate = (dateString) => {
+            const [day, month, year] = dateString.split('/');
+            return new Date(`${year}-${month}-${day}`);
+        };
+
+        const epocaSiembraDate = parseDate(formulario.epocaSiembra);
+        const epocaSiembraCultivoSiguienteDate = parseDate(formulario.epocaSiembraCultivoSiguiente);
+        const tiempoCosechaDate = parseDate(formulario.tiempoCosecha);
+
+        // Comparar fechas
+        if (isNaN(epocaSiembraDate.getTime())) {
+            isValid = false;
+            alert('La fecha de Época de siembra no es válida.');
+            return isValid;
+        }
+
+        if (isNaN(epocaSiembraCultivoSiguienteDate.getTime())) {
+            isValid = false;
+            alert('La fecha de Época de siembra siguiente no es válida.');
+            return isValid;
+        }
+
+        if (isNaN(tiempoCosechaDate.getTime())) {
+            isValid = false;
+            alert('La fecha de Tiempo de cosecha no es válida.');
+            return isValid;
+        }
+
+        if (tiempoCosechaDate <= epocaSiembraDate || tiempoCosechaDate >= epocaSiembraCultivoSiguienteDate) {
+            isValid = false;
+            alert('El tiempo de cosecha no puede ser anterior a la época de siembra ni tampoco después de la época de siembra siguiente.');
+            return isValid;
+        }
+
+        if (epocaSiembraCultivoSiguienteDate <= epocaSiembraDate || epocaSiembraCultivoSiguienteDate <= tiempoCosechaDate) {
+            isValid = false;
+            alert('Época de siembra no puede ser anterior a la época de siembra ni tampoco al tiempo de cosecha.');
             return isValid;
         }
 
@@ -150,12 +192,12 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
             epocaSiembraCultivoSiguiente: formatDate(dateEpocaSiembra)
         };
 
-        //  Se ejecuta el servicio de insertar calidad de suelo
+        //  Se ejecuta el servicio de insertar  la rotación de cultivo
         const responseInsert = await InsertarRotacionCultivoSegunEstacionalidad(formData);
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro la calidad de suelo correctamente!', '', [
+            Alert.alert('¡Se registro la rotación de cultivo correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
@@ -238,10 +280,10 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 setShowPickerSiembra(!showPickerSiembra);
                 break;
             case "cosecha":
-                setShowPickerTiempoCosecha(!showPickerEpocaSiembra);
+                setShowPickerTiempoCosecha(!showPickerTiempoCosecha);
                 break;
             case "siguienteSiembra":
-                setShowPickerEpocaSiembra(!showPickerTiempoCosecha);
+                setShowPickerEpocaSiembra(!showPickerEpocaSiembra);
                 break;
             default:
                 break;
@@ -257,11 +299,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 break;
             case 'cosecha':
                 setShowPickerTiempoCosecha(Platform.OS === 'ios');
-                setDateEpocaSiembra(currentDate);
+                setDateTiempoCosecha(currentDate);
                 break;
             case 'siguienteSiembra':
                 setShowPickerEpocaSiembra(Platform.OS === 'ios');
-                setDateTiempoCosecha(currentDate);
+                setDateEpocaSiembra(currentDate);
                 break;
             default:
                 break;
@@ -279,12 +321,12 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 updateFormulario('epocaSiembra', formatSpanishDate(dateSiembra));
                 break;
             case 'cosecha':
-                setShowPickerEpocaSiembra(false);
-                updateFormulario('tiempoCosecha', formatSpanishDate(dateEpocaSiembra));
+                setShowPickerTiempoCosecha(false);
+                updateFormulario('tiempoCosecha', formatSpanishDate(dateTiempoCosecha));
                 break;
             case 'siguienteSiembra':
-                setShowPickerTiempoCosecha(false);
-                updateFormulario('epocaSiembraCultivoSiguiente', formatSpanishDate(dateTiempoCosecha));
+                setShowPickerEpocaSiembra(false);
+                updateFormulario('epocaSiembraCultivoSiguiente', formatSpanishDate(dateEpocaSiembra));
                 break;
             default:
                 break;
@@ -357,11 +399,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
-                                        placeholder="Arroz, Maíz, Papá..."
+                                        placeholder="Arroz, Maíz, Papa..."
                                         value={formulario.cultivo}
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
-                                    <Text style={styles.formText}>Epoca Siembra</Text>
+                                    <Text style={styles.formText}>Época Siembra</Text>
 
                                     {!showPickerSiembra && (
                                         <Pressable
@@ -430,7 +472,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                     )}
 
 
-                                    <Text style={styles.formText} >Epoca de siembra siguiente</Text>
+                                    <Text style={styles.formText} >Época de siembra siguiente</Text>
                                     {!showPickerEpocaSiembra && (
                                         <Pressable
                                             onPress={() => toggleDatePicker('siguienteSiembra')}
@@ -483,7 +525,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                                 styles.pickerButton,
                                                 { backgroundColor: "#11182711" },
                                             ]}
-                                                onPress={() => confirmIOSDate('epocaSiembra')}
+                                                onPress={() => confirmIOSDate('siguienteSiembra')}
                                             >
 
                                                 <Text style={[
@@ -567,7 +609,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
-                                        placeholder="Arroz, Maíz, Papá..."
+                                        placeholder="Arroz, Maíz, Papa..."
                                         value={formulario.cultivoSiguiente}
                                         onChangeText={(text) => updateFormulario('cultivoSiguiente', text)}
                                     />

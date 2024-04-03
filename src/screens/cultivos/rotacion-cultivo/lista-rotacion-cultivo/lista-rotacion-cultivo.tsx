@@ -34,10 +34,10 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
         'Cultivo': 'cultivo',
-        'Epoca siembra': 'epocaSiembra',
-        'Tiempo siembra': 'tiempoCosecha',
+        'Época siembra': 'epocaSiembra',
+        'Tiempo Cosecha': 'tiempoCosecha',
         'Cultivo siembra': 'cultivoSiguiente',
-        'Epoca siguiente de siembra': 'epocaSiembraCultivoSiguiente',
+        'Época siguiente de siembra': 'epocaSiembraCultivoSiguiente',
         'Estado': 'estado'
     };
 
