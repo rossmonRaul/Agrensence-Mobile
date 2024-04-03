@@ -149,7 +149,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar Finca</Text>
+                                                <Text style={styles.buttonText}> Guardar Parcela</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
