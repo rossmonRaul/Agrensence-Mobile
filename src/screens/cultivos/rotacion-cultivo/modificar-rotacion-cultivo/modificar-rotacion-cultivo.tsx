@@ -195,6 +195,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         // Establecer el nombre de la finca inicial como selectedFinca
         setSelectedFinca(fincaInicial?.nombreFinca || null);
 
+
         //obtener las parcelas de la finca que trae el fertilizantes
         const ObtenerParcelasIniciales = async () => {
             try {
@@ -206,8 +207,14 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 console.error('Error fetching data:', error);
             }
         }
+
         ObtenerParcelasIniciales();
     }, [idFinca, parcela, finca, fincas]);
+
+    useEffect(() => {
+        const parcelaInicial = parcelas.find(parcela => parcela.idParcela === parseInt(idParcela));
+        setSelectedParcela(parcelaInicial?.nombre || null);
+    }, [finca, parcelasFiltradas]);
 
 
     //se formatea la fecha para que tenga el formato de español
@@ -706,16 +713,14 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                         onChange={handleValueFinca}
                                     />
                                 }
-                                {finca &&
-                                    <DropdownComponent
-                                        placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
-                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
-                                        iconName='map-marker'
-                                        value={parcela}
-                                        onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
-                                    />
-                                }
-                                {parcela && <TouchableOpacity
+                                <DropdownComponent
+                                    placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
+                                    data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                    iconName='map-marker'
+                                    value={parcela}
+                                    onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
+                                />
+                                <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
                                         handleModify();
@@ -725,7 +730,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
                                         <Text style={styles.buttonText}>Guardar cambios</Text>
                                     </View>
-                                </TouchableOpacity>}
+                                </TouchableOpacity>
                                 {estado === 'Activo'
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
