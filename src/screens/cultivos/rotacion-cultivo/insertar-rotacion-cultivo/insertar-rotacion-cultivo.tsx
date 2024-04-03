@@ -88,21 +88,63 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         const regexDate = /^\d{2}\/\d{2}\/\d{2}$/;
         if (!regexDate.test(formulario.epocaSiembra.trim())) {
             isValid = false;
-            alert('Por favor ingrese la Epoca Siembra en formato dd/mm/aa.');
+            alert('Por favor ingrese la Época Siembra en formato dd/mm/aa.');
             return isValid;
         }
 
         // Validación de la Epoca de siembra siguiente
         if (!regexDate.test(formulario.epocaSiembraCultivoSiguiente.trim())) {
             isValid = false;
-            alert('Por favor ingrese la Epoca de siembra siguiente en formato dd/mm/aa.');
+            alert('Por favor ingrese la Época de siembra siguiente en formato dd/mm/aa.');
             return isValid;
         }
+
+
 
         // Validación del Tiempo cosecha
         if (!regexDate.test(formulario.tiempoCosecha.trim())) {
             isValid = false;
             alert('Por favor ingrese el Tiempo cosecha en formato dd/mm/aa.');
+            return isValid;
+        }
+        // Convertir las fechas a objetos Date
+        const parseDate = (dateString) => {
+            const [day, month, year] = dateString.split('/');
+            return new Date(`${year}-${month}-${day}`);
+        };
+
+        const epocaSiembraDate = parseDate(formulario.epocaSiembra);
+        const epocaSiembraCultivoSiguienteDate = parseDate(formulario.epocaSiembraCultivoSiguiente);
+        const tiempoCosechaDate = parseDate(formulario.tiempoCosecha);
+
+        // Comparar fechas
+        if (isNaN(epocaSiembraDate.getTime())) {
+            isValid = false;
+            alert('La fecha de Época de siembra no es válida.');
+            return isValid;
+        }
+
+        if (isNaN(epocaSiembraCultivoSiguienteDate.getTime())) {
+            isValid = false;
+            alert('La fecha de Época de siembra siguiente no es válida.');
+            return isValid;
+        }
+
+        if (isNaN(tiempoCosechaDate.getTime())) {
+            isValid = false;
+            alert('La fecha de Tiempo de cosecha no es válida.');
+            return isValid;
+        }
+
+        if (tiempoCosechaDate <= epocaSiembraDate || tiempoCosechaDate >= epocaSiembraCultivoSiguienteDate) {
+            isValid = false;
+            alert('El tiempo de cosecha no puede ser anterior a la época de siembra ni tampoco después de la época de siembra siguiente.');
+            return isValid;
+        }
+
+        if (epocaSiembraCultivoSiguienteDate <= epocaSiembraDate || epocaSiembraCultivoSiguienteDate <= tiempoCosechaDate) {
+            isValid = false;
+            alert('Época de siembra no puede ser anterior a la época de siembra ni tampoco al tiempo de cosecha.');
             return isValid;
         }
 
@@ -361,7 +403,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                         value={formulario.cultivo}
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
-                                    <Text style={styles.formText}>Epoca Siembra</Text>
+                                    <Text style={styles.formText}>Época Siembra</Text>
 
                                     {!showPickerSiembra && (
                                         <Pressable
@@ -430,7 +472,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                     )}
 
 
-                                    <Text style={styles.formText} >Epoca de siembra siguiente</Text>
+                                    <Text style={styles.formText} >Época de siembra siguiente</Text>
                                     {!showPickerEpocaSiembra && (
                                         <Pressable
                                             onPress={() => toggleDatePicker('siguienteSiembra')}
