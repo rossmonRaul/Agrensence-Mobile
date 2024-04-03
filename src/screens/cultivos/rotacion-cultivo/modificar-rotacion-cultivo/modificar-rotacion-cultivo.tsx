@@ -136,7 +136,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             epocaSiembraCultivoSiguiente: formatDate(dateEpocaSiembra)
         };
 
-        //  Se ejecuta el servicio de insertar calidad de suelo
+        //  Se ejecuta el servicio de insertar  de  la rotación de cultivo
         const responseInsert = await ModificarRotacionCultivoSegunEstacionalidad(formData);
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida

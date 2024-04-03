@@ -192,12 +192,12 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
             epocaSiembraCultivoSiguiente: formatDate(dateEpocaSiembra)
         };
 
-        //  Se ejecuta el servicio de insertar calidad de suelo
+        //  Se ejecuta el servicio de insertar  la rotación de cultivo
         const responseInsert = await InsertarRotacionCultivoSegunEstacionalidad(formData);
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro la calidad de suelo correctamente!', '', [
+            Alert.alert('¡Se registro la rotación de cultivo correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
