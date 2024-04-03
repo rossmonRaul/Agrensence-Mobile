@@ -214,7 +214,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             }
         }
         ObtenerParcelasIniciales();
-    }, [idFinca, fincas]);
+    }, [idFinca, parcela, finca, fincas]);
 
 
     //se formatea la fecha para que tenga el formato de español
