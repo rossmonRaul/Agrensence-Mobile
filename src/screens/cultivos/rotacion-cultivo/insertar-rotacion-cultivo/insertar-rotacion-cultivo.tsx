@@ -280,10 +280,10 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 setShowPickerSiembra(!showPickerSiembra);
                 break;
             case "cosecha":
-                setShowPickerTiempoCosecha(!showPickerEpocaSiembra);
+                setShowPickerTiempoCosecha(!showPickerTiempoCosecha);
                 break;
             case "siguienteSiembra":
-                setShowPickerEpocaSiembra(!showPickerTiempoCosecha);
+                setShowPickerEpocaSiembra(!showPickerEpocaSiembra);
                 break;
             default:
                 break;
@@ -299,11 +299,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 break;
             case 'cosecha':
                 setShowPickerTiempoCosecha(Platform.OS === 'ios');
-                setDateEpocaSiembra(currentDate);
+                setDateTiempoCosecha(currentDate);
                 break;
             case 'siguienteSiembra':
                 setShowPickerEpocaSiembra(Platform.OS === 'ios');
-                setDateTiempoCosecha(currentDate);
+                setDateEpocaSiembra(currentDate);
                 break;
             default:
                 break;
@@ -321,12 +321,12 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 updateFormulario('epocaSiembra', formatSpanishDate(dateSiembra));
                 break;
             case 'cosecha':
-                setShowPickerEpocaSiembra(false);
-                updateFormulario('tiempoCosecha', formatSpanishDate(dateEpocaSiembra));
+                setShowPickerTiempoCosecha(false);
+                updateFormulario('tiempoCosecha', formatSpanishDate(dateTiempoCosecha));
                 break;
             case 'siguienteSiembra':
-                setShowPickerTiempoCosecha(false);
-                updateFormulario('epocaSiembraCultivoSiguiente', formatSpanishDate(dateTiempoCosecha));
+                setShowPickerEpocaSiembra(false);
+                updateFormulario('epocaSiembraCultivoSiguiente', formatSpanishDate(dateEpocaSiembra));
                 break;
             default:
                 break;
@@ -525,7 +525,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                                 styles.pickerButton,
                                                 { backgroundColor: "#11182711" },
                                             ]}
-                                                onPress={() => confirmIOSDate('epocaSiembra')}
+                                                onPress={() => confirmIOSDate('siguienteSiembra')}
                                             >
 
                                                 <Text style={[

@@ -234,10 +234,10 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 setShowPickerSiembra(!showPickerSiembra);
                 break;
             case "cosecha":
-                setShowPickerTiempoCosecha(!showPickerEpocaSiembra);
+                setShowPickerTiempoCosecha(!showPickerTiempoCosecha);
                 break;
             case "siguienteSiembra":
-                setShowPickerEpocaSiembra(!showPickerTiempoCosecha);
+                setShowPickerEpocaSiembra(!showPickerEpocaSiembra);
                 break;
             default:
                 break;
@@ -253,11 +253,11 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 break;
             case 'cosecha':
                 setShowPickerTiempoCosecha(Platform.OS === 'ios');
-                setDateEpocaSiembra(currentDate);
+                setDateTiempoCosecha(currentDate);
                 break;
             case 'siguienteSiembra':
                 setShowPickerEpocaSiembra(Platform.OS === 'ios');
-                setDateTiempoCosecha(currentDate);
+                setDateEpocaSiembra(currentDate);
                 break;
             default:
                 break;
@@ -280,16 +280,18 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
             alert('El Cultivo no puede tener más de 50 caracteres.');
             return;
         }
-        // Convertir las fechas a objetos Date
         const parseDate = (dateString) => {
             const [day, month, year] = dateString.split('/');
-            return new Date(`${year}-${month}-${day}`);
+
+            // Verificar si el año ya tiene "20" al inicio
+            const fullYear = year.startsWith("20") ? year : `20${year}`;
+
+            return new Date(`${fullYear}-${month}-${day}`);
         };
 
         const epocaSiembraDate = parseDate(formulario.epocaSiembra);
         const epocaSiembraCultivoSiguienteDate = parseDate(formulario.epocaSiembraCultivoSiguiente);
         const tiempoCosechaDate = parseDate(formulario.tiempoCosecha);
-
         // Comparar fechas
         if (isNaN(epocaSiembraDate.getTime())) {
             isValid = false;
@@ -387,12 +389,12 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 updateFormulario('epocaSiembra', formatSpanishDate(dateSiembra));
                 break;
             case 'cosecha':
-                setShowPickerEpocaSiembra(false);
-                updateFormulario('tiempoCosecha', formatSpanishDate(dateEpocaSiembra));
+                setShowPickerTiempoCosecha(false);
+                updateFormulario('tiempoCosecha', formatSpanishDate(dateTiempoCosecha));
                 break;
             case 'siguienteSiembra':
-                setShowPickerTiempoCosecha(false);
-                updateFormulario('epocaSiembraCultivoSiguiente', formatSpanishDate(dateTiempoCosecha));
+                setShowPickerEpocaSiembra(false);
+                updateFormulario('epocaSiembraCultivoSiguiente', formatSpanishDate(dateEpocaSiembra));
                 break;
             default:
                 break;
@@ -590,7 +592,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                                 styles.pickerButton,
                                                 { backgroundColor: "#11182711" },
                                             ]}
-                                                onPress={() => confirmIOSDate('epocaSiembra')}
+                                                onPress={() => confirmIOSDate('siguienteSiembra')}
                                             >
 
                                                 <Text style={[
