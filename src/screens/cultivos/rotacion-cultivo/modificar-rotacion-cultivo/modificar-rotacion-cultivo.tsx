@@ -466,7 +466,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
-                                        placeholder="Arroz, Maíz, Papá..."
+                                        placeholder="Arroz, Maíz, Papa..."
                                         value={formulario.cultivo}
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
@@ -676,7 +676,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
-                                        placeholder="Arroz, Maíz, Papá..."
+                                        placeholder="Arroz, Maíz, Papa..."
                                         value={formulario.cultivoSiguiente}
                                         onChangeText={(text) => updateFormulario('cultivoSiguiente', text)}
                                     />
