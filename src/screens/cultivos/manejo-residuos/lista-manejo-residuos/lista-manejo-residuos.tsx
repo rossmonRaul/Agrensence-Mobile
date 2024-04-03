@@ -57,7 +57,6 @@ export const ListaManejoResiduosScreen: React.FC = () => {
                     });
                 setParcelas(parcelasUnicas)   
                 const medicionesSuelo = await ObtenerManejoResiduos();
-                
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = medicionesSuelo.map((item) => ({
                     ...item,

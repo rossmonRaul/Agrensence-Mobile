@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-rotacion-cultivo.styles';
+import { styles } from './lista-conductividad-electrica-del-suelo.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../../servicios/ServicioFinca';
 import { processData } from '../../../../utils/processData';
-import { CustomRectangle } from '../../../../components/CustomRectangle/CustomRectangle';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../../constants';
@@ -13,17 +12,21 @@ import { useAuth } from '../../../../hooks/useAuth';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
-import { ObtenerRotacionCultivoSegunEstacionalidad } from '../../../../servicios/ServicioCultivos';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
-export const ListaRotacionCultivosScreen: React.FC = () => {
+import { CustomRectangleElectric } from '../../../../components/CustomRectangleElectric/CustomRectangleElectric';
+import { ObtenerConductividadElectricaEstresHidrico } from '../../../../servicios/ServicioUsoAgua';
+
+export const ListaConductividadElectricaSueloScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const [rotacionCultivos, setRotacionCultivos] = useState<any[]>([]);
+
+    const [originalApiData, setOriginalApiData] = useState<any[]>([]);
+    const [conductividadElecticaSuelo, setConductividadElecticaSuelo] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
@@ -33,23 +36,16 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
 
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
-        'Cultivo': 'cultivo',
-        'Epoca siembra': 'epocaSiembra',
-        'Tiempo siembra': 'tiempoCosecha',
-        'Cultivo siembra': 'cultivoSiguiente',
-        'Epoca siguiente de siembra': 'epocaSiembraCultivoSiguiente',
+        'Medida humedad suelo': 'medidaHumedadSuelo',
+        'Finca': 'nombreFinca',
+        'Parcela': 'nombreParcela',
         'Estado': 'estado'
     };
-
-    const handleRectanglePress = (idRotacionCultivoSegunEstacionalidad: string, idFinca: string, idParcela: string, cultivo: string,
-        epocaSiembra: string, tiempoCosecha: string, cultivoSiguiente: string,
-        epocaSiembraCultivoSiguiente: string, estado: string) => {
-        navigation.navigate(ScreenProps.ModifyCropRotation.screenName, {
-            idRotacionCultivoSegunEstacionalidad: idRotacionCultivoSegunEstacionalidad, idFinca: idFinca, idParcela: idParcela,
-            cultivo: cultivo, epocaSiembra: epocaSiembra, tiempoCosecha: tiempoCosecha, cultivoSiguiente: cultivoSiguiente,
-            epocaSiembraCultivoSiguiente: epocaSiembraCultivoSiguiente, estado: estado
-        });
-    };
+    const conductividadElectricaSueloTestData = [
+        { idMonitoreoEficienciaRiego: 1, idFinca: 1, idParcela: 1, volumenAguaUtilizado: "1.5", estadoTuberiasYAccesorios: "Bueno", uniformidadRiego: "Buena", estadoAspersores: "Bueno", estadoCanalesRiego: "Regular", nivelFreatico: "Alto", estado: "Activo" },
+        { idMonitoreoEficienciaRiego: 2, idFinca: 1, idParcela: 2, volumenAguaUtilizado: "0.5", estadoTuberiasYAccesorios: "Regular", uniformidadRiego: "Mala", estadoAspersores: "Malo", estadoCanalesRiego: "Regular", nivelFreatico: "Medio", estado: "Inactivo" },
+        // Agrega más datos de prueba según sea necesario
+    ];
 
 
     useEffect(() => {
@@ -83,14 +79,14 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                     });
 
                 setParcelas(parcelas);
-                //se obtienen la rotacion de cultivos para despues poder filtrarlos
-                const rotacionCultivosResponse = await ObtenerRotacionCultivoSegunEstacionalidad();
+                //se obtienen la conductividad  para despues poder filtrarlos
+                const conductividadElectricaResponse = await ObtenerConductividadElectricaEstresHidrico();
                 //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = rotacionCultivosResponse.map((item) => ({
+                const filteredData = conductividadElectricaResponse.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
-
+                setOriginalApiData(conductividadElectricaResponse);
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -124,8 +120,8 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         setSelectedParcela('Seleccione una Parcela')
         //se obtienen las parcelas de la finca seleccionada
         obtenerParcelasPorFinca(fincaId);
-        ///se obtienen la rotacion de cultivos de la finca seleccionada
-        obtenerRotacionCultivosPorRotacionPorFinca(fincaId);
+        ///se obtienen la conductividad electrica del suelo de la finca seleccionada
+        obtenerConductividadElectricaSueloPorRotacionPorFinca(fincaId);
     };
 
     //funcion para la accion del dropdown parcela
@@ -136,45 +132,45 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar los rotacion de cultivos
+        //si finca Id es null no se puede seleciona ni traer el y mostrar la conductividad electrica del suelo
         if (fincaId !== null) {
 
-            obtenerRotacionCultivosPorFincaYParcela(fincaId, parcelaId);
+            obtenerConductividadElectricaSueloPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
         }
     };
 
-
-    const obtenerRotacionCultivosPorRotacionPorFinca = async (fincaId: number) => {
+    // filtra los datos de conductividad electrica del suelo
+    const obtenerConductividadElectricaSueloPorRotacionPorFinca = async (fincaId: number) => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId)
-            setRotacionCultivos(rotacionCultivosFiltrado)
+            setConductividadElecticaSuelo(rotacionCultivosFiltrado)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
-    const obtenerRotacionCultivosPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
+
+    // filtra los datos de la conductividad electrica del suelo por finca y parcela
+    const obtenerConductividadElectricaSueloPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
 
-            setRotacionCultivos(rotacionCultivosFiltrado);
+            setConductividadElecticaSuelo(rotacionCultivosFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
-
-
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#274c48'} />
-                <AddButtonComponent screenName={ScreenProps.InsertCropRotation.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.HidricMenu.screenName} color={'#274c48'} />
+                {/* <AddButtonComponent screenName={ScreenProps.InsertIrrigationEfficiency.screenName} color={'#274c48'} /> */}
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de rotación de cultivos</Text>
+                    {/* <Text style={styles.textAbove} >Lista de conductividad eléctrica del suelo</Text> */}
                 </View>
 
                 <View style={styles.dropDownContainer}>
@@ -208,13 +204,9 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                 </View> */}
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {rotacionCultivos.map((item, index) => ( // Cambiar rotacionCultivos por rotacionCultivosFiltradosData
-                        <TouchableOpacity key={item.idRotacionCultivoSegunEstacionalidad} onPress={() => handleRectanglePress(
-                            item.idRotacionCultivoSegunEstacionalidad, item.idFinca, item.idParcela,
-                            item.cultivo, item.epocaSiembra, item.tiempoCosecha, item.cultivoSiguiente,
-                            item.epocaSiembraCultivoSiguiente, item.estado
-                        )}>
-                            <CustomRectangle
+                    {conductividadElecticaSuelo.map((item, index) => (
+                        <TouchableOpacity key={item.idConductividadElectrica} onPress={() => { }}>
+                            <CustomRectangleElectric
                                 key={item.idFinca}
                                 data={processData([item], keyMapping)?.data || []} />
                         </TouchableOpacity>

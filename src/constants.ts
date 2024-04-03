@@ -34,17 +34,25 @@ export const ScreenProps = {
     ListLandPreparation: { screenName: 'ListaPreparacionTerrenoScreen' },
     RegisterLandPreparation: { screenName: 'RegistrarPreparacionTerrenoScreen' },
     ModifyLandPreparation: { screenName: 'ModificarPreparacionTerrenoScreen' },
-    ListProductivity: { screenName: 'ListaProductividadScreen'},
-    RegisterProductivity: { screenName: 'RegistrarProductividadScreen'},
-    ModifyProductivity: { screenName: 'ModificarProductividadScreen'},
+    ListProductivity: { screenName: 'ListaProductividadScreen' },
+    RegisterProductivity: { screenName: 'RegistrarProductividadScreen' },
+    ModifyProductivity: { screenName: 'ModificarProductividadScreen' },
     ResidueList: { screenName: 'ListaManejoResiduosScreen' },
     RegisterResidue: { screenName: 'RegistrarResiduosScreen' },
     ModifyResidue: { screenName: 'ModificarResiduosScreen' },
+    HidricMenu: { screenName: 'MenuHidricoScreen' },
+    WatchListWaterScreen: { screenName: 'ListaSeguimientoAguaScreen' },
+    RegisterUseWaterScreen: { screenName: 'RegistrarUsoAguaScreen' },
+    ModifyUseWatterScreen: { screenName: 'ModificarUsoAguaScreen' },
+    ListIrrigationEfficiency: { screenName: 'ListIrrigationEfficiency' },
+    InsertIrrigationEfficiency: { screenName: 'InsertIrrigationEfficiency' },
+    ModifyIrrigationEfficiency: { screenName: 'ModifyIrrigationEfficiency' },
+    ListSoilElectricalConductivity: { screenName: 'ListSoilElectricalConductivity' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.100.28';
+export const IP_API = '192.168.0.11';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -53,7 +61,7 @@ export const Company_Props = [
     //Usuarios
     { id: 1, iconImage: require('./assets/images/icons/suelos.png'), text: 'Suelos', screen: ScreenProps.MenuFloor.screenName },
     { id: 2, iconImage: require('./assets/images/icons/cultivos.png'), text: 'Cultivos', screen: ScreenProps.AdminCrops.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: '' },
+    { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: ScreenProps.HidricMenu.screenName },
     { id: 4, iconImage: require('./assets/images/icons/clima.png'), text: 'Clima', screen: '' },
     { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: '' },
     { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: '' },
@@ -77,7 +85,7 @@ export const Company_Props = [
 
 export const Admin_cultivation = [
     { id: 1, iconImage: require('./assets/images/icons/rotacion-cultivos.png'), text: 'Rotación de cultivos según estacionalidad', screen: ScreenProps.CropRotationList.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo', screen: ScreenProps.ListProductivity.screenName},
+    { id: 2, iconImage: require('./assets/images/icons/productividad.png'), text: 'Productividad de cultivo', screen: ScreenProps.ListProductivity.screenName },
     { id: 3, iconImage: require('./assets/images/icons/montana.png'), text: 'Preparación del terreno y prácticas de conservación', screen: ScreenProps.ListLandPreparation.screenName },
     { id: 4, iconImage: require('./assets/images/icons/historial.png'), text: 'Historial de manejo  de residuos de la finca', screen: ScreenProps.ResidueList.screenName },
 ]
@@ -86,4 +94,13 @@ export const Admin_suelo = [
     { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de Fertilizantes', screen: ScreenProps.ListFertilizer.screenName },
     { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
     { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
+]
+
+
+export const Admin_hidrico = [
+    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Seguimiento del agua', screen: ScreenProps.WatchListWaterScreen.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/eficiencia-riego.png'), text: 'Monitoreo de la eficiencia de riego', screen: ScreenProps.ListIrrigationEfficiency.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/destello.png'), text: 'Conductividad eléctrica del suelo', screen: ScreenProps.ListSoilElectricalConductivity.screenName },
+    // { id: 2, iconImage: require('./assets/images/icons/suelo.png'), t ext: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
+    // { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
 ]

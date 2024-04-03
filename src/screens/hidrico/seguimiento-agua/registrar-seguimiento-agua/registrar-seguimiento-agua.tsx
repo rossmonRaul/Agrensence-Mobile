@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-preparacion-terreno.styles';
+import { styles } from './registrar-seguimiento-agua.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../../../../constants';
 import { useAuth } from '../../../../hooks/useAuth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
-//import { InsertarManejoFertilizantes } from '../../../../servicios/ServicioFertilizantes';
-import { InsertarPreparacionTerrenos } from '../../../../servicios/ServicioPreparacionTerreno';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
@@ -17,9 +14,10 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { FontAwesome } from '@expo/vector-icons';
 
+import { CrearRegistroSeguimientoUsoAgua } from '../../../../servicios/ServicioUsoAgua';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-
-export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
+export const RegistrarUsoAguaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
@@ -29,9 +27,10 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
+    const [isSecondFormVisible, setSecondFormVisible] = useState(false);
+
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(new Date())
-    const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -39,8 +38,9 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
         idParcela: selectedParcela,
         fecha: '',
         actividad: '',
-        maquinaria: '',
-        observaciones: '',
+        caudal: '',
+        consumoAgua: '',
+        observaciones: ''
     });
 
 
@@ -51,44 +51,57 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
             [key]: value
         }));
     };
+
+    //todo esto es parte del formato de la fecha
+
+
+    //se formatea la fecha para que tenga el formato de español
+    const formatSpanishDate = (date) => {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString().slice(-2);
+
+        return `${day}/${month}/${year}`;
+    };
+
+    const toggleDatePicker = () => {
+        setShowPicker(!showPicker);
+    }
+
+
+    //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
+    const formatDate = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString();
+
+        return `${year}-${month}-${day}`;
+    };
+
+    //se captura el evento de datetimepicker
+    const onChange = ({ type }, selectedDate) => {
+        if (type === "set" && selectedDate instanceof Date) {
+            const formattedDate = formatSpanishDate(selectedDate);
+            setDate(selectedDate);
+            updateFormulario('fecha', formattedDate);
+            if (Platform.OS === "android") {
+                toggleDatePicker();
+            }
+        } else {
+            toggleDatePicker();
+        }
+    };
+
+    //en el caso de ser ios poder capturar la fecha
+    const confirmIOSDate = () => {
+        toggleDatePicker();
+        updateFormulario('fecha', formatSpanishDate(date));
+        setDate(date)
+    }
+
+
     const validateFirstForm = () => {
         let isValid = true;
-
-        if (!formulario.fecha && !formulario.actividad && !formulario.maquinaria) {
-            alert('Por favor rellene el formulario');
-            isValid = false;
-            return
-        }
-        if (!formulario.fecha) {
-            alert('Ingrese una fecha');
-            isValid = false;
-            return
-        }
-        if (!formulario.actividad) {
-            alert('Ingrese una actividad');
-            isValid = false;
-            return
-        }
-        if (!formulario.maquinaria) {
-            alert('Ingrese alguna maquinaria');
-            isValid = false;
-            return
-        }
-       
-        return isValid
-    }
-    // Se defina una función para manejar el registro del identificacion
-    const handleRegister = async () => {
-
-        if (!formulario.observaciones) {
-            alert('Por favor rellene el formulario');
-            return
-        }
-
-        if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
-            return
-        }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             alert('Ingrese la Finca');
@@ -98,28 +111,78 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
             alert('Ingrese la Parcela');
             return
         }
+        if (!formulario.fecha) {
+            alert('Ingrese una fecha valida');
+            isValid = false;
+            return
+        }
+        if (!formulario.actividad) {
+            alert('Ingrese una actividad');
+            isValid = false;
+            return
+        }
+
+        if (!formulario.idFinca && !formulario.idParcela &&
+            !formulario.actividad && !formulario.fecha) {
+            alert('Por favor rellene el formulario');
+            isValid = false;
+            return
+        }
+
+        return isValid
+    }
+
+    // Se defina una función para manejar el registro cuando le da al boton de guardar
+    const handleRegister = async () => {
+
+        if (!formulario.caudal && !formulario.caudal && !formulario.observaciones) {
+            alert('Por favor rellene el formulario');
+            return
+        }
+
+        if (!formulario.caudal) {
+            alert('Ingrese el caudal');
+            return
+        }
+        if (!formulario.consumoAgua) {
+            alert('Ingrese el consumo del agua');
+            return
+        }
+
+        if (!formulario.observaciones) {
+            alert('Ingrese las observaciones');
+            return
+        }
+
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
             fecha: formatDate(),
             actividad: formulario.actividad,
-            maquinaria: formulario.maquinaria,
+            caudal: formulario.caudal,
+            consumoAgua: formulario.consumoAgua,
             observaciones: formulario.observaciones,
-            usuarioCreacionModificacion: userData.identificacion,
-
+            usuarioCreacion: userData.identificacion
         };
-        
-        //  Se ejecuta el servicio de isertar el manejo de fertilizante
-        const responseInsert = await InsertarPreparacionTerrenos(formData);
-        
+
+        console.log('formData')
+        console.log(formData)
+        console.log('formData')
+        //  Se ejecuta el servicio de insertar registro de seguimiento del uso del agua
+        const responseInsert = await CrearRegistroSeguimientoUsoAgua(formData);
+
+        console.log('responseInsert')
+        console.log(responseInsert)
+        console.log('responseInsert')
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo la preparación de terreno correctamente!', '', [
+            Alert.alert('¡Se registró el uso de agua correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminCrops.screenName as never);
+                        navigation.navigate(ScreenProps.HidricMenu.screenName as never);
                     },
                 },
             ]);
@@ -151,7 +214,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                     idParcela: item.idParcela,
                     nombre: item.nombreParcela,
                 }));
-                
+
                 setParcelas(parcelasUnicas);
 
             } catch (error) {
@@ -163,9 +226,8 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            
             const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
-            
+
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -174,52 +236,10 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     const handleFincaChange = (item: { label: string; value: string }) => {
         const fincaId = parseInt(item.value, 10);
         setSelectedFinca(item.value);
-
+        updateFormulario('idParcela', '')
         setSelectedParcela('Seleccione una Parcela')
         obtenerParcelasPorFinca(fincaId);
     };
-
-    //se formatea la fecha para que tenga el formato de español
-    const formatSpanishDate = (date) => {
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear().toString().slice(-2);
-
-        return `${day}/${month}/${year}`;
-    };
-
-    //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
-    const formatDate = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear().toString();
-
-        return `${year}-${month}-${day}`;
-    };
-
-    const toggleDatePicker = () => {
-        setShowPicker(!showPicker);
-    }
-    //se captura el evento de datetimepicker
-    const onChange = ({ type }, selectedDate) => {
-        if (type === "set" && selectedDate instanceof Date) {
-            const formattedDate = formatSpanishDate(selectedDate);
-            setDate(selectedDate);
-            updateFormulario('fecha', formattedDate);
-            if (Platform.OS === "android") {
-                toggleDatePicker();
-            }
-        } else {
-            toggleDatePicker();
-        }
-    };
-
-    //en el caso de ser ios poder capturar la fecha
-    const confirmIOSDate = () => {
-        toggleDatePicker();
-        updateFormulario('fecha', formatSpanishDate(date));
-        setDate(date)
-    }
 
     return (
         <View style={styles.container}>
@@ -233,17 +253,47 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.HidricMenu.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Preparación de Terrenos</Text>
+                            <Text style={styles.createAccountText} >Seguimiento del uso del agua</Text>
                         </View>
 
                         <View style={styles.formContainer}>
-                            {!isSecondFormVisible ? (
+                            {!isSecondFormVisible && (
                                 <>
+                                    <Text style={styles.formText} >Finca</Text>
+                                    {/* Dropdown para Fincas */}
+                                    <DropdownComponent
+                                        placeholder="Seleccione una Finca"
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={selectedFinca}
+                                        iconName="map-marker"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la finca
+                                            handleFincaChange(selectedItem);
+
+                                            // Actualizar el formulario con la selección de la finca
+                                            updateFormulario('idFinca', selectedItem.value);
+                                        }}
+                                    />
+                                    <Text style={styles.formText} >Parcela</Text>
+                                    {/* Dropdown para Parcelas */}
+                                    <DropdownComponent
+                                        placeholder="Seleccione una Parcela"
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                        value={selectedParcela}
+                                        iconName="map-marker"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la parcela
+                                            setSelectedParcela(selectedItem.value);
+
+                                            // Actualizar el formulario con la selección de la parcela
+                                            updateFormulario('idParcela', selectedItem.value);
+                                        }}
+                                    />
 
                                     <Text style={styles.formText}>Fecha</Text>
 
@@ -314,19 +364,14 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
 
                                         </View>
                                     )}
-                                    <Text style={styles.formText} >Actividad </Text>
+                                    <Text style={styles.formText} >Actividad</Text>
                                     <TextInput
-                                        style={styles.input}
-                                        placeholder="Actividad "
-                                        value={formulario.actividad }
+                                        style={styles.inputMultiline}
+                                        placeholder="Actividad"
+                                        value={formulario.actividad}
                                         onChangeText={(text) => updateFormulario('actividad', text)}
-                                    />
-                                    <Text style={styles.formText} >Maquinaria</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="maquinaria"
-                                        value={formulario.maquinaria}
-                                        onChangeText={(text) => updateFormulario('maquinaria', text)}
+                                        multiline
+                                        numberOfLines={5}
                                     />
                                     <TouchableOpacity
                                         style={styles.button}
@@ -342,9 +387,32 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         <Text style={styles.buttonText}>Siguiente</Text>
                                     </TouchableOpacity>
                                 </>
+                            )}
 
-                            ) : (
+                            {isSecondFormVisible && (
                                 <>
+                                    <Text style={styles.formText} >Caudal (L/s)</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Calidad del Agua"
+                                        value={formulario.caudal}
+                                        onChangeText={(text) => {
+                                            const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
+                                            updateFormulario('caudal', numericText);
+                                        }}
+                                        keyboardType="numeric"
+                                    />
+                                    <Text style={styles.formText} >Consumo de agua(m3)</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Consumo de agua"
+                                        value={formulario.consumoAgua}
+                                        onChangeText={(text) => {
+                                            const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
+                                            updateFormulario('consumoAgua', numericText);
+                                        }}
+                                        keyboardType="numeric"
+                                    />
                                     <Text style={styles.formText} >Observaciones</Text>
                                     <TextInput
                                         style={styles.inputMultiline}
@@ -354,42 +422,11 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-
-                                    <Text style={styles.formText} >Finca</Text>
-                                    {/* Dropdown para Fincas */}
-                                    <DropdownComponent
-                                        placeholder="Seleccione una Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
-                                        value={selectedFinca}
-                                        iconName="map-marker"
-                                        onChange={(selectedItem) => {
-                                            // Manejar el cambio en la selección de la finca
-                                            handleFincaChange(selectedItem);
-
-                                            // Actualizar el formulario con la selección de la finca
-                                            updateFormulario('idFinca', selectedItem.value);
-                                        }}
-                                    />
-                                    <Text style={styles.formText} >Parcela</Text>
-                                    {/* Dropdown para Parcelas */}
-                                    <DropdownComponent
-                                        placeholder="Seleccione una Parcela"
-                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
-                                        value={selectedParcela}
-                                        iconName="map-marker"
-                                        onChange={(selectedItem) => {
-                                            // Manejar el cambio en la selección de la parcela
-                                            setSelectedParcela(selectedItem.value);
-
-                                            // Actualizar el formulario con la selección de la parcela
-                                            updateFormulario('idParcela', selectedItem.value);
-                                        }}
-                                    />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
                                             style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
                                             onPress={() => {
-                                                setSecondFormVisible(false);
+                                                setSecondFormVisible(false)
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -410,7 +447,12 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         </TouchableOpacity>
                                     </View>
                                 </>
+
+
                             )}
+
+
+
 
                         </View>
                     </ScrollView>

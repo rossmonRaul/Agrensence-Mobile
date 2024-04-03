@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-rotacion-cultivo.styles';
+import { styles } from './lista-monitoreo-eficiencia-riego.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../../servicios/ServicioFinca';
@@ -13,17 +13,20 @@ import { useAuth } from '../../../../hooks/useAuth';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
-import { ObtenerRotacionCultivoSegunEstacionalidad } from '../../../../servicios/ServicioCultivos';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
-export const ListaRotacionCultivosScreen: React.FC = () => {
+import { ObtenerEficienciaRiego } from '../../../../servicios/ServicioUsoAgua';
+
+export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const [rotacionCultivos, setRotacionCultivos] = useState<any[]>([]);
+
+    const [originalApiData, setOriginalApiData] = useState<any[]>([]);
+    const [eficienciaRiego, setEficienciaRiego] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
@@ -33,24 +36,38 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
 
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
-        'Cultivo': 'cultivo',
-        'Epoca siembra': 'epocaSiembra',
-        'Tiempo siembra': 'tiempoCosecha',
-        'Cultivo siembra': 'cultivoSiguiente',
-        'Epoca siguiente de siembra': 'epocaSiembraCultivoSiguiente',
+        'Volumen de agua utilizado': 'volumenAguaUtilizado',
+        'Fugas': 'estadoTuberiasYAccesorios',
+        'Uniformidad del riego': 'uniformidadRiego',
+        'Estado de los aspersores': 'estadoAspersores',
+        'Estado de canales de riego': 'estadoCanalesRiego',
+        'Nivel freático': 'nivelFreatico',
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idRotacionCultivoSegunEstacionalidad: string, idFinca: string, idParcela: string, cultivo: string,
-        epocaSiembra: string, tiempoCosecha: string, cultivoSiguiente: string,
-        epocaSiembraCultivoSiguiente: string, estado: string) => {
-        navigation.navigate(ScreenProps.ModifyCropRotation.screenName, {
-            idRotacionCultivoSegunEstacionalidad: idRotacionCultivoSegunEstacionalidad, idFinca: idFinca, idParcela: idParcela,
-            cultivo: cultivo, epocaSiembra: epocaSiembra, tiempoCosecha: tiempoCosecha, cultivoSiguiente: cultivoSiguiente,
-            epocaSiembraCultivoSiguiente: epocaSiembraCultivoSiguiente, estado: estado
-        });
-    };
+    const handleRectanglePress = (idMonitoreoEficienciaRiego: string, idFinca: string, idParcela: string, estado: string) => {
+        // Encuentra el elemento correspondiente en los datos originales utilizando el ID único
+        const originalDataItem = originalApiData.find(item => item.idMonitoreoEficienciaRiego === idMonitoreoEficienciaRiego);
 
+        if (originalDataItem) {
+            // Si se encuentra el elemento correspondiente, puedes acceder a sus propiedades directamente
+            navigation.navigate(ScreenProps.ModifyIrrigationEfficiency.screenName, {
+                idMonitoreoEficienciaRiego: originalDataItem.idMonitoreoEficienciaRiego,
+                idFinca: idFinca,
+                volumenAguaUtilizado: originalDataItem.volumenAguaUtilizado,
+                estadoTuberiasYAccesorios: originalDataItem.estadoTuberiasYAccesorios,
+                uniformidadRiego: originalDataItem.uniformidadRiego,
+                estadoAspersores: originalDataItem.estadoAspersores,
+                estadoCanalesRiego: originalDataItem.estadoCanalesRiego,
+                nivelFreatico: originalDataItem.nivelFreatico,
+                idParcela: idParcela,
+                estado: estado
+            });
+        } else {
+            // Maneja el caso en el que no se encuentra el elemento correspondiente
+            console.error('No se encontró el elemento correspondiente en los datos originales.');
+        }
+    };
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -83,14 +100,18 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                     });
 
                 setParcelas(parcelas);
-                //se obtienen la rotacion de cultivos para despues poder filtrarlos
-                const rotacionCultivosResponse = await ObtenerRotacionCultivoSegunEstacionalidad();
+                //se obtienen el monitoreo eficiencia riego para despues poder filtrarlos
+                const rotacionCultivosResponse = await ObtenerEficienciaRiego();
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = rotacionCultivosResponse.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+                    estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No se encontraron fugas' : 'Se encontraron fugas',
+                    uniformidadRiego: item.uniformidadRiego === false ? 'No se observa uniformidad' : 'Se observa uniformidad',
+                    estadoAspersores: item.estadoAspersores === false ? 'No estan obstruidos' : 'Estan obstruidos',
+                    estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No se encuentran malezas u obstrucciones' : 'Se encuentran malezas u obstrucciones',
                 }));
-
+                setOriginalApiData(rotacionCultivosResponse);
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -124,8 +145,8 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         setSelectedParcela('Seleccione una Parcela')
         //se obtienen las parcelas de la finca seleccionada
         obtenerParcelasPorFinca(fincaId);
-        ///se obtienen la rotacion de cultivos de la finca seleccionada
-        obtenerRotacionCultivosPorRotacionPorFinca(fincaId);
+        ///se obtienen el monitoreo eficiencia riego de la finca seleccionada
+        obtenerMonitoreoEficienciaRiegoPorRotacionPorFinca(fincaId);
     };
 
     //funcion para la accion del dropdown parcela
@@ -136,32 +157,34 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar los rotacion de cultivos
+        //si finca Id es null no se puede seleciona ni traer el y mostrar el monitoreo eficiencia riego
         if (fincaId !== null) {
 
-            obtenerRotacionCultivosPorFincaYParcela(fincaId, parcelaId);
+            obtenerMonitoreoEficienciaRiegoPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
         }
     };
 
-
-    const obtenerRotacionCultivosPorRotacionPorFinca = async (fincaId: number) => {
+    // filtra los datos de el monitoreo eficiencia riego por finca
+    const obtenerMonitoreoEficienciaRiegoPorRotacionPorFinca = async (fincaId: number) => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId)
-            setRotacionCultivos(rotacionCultivosFiltrado)
+            setEficienciaRiego(rotacionCultivosFiltrado)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
-    const obtenerRotacionCultivosPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
+
+    // filtra los datos de el monitoreo eficiencia riego por finca y parcela
+    const obtenerMonitoreoEficienciaRiegoPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
 
-            setRotacionCultivos(rotacionCultivosFiltrado);
+            setEficienciaRiego(rotacionCultivosFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -171,10 +194,10 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#274c48'} />
-                <AddButtonComponent screenName={ScreenProps.InsertCropRotation.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.HidricMenu.screenName} color={'#274c48'} />
+                <AddButtonComponent screenName={ScreenProps.InsertIrrigationEfficiency.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de rotación de cultivos</Text>
+                    <Text style={styles.textAbove} >Lista de monitoreo eficiencia de riego</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
@@ -208,11 +231,9 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                 </View> */}
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {rotacionCultivos.map((item, index) => ( // Cambiar rotacionCultivos por rotacionCultivosFiltradosData
-                        <TouchableOpacity key={item.idRotacionCultivoSegunEstacionalidad} onPress={() => handleRectanglePress(
-                            item.idRotacionCultivoSegunEstacionalidad, item.idFinca, item.idParcela,
-                            item.cultivo, item.epocaSiembra, item.tiempoCosecha, item.cultivoSiguiente,
-                            item.epocaSiembraCultivoSiguiente, item.estado
+                    {eficienciaRiego.map((item, index) => (
+                        <TouchableOpacity key={item.idMonitoreoEficienciaRiego} onPress={() => handleRectanglePress(
+                            item.idMonitoreoEficienciaRiego, item.idFinca, item.idParcela, item.estado
                         )}>
                             <CustomRectangle
                                 key={item.idFinca}

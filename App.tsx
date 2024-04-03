@@ -45,6 +45,14 @@ import { RegistrarPreparacionTerrenoScreen } from './src/screens/cultivos/prepar
 import { ListaManejoResiduosScreen } from './src/screens/cultivos/manejo-residuos/lista-manejo-residuos/lista-manejo-residuos';
 import { RegistrarResiduosScreen } from './src/screens/cultivos/manejo-residuos/registrar-manejo-residuos/registrar-manejo-residuos';
 import { ModificarResiduosScreen } from './src/screens/cultivos/manejo-residuos/modificar-manejo-residuos/modificar-manejo-residuos';
+import { MenuHidricoScreen } from './src/screens/hidrico/menu-hidrico/menu-hidrico';
+import { ListaSeguimientoAguaScreen } from './src/screens/hidrico/seguimiento-agua/lista-seguimiento-agua/lista-seguimiento-agua';
+import { RegistrarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/registrar-seguimiento-agua/registrar-seguimiento-agua';
+import { ModificarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/modificar-seguimiento-agua/modificar-seguimiento-agua';
+import { ListaMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/lista-monitoreo-eficiencia-riego/lista-monitoreo-eficiencia-riego';
+import { InsertarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego';
+import { ModificarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego';
+import { ListaConductividadElectricaSueloScreen } from './src/screens/hidrico/conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -180,6 +188,14 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ResidueList.screenName} component={ListaManejoResiduosScreen} />
           <Stack.Screen name={ScreenProps.RegisterResidue.screenName} component={RegistrarResiduosScreen} />
           <Stack.Screen name={ScreenProps.ModifyResidue.screenName} component={ModificarResiduosScreen} />
+          <Stack.Screen name={ScreenProps.HidricMenu.screenName} component={MenuHidricoScreen} />
+          <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
+          <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
+          <Stack.Screen name={ScreenProps.ModifyUseWatterScreen.screenName} component={ModificarUsoAguaScreen} />
+          <Stack.Screen name={ScreenProps.ListIrrigationEfficiency.screenName} component={ListaMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.InsertIrrigationEfficiency.screenName} component={InsertarMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.ModifyIrrigationEfficiency.screenName} component={ModificarMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.ListSoilElectricalConductivity.screenName} component={ListaConductividadElectricaSueloScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
