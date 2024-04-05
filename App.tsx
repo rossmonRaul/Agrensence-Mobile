@@ -53,6 +53,8 @@ import { ListaMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monit
 import { InsertarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego';
 import { ModificarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego';
 import { ListaConductividadElectricaSueloScreen } from './src/screens/hidrico/conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo';
+import { AdministracionClima } from "./src/screens/administacion-clima/administacion-clima";
+import { ListaPronosticoMeteorologico } from './src/screens/clima/pronostico-meteorologico/lista-pronostico-meteorologico/lista-pronostico-meteorologico';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -196,6 +198,12 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.InsertIrrigationEfficiency.screenName} component={InsertarMonitoreoEficienciaRiegoScreen} />
           <Stack.Screen name={ScreenProps.ModifyIrrigationEfficiency.screenName} component={ModificarMonitoreoEficienciaRiegoScreen} />
           <Stack.Screen name={ScreenProps.ListSoilElectricalConductivity.screenName} component={ListaConductividadElectricaSueloScreen} />
+
+          <Stack.Screen name={ScreenProps.AdminWeather.screenName} component={AdministracionClima} />
+          <Stack.Screen name={ScreenProps.WatchWeather.screenName} component={ListaPronosticoMeteorologico} />
+          
+
+          
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
