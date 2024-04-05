@@ -458,7 +458,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                                 styles.pickerButton,
                                                 { backgroundColor: "#11182711" },
                                             ]}
-                                                onPress={confirmIOSDate}
+                                                onPress={() => confirmIOSDate('siembra')}
                                             >
 
                                                 <Text style={[
