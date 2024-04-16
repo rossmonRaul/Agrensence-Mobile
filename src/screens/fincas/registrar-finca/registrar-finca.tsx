@@ -21,6 +21,7 @@ export const RegistrarFincaScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         nombre: '',
+        ubicacion: '',
         idEmpresa: userData.idEmpresa,
     });
 
@@ -36,7 +37,7 @@ export const RegistrarFincaScreen: React.FC = () => {
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
 
-        if (!formulario.nombre && !formulario.idEmpresa) {
+        if (!formulario.nombre && !formulario.ubicacion && !formulario.idEmpresa) {
             alert('Por favor rellene el formulario');
             return
         }
@@ -44,9 +45,15 @@ export const RegistrarFincaScreen: React.FC = () => {
             alert('Ingrese un nombre');
             return
         }
+
+        if (!formulario.ubicacion) {
+            alert('Ingrese una ubicacion');
+            return
+        }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             nombre: formulario.nombre,
+            ubicacion:formulario.ubicacion,
             idEmpresa: formulario.idEmpresa,
         };
 
@@ -97,6 +104,13 @@ export const RegistrarFincaScreen: React.FC = () => {
                                     placeholder="Nombre de la Finca"
                                     value={formulario.nombre}
                                     onChangeText={(text) => updateFormulario('nombre', text)}
+                                />
+                                <Text style={styles.formText} >Ubicación</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Ubicación de la Finca"
+                                    value={formulario.ubicacion}
+                                    onChangeText={(text) => updateFormulario('ubicacion', text)}
                                 />
                                 <TouchableOpacity
                                     style={styles.button}

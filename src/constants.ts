@@ -107,6 +107,6 @@ export const Admin_hidrico = [
 ]
 
 export const Admin_clima = [
-    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Pronostico Meteorologico', screen: ScreenProps.WatchWeather.screenName }
+    { id: 1, iconImage: require('./assets/images/icons/weather.png'), text: 'Pronóstico Meteorológico', screen: ScreenProps.WatchWeather.screenName }
     // { id: 4, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
 ]

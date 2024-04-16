@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, TouchableOpacity, Text, TextInput } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, TextInput, Button, StyleSheet, Image  } from 'react-native';
 import { styles } from './lista-pronostico-meteorologico.style'
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,155 +16,129 @@ import { WebView } from 'react-native-webview';
 //import { ObtenerManejoResiduos } from '../../../../servicios/ServicioResiduos';
 //import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 
-import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import { ObtenerFincasUbicacionPorIdEmpresa, ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
+
+const API_WEATHER = `http://api.weatherapi.com/v1/current.json?key=19d59db408fe401f928191944240504&lang=es&q=`;
 
 export const ListaPronosticoMeteorologico: React.FC = () => {
-    // const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    // const { userData } = useAuth();
-    // const [parcelas, setParcelas] = useState<{ idParcela: number }[] | []>([]);
-    // const [apiData, setApiData] = useState<residueDataInterface[]>([]);
-    // const [residuosFiltradosData, setResiduosFiltradosData] = useState<any[]>([]);
-    // const [residuos, setResiduos] = useState<any[]>([]);
+    const { userData } = useAuth();
+    const [city, setCity] = useState('');
+    const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
+    const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
+    const [error, setError] = useState({
+      error: false,
+      message: '',
+    });
+    const [loading, setLoading] = useState(false);
+    const [weather, setWeather] = useState({
+      city: '',
+      country: '',
+      temperature: 0,
+      condition: '',
+      conditionText: '',
+      icon: '',
+    });
+  
+    useEffect(() => {
+      const obtenerDatosIniciales = async () => {
+          // Lógica para obtener datos desde la API
+          const formData = {idEmpresa  : userData.idEmpresa};
+  
+          try {
+              const datosInicialesObtenidos = await ObtenerFincasUbicacionPorIdEmpresa(formData);
+              
 
-    // //para poder hacer el filtro de los datos del api
-    // useEffect(() => {
-    //     // Obtener los IDs de las parcelas del usuario
-    //     const idParcelasUsuario = parcelas.map(parcela => parcela.idParcela);
-    
-    //     // Filtrar las residuosFiltradas por los IDs de las parcelas del usuario
-    //     const residuosfiltradas = apiData.filter(item => idParcelasUsuario.includes(item.idParcela));
-        
-    //     // Actualizar el estado con las residuos filtradas
-    //     setResiduosFiltradosData(residuosfiltradas);
-    //     setResiduos(residuosfiltradas)
-    // }, [apiData, parcelas]);
-    
-
-    // useEffect(() => {
-    //     const obtenerDatosIniciales = async () => {
-    //         // Lógica para obtener datos desde la API
-    //         const formData = { identificacion: userData.identificacion };
-    //         try {
-
-    //             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                
-    //             const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
-    //                 .filter(item => item !== undefined)
-    //                 .map(item => item!.idParcela)))
-    //                 .map(idParcela => {
-    //                     const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-    //                     const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-    //                     return { idParcela, nombreParcela };
-    //                 });
-    //             setParcelas(parcelasUnicas)   
-    //             const medicionesSuelo = await ObtenerManejoResiduos();
-    //             //si es 0 es inactivo sino es activo resetea los datos
-    //             const filteredData = medicionesSuelo.map((item) => ({
-    //                 ...item,
-    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-    //             }));
-    //             setApiData(filteredData);
-    //         } catch (error) {
-    //             console.error('Error fetching data:', error);
-    //         }
-    //     };
-
-    //     obtenerDatosIniciales();
-    // }, [userData.identificacion]);
-
-
-    // //  Se hace el mapeo segun los datos que se ocupen en el formateo
-    // const keyMapping = {
-    //     'Usuario' : 'usuario',
-    //     'Residuo': 'residuo',
-    //     'Fecha Generacion': 'fechaGeneracion',
-    //     'Fecha Manejo': 'fechaManejo',
-    //     'Destino': 'destinoFinal',
-    //     'Cantidad(kg)': 'cantidad',
-    //     'Accion Manejo': 'accionManejo',
-    //     'Finca': 'finca',
-    //     'Parcela': 'parcela',
-    //     'Estado': 'estado'
-    // };
+              setFincas(datosInicialesObtenidos);
+              
+  
+             
+          } catch (error) {
+              console.error('Error fetching data:', error);
+          }
+      };
+  
+      obtenerDatosIniciales();
+  }, []);
 
 
 
-    // //funcion para enviarlo a modificar residuo
-    // const handleRectanglePress = (idManejoResiduos: number, residuo: string,fechaGeneracion: string,
-    //     fechaManejo:string, cantidad: number, accionManejo: string, destinoFinal: string, idFinca: number, idParcela: number,
-    //     estado: string) => {
-
-    //     navigation.navigate(ScreenProps.ModifyResidue.screenName, {idManejoResiduos:idManejoResiduos, residuo:residuo,
-    //         fechaGeneracion:fechaGeneracion,fechaManejo:fechaManejo,cantidad:cantidad,accionManejo:accionManejo,destinoFinal:destinoFinal,
-    //         idFinca:idFinca,idParcela:idParcela, estado: estado
-    //     });
-    // };
-    // //funcion para poder buscar de acuerdo a al usuario, finca o parcela
-    // const handleSearch = (query: string) => {
-    //     const lowercaseQuery = query.toLowerCase();
-
-    //     const filteredData = residuosFiltradosData.filter((item) => {
-    //         return (
-    //             item.usuario.toLowerCase().includes(lowercaseQuery) ||
-    //             item.parcela.toLowerCase().includes(lowercaseQuery) ||
-    //             item.finca.toLowerCase().includes(lowercaseQuery)
-    //         );
-    //     });
-    //     setResiduos(filteredData);
-    // };
+    function quitarTildes(texto:any) {
+      return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+  
+    const handleFincaChange = async (item: { label: string; value: string }) => {
+      const fincaId = parseInt(item.value, 10);
+      //se selecciona el item de finca
+      setSelectedFinca(item.value);
+      const ubicacion=quitarTildes(item.value);
 
 
+      setError({ error: false, message: '' });
+      setLoading(true);
+     
+  
+      try {
+        const res = await fetch(API_WEATHER + ubicacion+' CR');
+        const data = await res.json();
+  
+        if (data.error) {
+          throw { message: data.error.message };
+        }
+  
+        setWeather({
+          city: data.location.name,
+          country: data.location.country,
+          temperature: data.current.temp_c,
+          condition: data.current.condition.code,
+          conditionText: data.current.condition.text,
+          icon: "https:"+data.current.condition.icon,
+        });
+
+      } catch (error:any) {
+        setError({ error: true, message: error.message });
+      } finally {
+        setLoading(false);
+      }
+           
+  };
+
+
+  
     return (
-        <View style={styles.container} >
-
-            <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.AdminWeather.screenName} color={'#274c48'} />
+      <View style={styles.listcontainer}>
+      <BackButtonComponent screenName={ScreenProps.AdminWeather.screenName} color={'#274c48'} />
                 {/* <AddButtonComponent screenName={ScreenProps.RegisterResidue.screenName} color={'#274c48'} /> */}
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Pronostico Meteorologico</Text>
+                    {/* <Text style={styles.textAbove} >Pronostico Meteorologico</Text> */}
                 </View>
-
-                {/* <View style={styles.searchContainer}>
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Buscar información"
-                        onChangeText={(text) => handleSearch(text)}
+        <Text style={styles.title}>Pronóstico Meteorológico</Text>
+        <View style={styles.searchContainer}>
+                            {/* Dropdown para Fincas */}
+                            <DropdownComponent 
+                           
+                            placeholder="Seleccione una Finca"
+                            data={fincas.map(finca => ({ label: finca.nombre, value: finca.ubicacion }))}
+                            value={selectedFinca}
+                            iconName="map-marker"
+                        
+                        onChange={handleFincaChange}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
-                        <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
-                </View> */}
-                {/* <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {residuos.map((item, index) => {
-
-                        return (
-                            <TouchableOpacity key={item.idManejoResiduos} onPress={() => handleRectanglePress(item.idManejoResiduos, item.residuo,item.fechaGeneracion,
-                                item.fechaManejo, item.cantidad, item.accionManejo, item.destinoFinal, item.idFinca, item.idParcela,
-                                item.estado)}>
-                                <CustomRectangle
-                                    key={item.idManejoResiduos}
-                                    data={processData([item], keyMapping)?.data || []} />
-                            </TouchableOpacity>
-                        );
-                    })}
-                </ScrollView> */}
-                
-                <WebView
-        source={{ uri: 'https://forecast7.com/es/9d78n83d84/orosi/' }}
-        style={{ width: 300, height: 200 }}
-      />
-<WebView
-        source={{
-          uri:
-            'https://openweathermap.org/weathermap?basemap=map&cities=true&layer=precipitation&lat=9.8201&lon=-83.8718&zoom=10',
-        }}
-        style={{ width: 300, height: 200 }}
-      />
-            </View>
-
-            <BottomNavBar />
-
-        </View>
+         </View>
+        {weather.city && (
+          <View style={styles.weatherContainer}>
+            <Text style={styles.texto}>{weather.city}, {weather.country}</Text>
+            <Image source={{ uri: weather.icon }} style={styles.weatherIcon} />
+            <Text style={styles.texto}>{weather.temperature} °C</Text>
+            <Text style={styles.texto}>{weather.conditionText}</Text>
+          </View>
+        )}
+        <Text style={styles.poweredBy}>
+          Powered by: {' '}
+          <Text style={styles.link}>WeatherAPI.com</Text>
+        </Text>
+      </View>
     );
-}
+  }
+
