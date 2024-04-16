@@ -16,9 +16,10 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ActualizarRiesgoNatural, CambiarEstadoRiesgoNatural, DesactivarDocumentoRiesgoNatural, InsertarDocumentacionRiesgoNatural, ObtenerDocumentacionRiesgoNatural } from '../../../../servicios/ServicioRiesgoNatural';
 import * as DocumentPicker from "expo-document-picker";
-
-import { decode } from 'base-64';
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import { Buffer } from 'buffer';
 
 //datos desde la lista para mostrarlos en los input
 interface RouteParams {
@@ -471,23 +472,23 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
             const docRes = await DocumentPicker.getDocumentAsync({
                 type: ['image/*', 'video/*'] // Permite seleccionar archivos de imagen o video'
             });
-    
+
             const assets = docRes.assets;
             if (!assets) return;
-    
+
             const acceptedFiles = assets.map(file => ({
                 name: file.name,
                 uri: file.uri,
                 type: file.mimeType || 'application/octet-stream', // Establecer un valor predeterminado si mimeType es undefined
                 size: file.size || 0, // Establecer un valor predeterminado si size es undefined
             }));
-    
+
             // Validar que no se exceda el límite de 5 archivos
             if (selectedFiles.length + acceptedFiles.length > 5) {
                 alert('No se puede ingresar más de 5 archivos');
                 return;
             }
-    
+
             // Validar cada archivo para verificar el tamaño
             const validFiles = acceptedFiles.filter(file => {
                 // Verificar tamaño (mayor de 5 MB)
@@ -497,15 +498,15 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                 }
                 return true;
             });
-    
+
             // Convertir los archivos seleccionados a base64
             const base64Files = await Promise.all(validFiles.map(async (file) => {
                 const response = await fetch(file.uri);
                 const blob = await response.blob();
-    
+
                 // Usar FileReader para leer el blob
                 const reader = new FileReader();
-    
+
                 return new Promise<{ base64: string; name: string; }>((resolve, reject) => {
                     reader.onloadend = () => {
                         // Asegúrate de que reader.result sea de tipo `string`
@@ -519,21 +520,21 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                         }
                     };
                     reader.onerror = reject;
-                    
+
                     // Iniciar la lectura del blob
                     reader.readAsDataURL(blob);
                 });
             }));
-    
+
             // Actualiza el estado con los archivos convertidos a base64
             setSelectedFiles([...selectedFiles, ...base64Files]);
             setAddFiles([...selectedFiles, ...base64Files]);
-    
+
         } catch (error) {
             console.error('Error al manejar la selección de documentos:', error);
         }
     };
-    
+
 
 
     const handleRemoveFile = (indexToRemove: number, idDocumentoToRemove: number) => {
@@ -556,43 +557,64 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
     };
 
-    const handleDownloadFile = async (file: { base64: string; name: string; }) => {
+    const handleDownloadFile = async (file) => {
         try {
             // Verifica que el archivo tenga un nombre y base64 válido
             if (!file.base64 || !file.name) {
                 console.error('El archivo o el nombre del archivo son nulos o indefinidos');
                 return;
             }
-    
-            // Define la carpeta personalizada en la carpeta de documentos del sistema
-            const appFolder = 'Agrosense';
-            const basePath = FileSystem.documentDirectory; // Ruta base
-            const appFolderPath = `${basePath}${appFolder}`;
-    
-            // Verifica si la carpeta existe, si no, créala
-            const folderExists = await FileSystem.getInfoAsync(appFolderPath);
-            if (!folderExists.exists) {
-                await FileSystem.makeDirectoryAsync(appFolderPath);
+
+            // Define el tipo MIME en función de la extensión del archivo
+            let mimeType = '';
+            if (file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
+                mimeType = 'image/jpeg';
+            } else if (file.name.endsWith('.png')) {
+                mimeType = 'image/png';
+            } else if (file.name.endsWith('.mp4')) {
+                mimeType = 'video/mp4';
+            } else {
+                console.error('Tipo de archivo no soportado');
+                return;
             }
-    
-            // Define la ruta completa para el archivo
-            const localUri = `${appFolderPath}/${file.name}`;
-    
-            // Guarda el archivo base64 localmente
-            await FileSystem.writeAsStringAsync(localUri, file.base64, {
+            console.log(mimeType)
+
+            // Solicita permisos para acceder a la galería de medios
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            if (status !== 'granted') {
+                console.error('Permiso no concedido para acceder a la galería de medios');
+                return;
+            }
+
+            // Crea un archivo temporal con el contenido base64
+            const filePath = `${FileSystem.cacheDirectory}${file.name}`;
+
+            // Decodifica el contenido base64 utilizando Buffer
+            const decodedBuffer = Buffer.from(file.base64, 'base64');
+
+            // Convertir el Buffer a string base64
+            const base64String = decodedBuffer.toString('base64');
+
+            // Escribe el archivo en el sistema de archivos como base64 string
+            await FileSystem.writeAsStringAsync(filePath, base64String, {
                 encoding: FileSystem.EncodingType.Base64,
             });
-    
-            // Muestra un mensaje de éxito
-            Alert.alert('Éxito', `Archivo guardado`);
-    
+
+            // Comprueba si Sharing está disponible
+            if (await Sharing.isAvailableAsync()) {
+                // Comparte el archivo
+                await Sharing.shareAsync(filePath,{mimeType: mimeType});
+                Alert.alert('Éxito', 'El archivo se guardo o se compartio');
+            } else {
+                Alert.alert('Error', 'No se puede importar el archivo.');
+            }
+
         } catch (error) {
             console.error('Error al guardar el archivo:', error);
+            Alert.alert('Error', 'No se puede guardar el archivo.');
         }
     };
-    
-    
-    
+
     return (
         <View style={styles.container}>
 
