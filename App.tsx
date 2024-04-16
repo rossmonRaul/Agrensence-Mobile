@@ -58,6 +58,9 @@ import { ListaPronosticoMeteorologico } from './src/screens/clima/pronostico-met
 import { ListaCondicionesMeteorologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/lista-condiciones-meteorologicas-climaticas/lista-condiciones-meteorologicas-climaticas';
 import { InsertarCondicionesMeteorologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/insertar-condiciones-meteorologicas-climaticas/insertar-condiciones-meteorologicas-climaticas';
 import { ModificarCondicionesMeterologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/modificar-condiciones-meteorologicas-climaticas/modificar-condiciones-meteorologicas-climaticas';
+import { ListaRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/lista-riesgo-natural/lista-riesgo-natural';
+import { RegistrarRiesgosScreen } from './src/screens/clima/riesgo-natural/registro-riesgo-natural/registro-riesgo-natural';
+import { ModificarRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/modificar-riesgo-natural/modificar-riesgo-natural';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -207,6 +210,9 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListWeatherClimateConditions.screenName} component={ListaCondicionesMeteorologicasClimaticasScreen} />
           <Stack.Screen name={ScreenProps.InsertWeatherClimateConditions.screenName} component={InsertarCondicionesMeteorologicasClimaticasScreen} />
           <Stack.Screen name={ScreenProps.ModifyWeatherClimateConditions.screenName} component={ModificarCondicionesMeterologicasClimaticasScreen} />
+          <Stack.Screen name={ScreenProps.RiskNaturalList.screenName} component={ListaRiesgoNaturalScreen} />
+          <Stack.Screen name={ScreenProps.ModifyRiskNatural.screenName} component={ModificarRiesgoNaturalScreen} />
+          <Stack.Screen name={ScreenProps.InsertRiskNatural.screenName} component={RegistrarRiesgosScreen} />
 
 
 

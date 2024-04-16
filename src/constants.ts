@@ -53,11 +53,14 @@ export const ScreenProps = {
     ListWeatherClimateConditions: { screenName: 'ListWeatherClimateConditions' },
     InsertWeatherClimateConditions: { screenName: 'InsertWeatherClimateConditions' },
     ModifyWeatherClimateConditions: { screenName: 'ModifyWeatherClimateConditions' },
+    RiskNaturalList: { screenName: 'ListaRiesgoNaturalScreen' },
+    InsertRiskNatural: { screenName: 'RegistrarRiesgosScreen' },
+    ModifyRiskNatural: { screenName: 'ModificarRiesgoNaturalScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.0.12';
+export const IP_API = '192.168.1.34';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -111,6 +114,6 @@ export const Admin_hidrico = [
 
 export const Admin_clima = [
     { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Pronostico Meteorologico', screen: ScreenProps.WatchWeather.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/condiciones-climaticas.png'), text: 'Condiciones meteorológicas y climáticas', screen: ScreenProps.ListWeatherClimateConditions.screenName }
-    // { id: 4, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis' },
+    { id: 2, iconImage: require('./assets/images/icons/condiciones-climaticas.png'), text: 'Condiciones meteorológicas y climáticas', screen: ScreenProps.ListWeatherClimateConditions.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/calentamiento-global.png'), text: 'Riesgos Naturales', screen: ScreenProps.RiskNaturalList.screenName },
 ]
