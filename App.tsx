@@ -55,6 +55,9 @@ import { ModificarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/m
 import { ListaConductividadElectricaSueloScreen } from './src/screens/hidrico/conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo';
 import { AdministracionClima } from "./src/screens/administacion-clima/administacion-clima";
 import { ListaPronosticoMeteorologico } from './src/screens/clima/pronostico-meteorologico/lista-pronostico-meteorologico/lista-pronostico-meteorologico';
+import { ListaCondicionesMeteorologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/lista-condiciones-meteorologicas-climaticas/lista-condiciones-meteorologicas-climaticas';
+import { InsertarCondicionesMeteorologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/insertar-condiciones-meteorologicas-climaticas/insertar-condiciones-meteorologicas-climaticas';
+import { ModificarCondicionesMeterologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/modificar-condiciones-meteorologicas-climaticas/modificar-condiciones-meteorologicas-climaticas';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -201,9 +204,12 @@ const App: React.FC = () => {
 
           <Stack.Screen name={ScreenProps.AdminWeather.screenName} component={AdministracionClima} />
           <Stack.Screen name={ScreenProps.WatchWeather.screenName} component={ListaPronosticoMeteorologico} />
-          
+          <Stack.Screen name={ScreenProps.ListWeatherClimateConditions.screenName} component={ListaCondicionesMeteorologicasClimaticasScreen} />
+          <Stack.Screen name={ScreenProps.InsertWeatherClimateConditions.screenName} component={InsertarCondicionesMeteorologicasClimaticasScreen} />
+          <Stack.Screen name={ScreenProps.ModifyWeatherClimateConditions.screenName} component={ModificarCondicionesMeterologicasClimaticasScreen} />
 
-          
+
+
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
