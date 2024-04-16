@@ -113,7 +113,7 @@ export const Admin_hidrico = [
 ]
 
 export const Admin_clima = [
-    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Pronostico Meteorologico', screen: ScreenProps.WatchWeather.screenName },
+    { id: 1, iconImage: require('./assets/images/icons/weather.png'), text: 'Pronóstico Meteorológico', screen: ScreenProps.WatchWeather.screenName },
     { id: 2, iconImage: require('./assets/images/icons/condiciones-climaticas.png'), text: 'Condiciones meteorológicas y climáticas', screen: ScreenProps.ListWeatherClimateConditions.screenName },
     { id: 3, iconImage: require('./assets/images/icons/calentamiento-global.png'), text: 'Riesgos Naturales', screen: ScreenProps.RiskNaturalList.screenName },
 ]
