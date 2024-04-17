@@ -21,7 +21,7 @@ import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { InsertarRegistroCondicionesMeteorologicas } from '../../../../servicios/ServicioClima';
-import { formatSpanishDate } from '../../../../utils/dateFortmatter';
+import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 
 export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -169,7 +169,7 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
             identificacionUsuario: userData.identificacion,
-            fecha: formulario.fecha,
+            fecha: formatFecha(formulario.fecha),
             hora: `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} ${period}`,
             humedad: formulario.humedad,
             temperatura: formulario.temperatura,
@@ -421,7 +421,7 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                                                 styles.pickerButton,
                                                 { backgroundColor: "#11182711" },
                                             ]}
-                                                onPress={toggleDatePicker}
+                                                onPress={() => toggleDatePicker('fecha')}
                                             >
 
                                                 <Text style={[

@@ -56,11 +56,15 @@ export const ScreenProps = {
     RiskNaturalList: { screenName: 'ListaRiesgoNaturalScreen' },
     InsertRiskNatural: { screenName: 'RegistrarRiesgosScreen' },
     ModifyRiskNatural: { screenName: 'ModificarRiesgoNaturalScreen' },
+    MenuPests: { screenName: 'MenuPests' },
+    InsertPestsDiseases: { screenName: 'InsertPestsDiseases' },
+    ListPestsDiseases: { screenName: 'ListPestsDiseases' },
+    ModifyPestsDiseases: { screenName: 'ModifyPestsDiseases' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.1.34';
+export const IP_API = '192.168.0.2';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -71,7 +75,7 @@ export const Company_Props = [
     { id: 2, iconImage: require('./assets/images/icons/cultivos.png'), text: 'Cultivos', screen: ScreenProps.AdminCrops.screenName },
     { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: ScreenProps.HidricMenu.screenName },
     { id: 4, iconImage: require('./assets/images/icons/clima.png'), text: 'Clima', screen: ScreenProps.AdminWeather.screenName },
-    { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: '' },
+    { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: ScreenProps.MenuPests.screenName },
     { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: '' },
     { id: 7, iconImage: require('./assets/images/icons/comunidad.png'), text: 'Comunidad', screen: '' },
     { id: 8, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
@@ -116,4 +120,8 @@ export const Admin_clima = [
     { id: 1, iconImage: require('./assets/images/icons/weather.png'), text: 'Pronóstico Meteorológico', screen: ScreenProps.WatchWeather.screenName },
     { id: 2, iconImage: require('./assets/images/icons/condiciones-climaticas.png'), text: 'Condiciones meteorológicas y climáticas', screen: ScreenProps.ListWeatherClimateConditions.screenName },
     { id: 3, iconImage: require('./assets/images/icons/calentamiento-global.png'), text: 'Riesgos Naturales', screen: ScreenProps.RiskNaturalList.screenName },
+]
+
+export const Admin_plagas = [
+    { id: 1, iconImage: require('./assets/images/icons/plagas&enfermedades.png'), text: 'Problemas asociados a plagas y enfermedades', screen: ScreenProps.ListPestsDiseases.screenName },
 ]

@@ -20,7 +20,7 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';;
 import { ModificarRegistroSeguimientoCondicionesMeteorologicas } from '../../../../servicios/ServicioClima';
 import { CambiarEstadoRegistroCondicionesMeteorologicas } from '../../../../servicios/ServicioClima';
-import { formatSpanishDate } from '../../../../utils/dateFortmatter';
+import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface RouteParams {
@@ -150,7 +150,7 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
             identificacionUsuario: userData.identificacion,
-            fecha: formulario.fecha,
+            fecha: formatFecha(formulario.fecha),
             hora: `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} ${period}`,
             humedad: formulario.humedad,
             temperatura: formulario.temperatura,
