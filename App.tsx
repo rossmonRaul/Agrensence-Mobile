@@ -61,6 +61,11 @@ import { ModificarCondicionesMeterologicasClimaticasScreen } from './src/screens
 import { ListaRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/lista-riesgo-natural/lista-riesgo-natural';
 import { RegistrarRiesgosScreen } from './src/screens/clima/riesgo-natural/registro-riesgo-natural/registro-riesgo-natural';
 import { ModificarRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/modificar-riesgo-natural/modificar-riesgo-natural';
+import { AdministracionPlagas } from './src/screens/plagas/administracion-plagas/administracion-plagas';
+import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/condiciones-meteorologicas-climaticas/lista-problemas-asociados-plagas/lista-problemas-asociados-plagas';
+import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/condiciones-meteorologicas-climaticas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
+import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/condiciones-meteorologicas-climaticas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -213,6 +218,10 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.RiskNaturalList.screenName} component={ListaRiesgoNaturalScreen} />
           <Stack.Screen name={ScreenProps.ModifyRiskNatural.screenName} component={ModificarRiesgoNaturalScreen} />
           <Stack.Screen name={ScreenProps.InsertRiskNatural.screenName} component={RegistrarRiesgosScreen} />
+          <Stack.Screen name={ScreenProps.MenuPests.screenName} component={AdministracionPlagas} />
+          <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
 
 
 
