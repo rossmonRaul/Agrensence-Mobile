@@ -20,6 +20,8 @@ import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
+import * as base64js from 'base64-js';
+
 
 //datos desde la lista para mostrarlos en los input
 interface RouteParams {
@@ -565,55 +567,44 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                 return;
             }
 
-            // Define el tipo MIME en función de la extensión del archivo
-            let mimeType = '';
-            if (file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
-                mimeType = 'image/jpeg';
-            } else if (file.name.endsWith('.png')) {
-                mimeType = 'image/png';
-            } else if (file.name.endsWith('.mp4')) {
-                mimeType = 'video/mp4';
-            } else {
-                console.error('Tipo de archivo no soportado');
-                return;
-            }
-            console.log(mimeType)
+            // Obtiene la ruta del directorio raíz de la aplicación
+            const rootDirectory = FileSystem.documentDirectory;
 
-            // Solicita permisos para acceder a la galería de medios
-            const { status } = await MediaLibrary.requestPermissionsAsync();
-            if (status !== 'granted') {
-                console.error('Permiso no concedido para acceder a la galería de medios');
-                return;
-            }
+            // Nombre de la carpeta personalizada
+            const customFolder = "Agrosense";
 
-            // Crea un archivo temporal con el contenido base64
-            const filePath = `${FileSystem.cacheDirectory}${file.name}`;
+            // Crea la ruta completa de la carpeta
+            const folderPath = `${rootDirectory}${customFolder}/`;
 
-            // Decodifica el contenido base64 utilizando Buffer
-            const decodedBuffer = Buffer.from(file.base64, 'base64');
+            // Crea la carpeta si no existe
+            await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });   
 
-            // Convertir el Buffer a string base64
-            const base64String = decodedBuffer.toString('base64');
+            // Crea la ruta completa del archivo en la carpeta personalizada
+            const filePath = `${folderPath}${file.name}`;
 
-            // Escribe el archivo en el sistema de archivos como base64 string
-            await FileSystem.writeAsStringAsync(filePath, base64String, {
+            // Guarda el archivo en el sistema de archivos
+            await FileSystem.writeAsStringAsync(filePath, file.base64, {
                 encoding: FileSystem.EncodingType.Base64,
             });
 
-            // Comprueba si Sharing está disponible
-            if (await Sharing.isAvailableAsync()) {
-                // Comparte el archivo
-                await Sharing.shareAsync(filePath,{mimeType: mimeType});
-                Alert.alert('Éxito', 'El archivo se guardo o se compartio');
+            // Verifica si el archivo se ha guardado correctamente
+            const fileInfo = await FileSystem.getInfoAsync(filePath);
+            if (fileInfo.exists) {
+                console.log('El archivo se ha guardado correctamente en:', fileInfo.uri);
+                // Mostrar una alerta de éxito
+                Alert.alert('Éxito', 'El archivo se ha guardado con éxito en la carpeta "Agrosense".');
             } else {
-                Alert.alert('Error', 'No se puede importar el archivo.');
+                console.error('El archivo no se ha guardado correctamente.');
+                Alert.alert('Error', 'No se ha podido guardar el archivo en la carpeta "Agrosense".');
             }
-
+           
         } catch (error) {
             console.error('Error al guardar el archivo:', error);
             Alert.alert('Error', 'No se puede guardar el archivo.');
         }
     };
+
+
 
     return (
         <View style={styles.container}>
