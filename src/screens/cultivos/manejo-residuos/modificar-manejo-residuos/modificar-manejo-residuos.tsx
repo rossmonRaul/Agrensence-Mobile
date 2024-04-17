@@ -43,10 +43,13 @@ export const ModificarResiduosScreen: React.FC = () => {
     const [showPickerManejo, setShowPickerManejo] = useState(false);
     const [dateManejo, setDateManejo] = useState(new Date())
 
+    const [formattedDate, setFormattedDate] = useState('');
+    const [formattedDateManejo, setFormattedDateManejo] = useState('');
+
     const route = useRoute();
-    const { idManejoResiduos,idFinca,idParcela,residuo,fechaGeneracion,
-    fechaManejo,cantidad,accionManejo,destinoFinal, estado } = route.params as RouteParams;
-        
+    const { idManejoResiduos, idFinca, idParcela, residuo, fechaGeneracion,
+        fechaManejo, cantidad, accionManejo, destinoFinal, estado } = route.params as RouteParams;
+
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idFinca: idFinca,
@@ -125,17 +128,17 @@ export const ModificarResiduosScreen: React.FC = () => {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
             residuo: formulario.residuo,
-            fechaGeneracion: formatDate(),
-            fechaManejo: formatDateManejo(),
+            fechaGeneracion: formattedDate,
+            fechaManejo: formattedDateManejo,
             cantidad: formulario.cantidad,
             accionManejo: formulario.accionManejo,
             destinofinal: formulario.destinofinal,
             usuarioModificacion: userData.identificacion
         };
-        
+
         //  Se ejecuta el servicio de insertar residuo
         const responseInsert = await ModificarManejoResiduos(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert(responseInsert.mensaje, '', [
@@ -165,7 +168,7 @@ export const ModificarResiduosScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
-                
+
                 setFincas(fincasUnicas);
 
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
@@ -175,6 +178,9 @@ export const ModificarResiduosScreen: React.FC = () => {
                 }));
 
                 setParcelas(parcelasUnicas)
+
+                setFormattedDate(formatDateToISO(fechaGeneracion))
+                setFormattedDateManejo(formatDateToISO(fechaManejo))
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -186,11 +192,23 @@ export const ModificarResiduosScreen: React.FC = () => {
 
     }, []);
 
+    const formatDateToISO = (fecha) => {
+        // Divide la fecha en día, mes y año
+        const [day, month, year] = fecha.split('/');
+
+        // Asegura que el día y el mes tengan dos dígitos
+        const dayFormatted = day.padStart(2, '0');
+        const monthFormatted = month.padStart(2, '0');
+
+        // Retorna la fecha en formato 'yyyy-mm-dd'
+        return `${year}-${monthFormatted}-${dayFormatted}`;
+    };
+
     useEffect(() => {
         // Buscar la finca correspondiente, esto se hace para cargar las parcelas que se necesitan en dropdown porque
         // el residuo ya tiene una finca asignada
         const fincaInicial = fincas.find(finca => finca.idFinca === parseInt(idFinca));
-        
+
         // Establecer el nombre de la finca inicial como selectedFinca
         setSelectedFinca(fincaInicial?.nombreFinca || null);
 
@@ -212,7 +230,7 @@ export const ModificarResiduosScreen: React.FC = () => {
     useEffect(() => {
         // Buscar la parcela correspondiente
         const parcelaInicial = parcelas.find(parcela => parcela.idParcela === parseInt(idParcela));
-        
+
         // Establecer el nombre de la parcela inicial como selectedFinca
         setSelectedParcela(parcelaInicial?.nombre || null);
     }, [idParcela, parcelas]);
@@ -247,15 +265,14 @@ export const ModificarResiduosScreen: React.FC = () => {
         return `${day}/${month}/${year}`;
     };
 
-    //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
-    const formatDate = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
+    // Función para formatear la fecha 
+    const formatDate = (date) => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear().toString();
-
         return `${year}-${month}-${day}`;
     };
-    
+
     const formatDateManejo = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
         const day = dateManejo.getDate().toString().padStart(2, '0');
         const month = (dateManejo.getMonth() + 1).toString().padStart(2, '0');
@@ -273,6 +290,11 @@ export const ModificarResiduosScreen: React.FC = () => {
             const formattedDate = formatSpanishDate(selectedDate);
             setDate(selectedDate);
             updateFormulario('fechaGeneracion', formattedDate);
+
+            // Formatea la fecha seleccionada
+            const formatted = formatDate(date);
+            // Actualiza la variable de estado con la fecha formateada
+            setFormattedDate(formatted);
             if (Platform.OS === "android") {
                 toggleDatePicker();
             }
@@ -285,6 +307,10 @@ export const ModificarResiduosScreen: React.FC = () => {
     const confirmIOSDate = () => {
         toggleDatePicker();
         updateFormulario('fechaGeneracion', formatSpanishDate(date));
+        // Formatea la fecha seleccionada
+        const formatted = formatDate(date);
+        // Actualiza la variable de estado con la fecha formateada
+        setFormattedDate(formatted);
         setDate(date)
     }
 
@@ -297,6 +323,10 @@ export const ModificarResiduosScreen: React.FC = () => {
             const formattedDate = formatSpanishDate(selectedDate);
             setDateManejo(selectedDate);
             updateFormulario('fechaManejo', formattedDate);
+            // Formatea la fecha seleccionada
+            const formatted = formatDate(dateManejo);
+            // Actualiza la variable de estado con la fecha formateada
+            setFormattedDateManejo(formatted);
             if (Platform.OS === "android") {
                 toggleDatePickerManejo();
             }
@@ -308,8 +338,12 @@ export const ModificarResiduosScreen: React.FC = () => {
     //en el caso de ser ios poder capturar la fecha
     const confirmIOSDateManejo = () => {
         toggleDatePickerManejo();
-        
+
         updateFormulario('fechaManejo', formatSpanishDate(dateManejo));
+        // Formatea la fecha seleccionada
+        const formatted = formatDate(dateManejo);
+        // Actualiza la variable de estado con la fecha formateada
+        setFormattedDateManejo(formatted);
         setDateManejo(dateManejo)
     }
 
@@ -580,7 +614,7 @@ export const ModificarResiduosScreen: React.FC = () => {
 
                                 <>
 
-<Text style={styles.formText} >Finca</Text>
+                                    <Text style={styles.formText} >Finca</Text>
                                     {/* Dropdown para Fincas */}
                                     <DropdownComponent
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
@@ -618,7 +652,7 @@ export const ModificarResiduosScreen: React.FC = () => {
                                         value={formulario.destinofinal}
                                         onChangeText={(text) => updateFormulario('destinofinal', text)}
                                     />
-                                    
+
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
                                             style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
