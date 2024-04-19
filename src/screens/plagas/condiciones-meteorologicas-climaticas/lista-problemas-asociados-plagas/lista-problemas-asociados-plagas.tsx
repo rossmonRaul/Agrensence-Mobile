@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-condiciones-meteorologicas-climaticas.styles';
+import { styles } from './lista-problemas-asociados-plagas.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { processData } from '../../../../utils/processData';
 import { CustomRectangle } from '../../../../components/CustomRectangle/CustomRectangle';
@@ -13,9 +13,9 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
-import { ObtenerRegistroCondicionesMeteorologica } from '../../../../servicios/ServicioClima';
+import { ObtenerRegistroSeguimientoPlagasYEnfermedades } from '../../../../servicios/ServicioPlagas&Enfermedades';
 
-export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
+export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
@@ -23,7 +23,7 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
     const [apiData, setApiData] = useState<any[]>([]);
 
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
-    const [eficienciaRiego, setEficienciaRiego] = useState<any[]>([]);
+    const [problemasAsociadosPlagas, setProblemasAsociadosPlagas] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
@@ -34,29 +34,31 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
         'Fecha': 'fecha',
-        'Hora': 'hora',
-        'Humedad(%)': 'humedad',
-        'Temperatura(°C)': 'temperatura',
-        'Humedad acumulada(%)': 'humedadAcumulada',
-        'Temperatura acumulada(°C)': 'temperaturaAcumulada',
+        'Cultivo': 'cultivo',
+        'Plaga': 'plagaEnfermedad',
+        'Problema': 'problema',
+        'Incidencia': 'incidencia',
+        'Metodología de estimación': 'metodologiaEstimacion',
+        'Acción tomada': 'accionTomada',
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idRegistroCondicionesMeteorologicasClimaticas: string, idFinca: string, idParcela: string, fecha: string,
-        hora: string, humedad: string, temperatura: string, humedadAcumulada: string, temperaturaAcumulada: string, estado: string) => {
+    const handleRectanglePress = (idRegistroSeguimientoPlagasYEnfermedades: string, idFinca: string, idParcela: string, fecha: string,
+        cultivo: string, plagaEnfermedad: string, incidencia: string, metodologiaEstimacion: string, problema: string, accionTomada: string, estado: string) => {
         // Encuentra el elemento correspondiente en los datos originales utilizando el ID único
 
         // Si se encuentra el elemento correspondiente, puedes acceder a sus propiedades directamente
-        navigation.navigate(ScreenProps.ModifyWeatherClimateConditions.screenName, {
-            idRegistroCondicionesMeteorologicasClimaticas: idRegistroCondicionesMeteorologicasClimaticas,
+        navigation.navigate(ScreenProps.ModifyPestsDiseases.screenName, {
+            idRegistroSeguimientoPlagasYEnfermedades: idRegistroSeguimientoPlagasYEnfermedades,
             idFinca: idFinca,
             idParcela: idParcela,
             fecha: fecha,
-            hora: hora,
-            humedad: humedad,
-            temperatura: temperatura,
-            humedadAcumulada: humedadAcumulada,
-            temperaturaAcumulada: temperaturaAcumulada,
+            cultivo: cultivo,
+            plagaEnfermedad: plagaEnfermedad,
+            incidencia: incidencia,
+            metodologiaEstimacion: metodologiaEstimacion,
+            problema: problema,
+            accionTomada: accionTomada,
             estado: estado
         });
 
@@ -93,14 +95,14 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
                     });
 
                 setParcelas(parcelas);
-                //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
-                const registroCondicionesMeteorologicaResponse = await ObtenerRegistroCondicionesMeteorologica();
+                //se obtienen los datos de el registro problemas asociados a plagas para despues poder filtrarlos
+                const registroProblemasAsociadosPlagasResponse = await ObtenerRegistroSeguimientoPlagasYEnfermedades();
                 //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = registroCondicionesMeteorologicaResponse.map((item) => ({
+                const filteredData = registroProblemasAsociadosPlagasResponse.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
-                setOriginalApiData(registroCondicionesMeteorologicaResponse);
+                setOriginalApiData(registroProblemasAsociadosPlagasResponse);
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -144,10 +146,10 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar el registro condiciones meteorologica
+        //si finca Id es null no se puede seleciona ni traer el y mostrar el registro problemas asociados a plagas
         if (fincaId !== null) {
 
-            obtenerRegistroCondicionesMeteorologicaPorFincaYParcela(fincaId, parcelaId);
+            obtenerProblemasAsociadosPlagasPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
         }
@@ -156,13 +158,13 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
 
 
 
-    // filtra los datos de el registro condiciones meteorologica
-    const obtenerRegistroCondicionesMeteorologicaPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
+    // filtra los datos de el registro problemas asociados a plagas
+    const obtenerProblemasAsociadosPlagasPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
 
-            const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
+            const problemasAsociaadosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
 
-            setEficienciaRiego(rotacionCultivosFiltrado);
+            setProblemasAsociadosPlagas(problemasAsociaadosFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -172,10 +174,10 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.AdminWeather.screenName} color={'#274c48'} />
-                <AddButtonComponent screenName={ScreenProps.InsertWeatherClimateConditions.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.MenuPests.screenName} color={'#274c48'} />
+                <AddButtonComponent screenName={ScreenProps.InsertPestsDiseases.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista condiciones meteorológicas y climáticas</Text>
+                    <Text style={styles.textAbove} >Lista problemas asociados a plagas y enfermedades </Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
@@ -184,7 +186,7 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
-                        iconName="tree"
+                        iconName="map-marker"
                         onChange={handleFincaChange}
                     />
 
@@ -193,15 +195,15 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
-                        iconName="pagelines"
+                        iconName="map-marker"
                         onChange={handleParcelaChange}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {eficienciaRiego.map((item, index) => (
-                        <TouchableOpacity key={item.idRegistroCondicionesMeteorologicasClimaticas} onPress={() => handleRectanglePress(
-                            item.idRegistroCondicionesMeteorologicasClimaticas, item.idFinca, item.idParcela, item.fecha, item.hora, item.humedad, item.temperatura,
-                            item.humedadAcumulada, item.temperaturaAcumulada, item.estado
+                    {problemasAsociadosPlagas.map((item, index) => (
+                        <TouchableOpacity key={item.idRegistroSeguimientoPlagasYEnfermedades} onPress={() => handleRectanglePress(
+                            item.idRegistroSeguimientoPlagasYEnfermedades, item.idFinca, item.idParcela, item.fecha, item.cultivo, item.plagaEnfermedad, item.incidencia,
+                            item.metodologiaEstimacion, item.problema, item.accionTomada, item.estado
                         )}>
                             <CustomRectangle
                                 key={item.idFinca}

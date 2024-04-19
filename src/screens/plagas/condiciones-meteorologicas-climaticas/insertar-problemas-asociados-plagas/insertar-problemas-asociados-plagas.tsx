@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { styles } from './insertar-condiciones-meteorologicas-climaticas.styles';
+import { styles } from './insertar-problemas-asociados-plagasstyles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../../../../constants';
@@ -20,15 +20,12 @@ import { UseFetchDropdownDataProps } from '../../../../hooks/useFetchDropDownDat
 import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
-import { InsertarRegistroCondicionesMeteorologicas } from '../../../../servicios/ServicioClima';
+import { InsertarRegistroSeguimientoPlagasYEnfermedades } from '../../../../servicios/ServicioPlagas&Enfermedades';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 
-export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
+export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
-    const [hours, setHours] = useState('');
-    const [minutes, setMinutes] = useState('');
-    const [period, setPeriod] = useState('');
 
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
@@ -36,8 +33,6 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
     const [parcela, setParcela] = useState(null);
     const [fincaDataOriginal, setFincaDataOriginal] = useState<DropdownData[]>([]);
     const [parcelaDataOriginal, setParcelaDataOriginal] = useState<DropdownData[]>([]);
-    const [fincaDataSort, setFincaDataSort] = useState<DropdownData[]>([]);
-    const [parcelaDataSort, setParcelaDataSort] = useState<DropdownData[]>([]);
     const [handleEmpresaCalled, setHandleEmpresaCalled] = useState(false);
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
@@ -45,12 +40,10 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
 
     const [showFecha, setShowFecha] = useState(false);
-    const [showPickerTiempoCosecha, setShowPickerTiempoCosecha] = useState(false);
 
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
     const [dateFecha, setDateFecha] = useState(new Date())
-    const [dateTiempoCosecha, setDateTiempoCosecha] = useState(new Date())
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -58,11 +51,12 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
         idParcela: parcela,
         identificacionUsuario: userData.identificacion,
         fecha: '',
-        hora: '',
-        humedad: '',
-        temperatura: '',
-        humedadAcumulada: '',
-        temperaturaAcumulada: '',
+        cultivo: '',
+        problema: '',
+        plagaEnfermedad: '',
+        incidencia: '',
+        metodologiaEstimacion: '',
+        accionTomada: '',
     });
 
 
@@ -74,58 +68,39 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
         }));
     };
 
-
     const validateFirstForm = () => {
         let isValid = true;
-
-        const temperaturaRegex = /^-?\d+(\.\d+)?$/;
-        const humedadRegex = /^\d+$/;
 
         if (formulario.fecha.trim() === '') {
             isValid = false;
             alert('La fecha es requerida.');
             return isValid;
         }
-        if (hours === '' && minutes === '') {
+
+        if (formulario.cultivo.trim() === '') {
             isValid = false;
-            alert('La hora es requerida.');
+            alert('El campo Cultivo es requerido.');
             return isValid;
         }
-        if (formulario.temperatura.toString().trim() === '') {
+
+        if (formulario.problema.trim() === '') {
             isValid = false;
-            alert('La temperatura es requerida.');
+            alert('El campo Problema es requerido.');
             return isValid;
         }
-        if (!temperaturaRegex.test(formulario.temperatura.toString().toString().trim())) {
+
+        if (formulario.plagaEnfermedad.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese una temperatura válida (permitiendo decimales con punto).');
+            alert('El campo Plaga/Enfermedad es requerido.');
             return isValid;
         }
-        if (period === '') {
+
+        if (formulario.incidencia.trim() === '') {
             isValid = false;
-            alert('El periodo es requerido.');
+            alert('El campo Incidencia es requerido.');
             return isValid;
         }
-        if (formulario.humedad.toString().trim() === '') {
-            isValid = false;
-            alert('La humedad es requerida.');
-            return isValid;
-        }
-        if (!humedadRegex.test(formulario.humedad.toString().trim())) {
-            isValid = false;
-            alert('Por favor ingrese una humedad válida (números enteros).');
-            return isValid;
-        }
-        if (parseInt(formulario.humedad) < 0 || parseInt(formulario.humedad) > 100) {
-            isValid = false;
-            alert('La humedad tiene que ser un número entre 0 y 100.');
-            return isValid;
-        }
-        if (parseInt(formulario.humedadAcumulada) < 0) {
-            isValid = false;
-            alert('La humedad acumulada no puede ser un número negativo.');
-            return isValid;
-        }
+
 
         return isValid;
     };
@@ -133,58 +108,46 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
 
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
+        if (formulario.metodologiaEstimacion.trim() === '') {
+            alert('El campo Metodología de estimación es requerido.');
+            return;
+        }
 
-        const temperaturaRegex = /^-?\d+(\.\d+)?$/;
-        const humedadRegex = /^\d+$/;
-        if (formulario.temperaturaAcumulada.trim() === '') {
-            alert('Por favor ingrese la temperatura.');
-            return
-        }
-        if (!temperaturaRegex.test(formulario.temperaturaAcumulada.trim())) {
-            alert('Por favor ingrese una temperatura válida (permitiendo decimales con punto).');
-            return
-        }
-        if (formulario.humedadAcumulada.trim() === '') {
-            alert('Por favor ingrese la humedad.');
-            return
-        }
-        if (!humedadRegex.test(formulario.humedadAcumulada.trim())) {
-            alert('Por favor ingrese una humedad válida (números enteros).');
-            return
-        }
-        if (parseInt(formulario.humedadAcumulada) < 0 || parseInt(formulario.humedadAcumulada) > 100) {
-            alert('La humedad acumulada tiene que ser un número entre 0 y 100.');
+        if (formulario.accionTomada.trim() === '') {
+            alert('El campo Acción tomada es requerido.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
             alert('Ingrese la Finca');
-            return
+            return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             alert('Ingrese la Parcela');
-            return
+            return;
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
-            identificacionUsuario: userData.identificacion,
+            usuarioCreacionModificacion: userData.identificacion,
             fecha: formatFecha(formulario.fecha),
-            hora: `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} ${period}`,
-            humedad: formulario.humedad,
-            temperatura: formulario.temperatura,
-            humedadAcumulada: formulario.humedadAcumulada,
-            temperaturaAcumulada: formulario.temperaturaAcumulada,
+            cultivo: formulario.cultivo,
+            problema: formulario.problema,
+            plagaEnfermedad: formulario.plagaEnfermedad,
+            incidencia: formulario.incidencia,
+            metodologiaEstimacion: formulario.metodologiaEstimacion,
+            accionTomada: formulario.accionTomada,
         };
-        //  Se ejecuta el servicio de insertar las condiciones meteorológicas y climáticas
-        const responseInsert = await InsertarRegistroCondicionesMeteorologicas(formData);
+        //  Se ejecuta el servicio de insertar problemas asociados a plagas y enfermedades
+        const responseInsert = await InsertarRegistroSeguimientoPlagasYEnfermedades(formData);
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro el seguimiento de las condiciones meteorológicas y climáticas correctamente!', '', [
+            Alert.alert('¡Se registro problemas asociados a plagas y enfermedades correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminWeather.screenName as never);
+                        navigation.navigate(ScreenProps.MenuPests.screenName as never);
                     },
                 },
             ]);
@@ -246,10 +209,6 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                 setShowFecha(Platform.OS === 'ios');
                 setDateFecha(currentDate);
                 break;
-            case 'cosecha':
-                setShowPickerTiempoCosecha(Platform.OS === 'ios');
-                setDateTiempoCosecha(currentDate);
-                break;
             default:
                 break;
         }
@@ -263,7 +222,6 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
     const handleValueEmpresa = (idEmpresa: number) => {
         setEmpresa(idEmpresa);
         let fincaSort = fincaDataOriginal.filter(item => item.id === userData.idEmpresa.toString());
-        setFincaDataSort(fincaSort);
         setFinca(null);
         setParcela(null);
     }
@@ -277,7 +235,6 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
         setFinca(itemValue.value);
         obtenerParcelasPorFinca(itemValue.value);
         let parcelaSort = parcelaDataOriginal.filter(item => item.id === itemValue.value);
-        setParcelaDataSort(parcelaSort)
         setParcela(null);
         updateFormulario('idFinca', itemValue.value)
     }
@@ -323,39 +280,6 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
     useFetchDropdownData(obtenerFincaProps);
     useFetchDropdownData(obtenerParcelaProps);
 
-    const handleHourChange = (text) => {
-        const sanitizedText = text.replace(/[^0-9]/g, ''); // Eliminar cualquier carácter que no sea un número
-
-        if (sanitizedText === '' || (parseInt(sanitizedText) >= 1 && parseInt(sanitizedText) <= 12)) {
-            // Si el texto está vacío o está entre 1 y 12, actualizar el estado de las horas
-            setHours(sanitizedText);
-        }
-    };
-
-    const handleMinuteChange = (text) => {
-        const sanitizedText = text.replace(/[^0-9]/g, ''); // Eliminar cualquier carácter que no sea un número
-
-        if (sanitizedText === '' || (parseInt(sanitizedText) >= 0 && parseInt(sanitizedText) <= 59)) {
-            // Si el texto está vacío o está entre 0 y 59, actualizar el estado de los minutos
-            setMinutes(sanitizedText);
-        }
-    };
-
-    const isValidTime = () => {
-        if (parseInt(hours, 10) < 0 || parseInt(hours, 10) > 12 || parseInt(minutes, 10) < 0 || parseInt(minutes, 10) >= 60) {
-            return false;
-        }
-        return true;
-    };
-    const dateTimeValues = [
-        {
-            label: 'AM', value: 'AM'
-        },
-        {
-
-            label: 'PM', value: 'PM'
-        }
-    ]
 
 
     return (
@@ -370,12 +294,12 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.ListWeatherClimateConditions.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListPestsDiseases.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Seguimiento de las condiciones meteorológicas y climáticas</Text>
+                            <Text style={styles.createAccountText} >Problemas asociados a plagas o enfermedades</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -447,61 +371,38 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
 
                                         </View>
                                     )}
-                                    <Text style={styles.formText} >Hora</Text>
-                                    <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }} >
-                                        <View style={{
-                                            flexDirection: 'row', alignItems: 'center', width: 100, gap: 10
-                                        }}>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="HH"
-                                                keyboardType="numeric"
-                                                value={hours}
-                                                onChangeText={(text) => handleHourChange(text)}
-                                                maxLength={2}
-                                            />
-                                            <Text>:</Text>
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder="MM"
-                                                keyboardType="numeric"
-                                                value={minutes}
-                                                onChangeText={(text) => handleMinuteChange(`${text}`)}
-                                                maxLength={2}
-                                            />
-                                        </View>
-                                        <View style={{ minWidth: 120, minHeight: 50 }}>
-                                            <DropdownComponent
-                                                placeholder="Periodo"
-                                                data={dateTimeValues}
-                                                value={period}
-                                                iconName=''
-                                                onChange={(value) => setPeriod(value.value)}
-                                            />
-                                        </View>
-
-                                    </View>
-                                    {!isValidTime() && <Text style={{ color: 'red' }}>Ingrese una hora válida</Text>}
-                                    <Text style={styles.formText}>
-                                        {`Hora seleccionada: ${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} ${period}`}
-                                    </Text>
-                                    <Text style={styles.formText} >Temperatura (°C)</Text>
+                                    <Text style={styles.formText} >Cultivo</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="Temperatura"
-                                        keyboardType="numeric"
-                                        value={formulario.temperatura}
-                                        onChangeText={(text) => updateFormulario('temperatura', text)}
-                                        maxLength={10}
+                                        placeholder="Cultivo"
+                                        value={formulario.cultivo}
+                                        onChangeText={(text) => updateFormulario('cultivo', text)}
+                                        maxLength={50}
                                     />
-                                    <Text style={styles.formText} >Humedad(%)</Text>
+                                    <Text style={styles.formText} >Problema</Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="Humedad"
-                                        keyboardType="numeric"
-                                        value={formulario.humedad}
-                                        onChangeText={(text) => updateFormulario('humedad', text)}
-                                        maxLength={10}
+                                        placeholder="Problema"
+                                        value={formulario.problema}
+                                        onChangeText={(text) => updateFormulario('problema', text)}
+                                        maxLength={100}
+                                    />
+                                    <Text style={styles.formText} >Plaga o Enfermedad</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Plaga o enfermedad"
+                                        value={formulario.plagaEnfermedad}
+                                        onChangeText={(text) => updateFormulario('plagaEnfermedad', text)}
+                                        maxLength={50}
+
+                                    />
+                                    <Text style={styles.formText} >Incidencia</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Incidencia"
+                                        value={formulario.incidencia}
+                                        onChangeText={(text) => updateFormulario('incidencia', text)}
+                                        maxLength={50}
                                     />
 
 
@@ -521,23 +422,21 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                                 </>
 
                             ) : (<>
-                                <Text style={styles.formText} >Temperatura acumulada (°C)</Text>
+                                <Text style={styles.formText} >Metodología de estimación</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Temperatura"
-                                    keyboardType="numeric"
-                                    value={formulario.temperaturaAcumulada}
-                                    onChangeText={(text) => updateFormulario('temperaturaAcumulada', text)}
-                                    maxLength={5}
+                                    placeholder="Metodología de estimación"
+                                    value={formulario.metodologiaEstimacion}
+                                    onChangeText={(text) => updateFormulario('metodologiaEstimacion', text)}
+                                    maxLength={100}
                                 />
-                                <Text style={styles.formText} >Humedad acumulada(%)</Text>
+                                <Text style={styles.formText} >Acción tomada</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder="Humedad"
-                                    keyboardType="numeric"
-                                    value={formulario.humedadAcumulada}
-                                    onChangeText={(text) => updateFormulario('humedadAcumulada', text)}
-                                    maxLength={3}
+                                    placeholder="Acción tomada"
+                                    value={formulario.accionTomada}
+                                    onChangeText={(text) => updateFormulario('accionTomada', text)}
+                                    maxLength={200}
                                 />
                                 {empresa &&
                                     <DropdownComponent
