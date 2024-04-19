@@ -417,8 +417,8 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                         data={[
                                             { label: "Terremoto", value: "Terremoto" },
                                             { label: "Deslizamiento", value: "Deslizamiento" },
-                                            { label: "Peligroso", value: "Peligroso" },
                                             { label: "Incendio", value: "Incendio" },
+                                            { label: "Inundacion", value: "Inundacion" },
                                             { label: "Sequía", value: "Sequía" },
                                             { label: "Huracan", value: "Huracan" }
                                         ]}
@@ -602,7 +602,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                                 setFirstFormVisible(true)
@@ -658,7 +658,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
 
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={[styles.button, { width: 150, marginRight: 10,  borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(true);
                                                 setThirdFormVisible(false)

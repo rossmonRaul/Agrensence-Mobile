@@ -106,8 +106,8 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
         //  Se muestra una alerta con opción de aceptar o cancelar
         Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del riesgo natural?',
+            'Confirmar eliminación',
+            '¿Estás seguro de que deseas eliminar el riesgo natural?',
             [
                 {
                     text: 'Cancelar',
@@ -121,14 +121,14 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                         //Se valida si los datos recibidos de la api son correctos
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se actualizó el estado del riesgo natural correctamente!',
+                                '¡Se elimino el riesgo natural correctamente!',
                                 '',
                                 [
                                     {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.MenuFloor.screenName
+                                                ScreenProps.AdminWeather.screenName
                                             );
                                         },
                                     },
@@ -171,6 +171,8 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
                 setLoading(true); // Establecer loading a true antes de empezar
                 setFirstFormVisible(false)
+                setSecondFormVisible(false)
+                setThirdFormVisible(false)
                 // Obtener documentos en formato base64
                 const documentos = await ObtenerDocumentacionRiesgoNatural({ idRiesgoNatural });
 
@@ -530,7 +532,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
             // Actualiza el estado con los archivos convertidos a base64
             setSelectedFiles([...selectedFiles, ...base64Files]);
-            setAddFiles([...selectedFiles, ...base64Files]);
+            setAddFiles([...addFiles, ...base64Files]);
 
         } catch (error) {
             console.error('Error al manejar la selección de documentos:', error);
@@ -558,52 +560,6 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
         }
 
     };
-
-    const handleDownloadFile = async (file) => {
-        try {
-            // Verifica que el archivo tenga un nombre y base64 válido
-            if (!file.base64 || !file.name) {
-                console.error('El archivo o el nombre del archivo son nulos o indefinidos');
-                return;
-            }
-
-            // Obtiene la ruta del directorio raíz de la aplicación
-            const rootDirectory = FileSystem.documentDirectory;
-
-            // Nombre de la carpeta personalizada
-            const customFolder = "Agrosense";
-
-            // Crea la ruta completa de la carpeta
-            const folderPath = `${rootDirectory}${customFolder}/`;
-
-            // Crea la carpeta si no existe
-            await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });   
-
-            // Crea la ruta completa del archivo en la carpeta personalizada
-            const filePath = `${folderPath}${file.name}`;
-
-            // Guarda el archivo en el sistema de archivos
-            await FileSystem.writeAsStringAsync(filePath, file.base64, {
-                encoding: FileSystem.EncodingType.Base64,
-            });
-
-            // Verifica si el archivo se ha guardado correctamente
-            const fileInfo = await FileSystem.getInfoAsync(filePath);
-            if (fileInfo.exists) {
-                console.log('El archivo se ha guardado correctamente en:', fileInfo.uri);
-                // Mostrar una alerta de éxito
-                Alert.alert('Éxito', 'El archivo se ha guardado con éxito en la carpeta "Agrosense".');
-            } else {
-                console.error('El archivo no se ha guardado correctamente.');
-                Alert.alert('Error', 'No se ha podido guardar el archivo en la carpeta "Agrosense".');
-            }
-           
-        } catch (error) {
-            console.error('Error al guardar el archivo:', error);
-            Alert.alert('Error', 'No se puede guardar el archivo.');
-        }
-    };
-
 
 
     return (
@@ -647,6 +603,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                             { label: "Terremoto", value: "Terremoto" },
                                             { label: "Deslizamiento", value: "Deslizamiento" },
                                             { label: "Incendio", value: "Incendio" },
+                                            { label: "Inundacion", value: "Inundacion" },
                                             { label: "Sequía", value: "Sequía" },
                                             { label: "Huracan", value: "Huracan" }
                                         ]}
@@ -830,7 +787,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={[styles.button, { width: 150, marginRight: 10,  borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                                 setFirstFormVisible(true)
@@ -878,11 +835,11 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                     <View style={styles.fileList}>
                                         {selectedFiles.map((file, index) => (
                                             <View key={index} style={styles.fileItem}>
-                                                <TouchableOpacity onPress={() => handleDownloadFile(file)}>
+                                                
                                                     <Text style={styles.fileName}>
                                                         {file.name.length > 30 ? `${file.name.substring(0, 30)}...` : file.name}
                                                     </Text>
-                                                </TouchableOpacity>
+                                                
                                                 <Button title="X" onPress={() => handleRemoveFile(index, file.idDocumento)} />
                                             </View>
 
@@ -891,7 +848,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(true);
                                                 setThirdFormVisible(false)
@@ -915,8 +872,8 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         </TouchableOpacity>
 
                                     </View>
-                                    {estado === 'Activo'
-                                        ? <TouchableOpacity
+                                    
+                                    <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
                                                 handleChangeAccess();
@@ -924,22 +881,11 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Desactivar</Text>
+                                                <Text style={styles.buttonText}> Eliminar</Text>
                                             </View>
-                                        </TouchableOpacity>
-                                        :
-                                        <TouchableOpacity
-                                            style={styles.buttonActive}
-                                            onPress={() => {
-                                                handleChangeAccess();
-                                            }}
-                                        >
-                                            <View style={styles.buttonContent}>
-                                                <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Activar</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    }
+                                        </TouchableOpacity>    
+                                        
+                                    
                                 </>
                             )}
 
