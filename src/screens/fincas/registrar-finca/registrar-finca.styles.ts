@@ -111,5 +111,20 @@ export const styles = StyleSheet.create({
     },
     rowContainer: {
         width: '100%',
-    }
+    },
+    additionalInfo: {
+        color: '#6c757d', // Color del texto
+        fontSize: 12, // Tamaño de fuente
+       //marginTop: 5, // Espacio superior
+        marginLeft: 4, // Margen izquierdo
+        marginBottom: 10,
+      },
+      inputSinMargin: {
+        height: 40,
+        borderColor: '#548256',
+        borderWidth: 2,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        fontFamily: 'CatamaranMedium'
+    },
 });

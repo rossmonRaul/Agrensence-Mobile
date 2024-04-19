@@ -107,11 +107,12 @@ export const RegistrarFincaScreen: React.FC = () => {
                                 />
                                 <Text style={styles.formText} >Ubicación</Text>
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.inputSinMargin}
                                     placeholder="Ubicación de la Finca"
                                     value={formulario.ubicacion}
                                     onChangeText={(text) => updateFormulario('ubicacion', text)}
                                 />
+                                <Text style={styles.additionalInfo}>Puede llevar cantón o distrito</Text>
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
