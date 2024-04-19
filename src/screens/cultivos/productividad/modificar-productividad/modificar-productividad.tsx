@@ -430,7 +430,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                             }}

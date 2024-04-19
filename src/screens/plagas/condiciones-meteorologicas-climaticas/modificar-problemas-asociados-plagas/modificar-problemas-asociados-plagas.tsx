@@ -573,7 +573,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                     }}
                                 />
                                 <TouchableOpacity
-                                    style={[styles.button, { width: 150, marginRight: 10, marginBottom: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                    style={styles.backButton}
                                     onPress={() => {
                                         setSecondFormVisible(false);
                                     }}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, TextInput } from 'react-native';
-import { styles } from './lista-seguimiento-agua.styles'
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { Ionicons } from '@expo/vector-icons';
@@ -126,17 +126,17 @@ export const ListaSeguimientoAguaScreen: React.FC = () => {
                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, idParcela, nombreParcela };
                     });
-                    setParcelas(parcelas);
-                    //se obtienen los fertilizantes para despues poder filtrarlos
-                    const fertilizantes = await ObtenerUsoAgua();
-                    //si es 0 es inactivo sino es activo resetea los datos
-                    const filteredData = fertilizantes.map((item) => ({
-                        ...item,
-                        estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                    }));
-    
-                    setApiData(filteredData);
-                    
+                setParcelas(parcelas);
+                //se obtienen los fertilizantes para despues poder filtrarlos
+                const fertilizantes = await ObtenerUsoAgua();
+                //si es 0 es inactivo sino es activo resetea los datos
+                const filteredData = fertilizantes.map((item) => ({
+                    ...item,
+                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+                }));
+
+                setApiData(filteredData);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -182,7 +182,7 @@ export const ListaSeguimientoAguaScreen: React.FC = () => {
                 <View style={styles.textAboveContainer}>
                     <Text style={styles.textAbove} >Lista de seguimiento del uso del agua </Text>
                 </View>
-                <View style={styles.searchContainer}>
+                <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"

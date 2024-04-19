@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './modificar-seguimiento-agua.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -255,7 +255,7 @@ export const ModificarUsoAguaScreen: React.FC = () => {
                     onPress: async () => {
                         //  Se ejecuta el servicio para cambiar el estado del seguimiento del uso del aguaa
                         const responseInsert = await CambiarEstadoRegistroSeguimientoUsoAgua(formData);
-                        
+
                         //Se valida si los datos recibidos de la api son correctos
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
@@ -504,7 +504,7 @@ export const ModificarUsoAguaScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                             }}

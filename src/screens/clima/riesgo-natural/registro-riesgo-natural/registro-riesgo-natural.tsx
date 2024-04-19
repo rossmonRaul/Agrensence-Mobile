@@ -602,7 +602,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                                 setFirstFormVisible(true)
@@ -658,7 +658,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
 
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(true);
                                                 setThirdFormVisible(false)

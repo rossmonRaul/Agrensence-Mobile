@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-seguimiento-agua.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../../../../constants';
