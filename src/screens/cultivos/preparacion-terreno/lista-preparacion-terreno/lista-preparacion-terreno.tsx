@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-preparacion-terreno.styles'
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,16 +27,16 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
     const [apiData, setApiData] = useState<LandPreparationDataInterface[]>([]);
     const [preparacionTerrenoFiltradosData, setPreparacionTerrenoFiltrados] = useState<any[]>([]);
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
-    const [parcelas, setParcelas] = useState<{idFinca: number;idParcela: number;nombreParcela?: string;}[]>([]);
+    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
 
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
     useEffect(() => {
-               const obtenerDatosIniciales = async () => {
+        const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
-            const formData = {identificacion  : userData.identificacion};
+            const formData = { identificacion: userData.identificacion };
 
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
@@ -49,10 +49,10 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
-                
+
                 setFincas(fincasUnicas);
                 //Se obtienen las parcelas para poder hacer los filtros despues
-                
+
 
                 const parcelas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
@@ -63,12 +63,12 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, idParcela, nombreParcela };
                     });
-                
+
                 setParcelas(parcelas);
                 //se obtienen los fertilizantes para despues poder filtrarlos
-                const preparacionTerreno  = await ObtenerDatosPreparacionTerreno();
+                const preparacionTerreno = await ObtenerDatosPreparacionTerreno();
                 //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = preparacionTerreno .map((item) => ({
+                const filteredData = preparacionTerreno.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
@@ -88,7 +88,7 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
         try {
 
             const resultado = parcelas.filter(item => item.idFinca === fincaId);
-            
+
             setParcelasFiltradas(resultado);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -107,9 +107,9 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
     //se filtra los feritilizantes por finca y parcela seleccionados en el dropdown
     const obtenerPreparacionTerrenoPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
-            
+
             const fertilizanteFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
-            
+
             setPreparacionTerrenoFiltrados(fertilizanteFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -131,14 +131,14 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
     //funcion para la accion del dropdown parcela
     const handleParcelaChange = (item: { label: string; value: string }) => {
         const parcelaId = parseInt(item.value, 10);
-        
+
         //se necesita el fincaId para poder hacer el filtrado
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
         //si finca Id es null no se puede seleciona ni traer el y mostrar los fertilizantes 
         if (fincaId !== null) {
-            
+
             obtenerPreparacionTerrenoPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
@@ -158,14 +158,14 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
 
 
     //funcion para que enviarlo a modificar la el manejo de fertilizantes
-    const handleRectanglePress = (idPreparacionTerreno : string, idFinca: string, idParcela: string, fecha: string,
-        actividad : string, maquinaria : string, observaciones: string, estado: string) => {
+    const handleRectanglePress = (idPreparacionTerreno: string, idFinca: string, idParcela: string, fecha: string,
+        actividad: string, maquinaria: string, observaciones: string, estado: string) => {
         navigation.navigate(ScreenProps.ModifyLandPreparation.screenName, {
-            idPreparacionTerreno : idPreparacionTerreno , idFinca: idFinca, idParcela: idParcela,
-            fecha: fecha, actividad: actividad, maquinaria: maquinaria,observaciones: observaciones, estado: estado
+            idPreparacionTerreno: idPreparacionTerreno, idFinca: idFinca, idParcela: idParcela,
+            fecha: fecha, actividad: actividad, maquinaria: maquinaria, observaciones: observaciones, estado: estado
         });
     };
-    
+
 
 
     return (
@@ -179,7 +179,7 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                     <Text style={styles.textAbove} >Lista de Preparación de Terreno</Text>
                 </View>
 
-                <View style={styles.searchContainer}>
+                <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
@@ -203,7 +203,7 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
 
                         return (
                             <TouchableOpacity key={item.idPreparacionTerreno} onPress={() => handleRectanglePress(item.idPreparacionTerreno, item.idFinca, item.idParcela, item.fecha,
-                                item.actividad , item.maquinaria, item.observaciones, item.estado)}>
+                                item.actividad, item.maquinaria, item.observaciones, item.estado)}>
                                 <CustomRectangle
                                     key={item.idPreparacionTerreno}
                                     data={processData([item], keyMapping)?.data || []} />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-fincas.styles';
+import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
@@ -29,8 +29,8 @@ export const ListaFincasScreen: React.FC = () => {
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idFinca: string, Nombre: string,Ubicacion: string, Estado: string) => {
-        navigation.navigate(ScreenProps.ModifyEstate.screenName, { idFinca, nombre: Nombre, ubicacion:Ubicacion, estado: Estado });
+    const handleRectanglePress = (idFinca: string, Nombre: string, Ubicacion: string, Estado: string) => {
+        navigation.navigate(ScreenProps.ModifyEstate.screenName, { idFinca, nombre: Nombre, ubicacion: Ubicacion, estado: Estado });
     };
 
     const fetchData = async () => {

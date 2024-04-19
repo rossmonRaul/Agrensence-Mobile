@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './administacion-clima.styles'
+import { styles } from '../../styles/menu-global-styles.styles';
 import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { IconRectangle } from '../../components/IconRectangle/IconRectangle';
 import { Admin_clima } from '../../constants';

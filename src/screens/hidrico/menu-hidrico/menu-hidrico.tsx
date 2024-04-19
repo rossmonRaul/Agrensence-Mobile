@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import { styles } from './menu-hidrico.style';
+import { styles } from '../../../styles/menu-global-styles.styles';
 import { IconRectangle } from '../../../components/IconRectangle/IconRectangle';
-import { Admin_hidrico} from '../../../constants';
+import { Admin_hidrico } from '../../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
@@ -28,7 +28,7 @@ export const MenuHidricoScreen: React.FC = () => {
     }
 
     //  Se renderiza los cuadros con sus respectivos iconos
-    
+
 
     return (
         <>
@@ -41,7 +41,7 @@ export const MenuHidricoScreen: React.FC = () => {
                 <View style={styles.rowContainer}>
 
                     {Admin_hidrico.map((item) => (
-                        
+
                         <View style={styles.row} key={item.id}>
                             <IconRectangle
                                 onPress={() => HandleRectanglePress(item)}

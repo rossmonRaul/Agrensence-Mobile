@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-rotacion-cultivo.styles';
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../../servicios/ServicioFinca';

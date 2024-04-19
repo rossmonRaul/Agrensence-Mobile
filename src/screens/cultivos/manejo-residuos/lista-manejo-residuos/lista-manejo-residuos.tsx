@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, TextInput } from 'react-native';
-import { styles } from './lista-manejo-residuos.style'
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { processData } from '../../../../utils/processData';
@@ -29,15 +29,15 @@ export const ListaManejoResiduosScreen: React.FC = () => {
     useEffect(() => {
         // Obtener los IDs de las parcelas del usuario
         const idParcelasUsuario = parcelas.map(parcela => parcela.idParcela);
-    
+
         // Filtrar las residuosFiltradas por los IDs de las parcelas del usuario
         const residuosfiltradas = apiData.filter(item => idParcelasUsuario.includes(item.idParcela));
-        
+
         // Actualizar el estado con las residuos filtradas
         setResiduosFiltradosData(residuosfiltradas);
         setResiduos(residuosfiltradas)
     }, [apiData, parcelas]);
-    
+
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -46,7 +46,7 @@ export const ListaManejoResiduosScreen: React.FC = () => {
             try {
 
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                
+
                 const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idParcela)))
@@ -55,7 +55,7 @@ export const ListaManejoResiduosScreen: React.FC = () => {
                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
                         return { idParcela, nombreParcela };
                     });
-                setParcelas(parcelasUnicas)   
+                setParcelas(parcelasUnicas)
                 const medicionesSuelo = await ObtenerManejoResiduos();
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = medicionesSuelo.map((item) => ({
@@ -74,7 +74,7 @@ export const ListaManejoResiduosScreen: React.FC = () => {
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
-        'Usuario' : 'usuario',
+        'Usuario': 'usuario',
         'Residuo': 'residuo',
         'Fecha Generacion': 'fechaGeneracion',
         'Fecha Manejo': 'fechaManejo',
@@ -89,13 +89,14 @@ export const ListaManejoResiduosScreen: React.FC = () => {
 
 
     //funcion para enviarlo a modificar residuo
-    const handleRectanglePress = (idManejoResiduos: number, residuo: string,fechaGeneracion: string,
-        fechaManejo:string, cantidad: number, accionManejo: string, destinoFinal: string, idFinca: number, idParcela: number,
+    const handleRectanglePress = (idManejoResiduos: number, residuo: string, fechaGeneracion: string,
+        fechaManejo: string, cantidad: number, accionManejo: string, destinoFinal: string, idFinca: number, idParcela: number,
         estado: string) => {
 
-        navigation.navigate(ScreenProps.ModifyResidue.screenName, {idManejoResiduos:idManejoResiduos, residuo:residuo,
-            fechaGeneracion:fechaGeneracion,fechaManejo:fechaManejo,cantidad:cantidad,accionManejo:accionManejo,destinoFinal:destinoFinal,
-            idFinca:idFinca,idParcela:idParcela, estado: estado
+        navigation.navigate(ScreenProps.ModifyResidue.screenName, {
+            idManejoResiduos: idManejoResiduos, residuo: residuo,
+            fechaGeneracion: fechaGeneracion, fechaManejo: fechaManejo, cantidad: cantidad, accionManejo: accionManejo, destinoFinal: destinoFinal,
+            idFinca: idFinca, idParcela: idParcela, estado: estado
         });
     };
     //funcion para poder buscar de acuerdo a al usuario, finca o parcela
@@ -138,7 +139,7 @@ export const ListaManejoResiduosScreen: React.FC = () => {
                     {residuos.map((item, index) => {
 
                         return (
-                            <TouchableOpacity key={item.idManejoResiduos} onPress={() => handleRectanglePress(item.idManejoResiduos, item.residuo,item.fechaGeneracion,
+                            <TouchableOpacity key={item.idManejoResiduos} onPress={() => handleRectanglePress(item.idManejoResiduos, item.residuo, item.fechaGeneracion,
                                 item.fechaManejo, item.cantidad, item.accionManejo, item.destinoFinal, item.idFinca, item.idParcela,
                                 item.estado)}>
                                 <CustomRectangle

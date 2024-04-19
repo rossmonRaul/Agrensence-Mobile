@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-manejo-residuos.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -128,7 +128,7 @@ export const RegistrarResiduosScreen: React.FC = () => {
 
         //  Se ejecuta el servicio de insertar calidad de suelo
         const responseInsert = await InsertarManejoResiduos(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert(responseInsert.mensaje, '', [
@@ -211,7 +211,7 @@ export const RegistrarResiduosScreen: React.FC = () => {
 
         return `${year}-${month}-${day}`;
     };
-    
+
     const formatDateManejo = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
         const day = dateManejo.getDate().toString().padStart(2, '0');
         const month = (dateManejo.getMonth() + 1).toString().padStart(2, '0');

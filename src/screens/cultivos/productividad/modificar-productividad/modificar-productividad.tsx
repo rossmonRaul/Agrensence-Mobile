@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './modificar-productividad-styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -111,8 +111,8 @@ export const ModificarProductividadScreen: React.FC = () => {
             isValid = false;
             return;
         }
-        
-        
+
+
 
         if (!formulario.productividad) {
             alert('Ingrese la productividad');
@@ -391,7 +391,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         iconName="map-marker"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
-                                           setSelectedTemporada(selectedItem.value);
+                                            setSelectedTemporada(selectedItem.value);
 
                                             // Actualizar el formulario con la selección de la finca
                                             updateFormulario('temporada', selectedItem.value);

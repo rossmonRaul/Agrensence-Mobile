@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     formContainer: {
         paddingTop: 10,
         justifyContent: 'center',
+        marginBottom: 50,
     },
     buttonContent: {
         marginTop: 1,
@@ -43,6 +44,7 @@ export const styles = StyleSheet.create({
         padding: 8,
         alignItems: 'center',
         borderRadius: 12,
+        marginBottom: 10,
     },
     buttonPicker: {
         height: 50,
@@ -87,7 +89,7 @@ export const styles = StyleSheet.create({
         fontFamily: 'CatamaranBold'
     },
     formText: {
-        fontSize: 22,
+        fontSize: 20,
         fontFamily: 'CatamaranBold'
     },
     picker: {
@@ -137,7 +139,7 @@ export const styles = StyleSheet.create({
 
     },
     inputMultiline: {
-        height: 80,
+        height: 100,
         borderColor: '#548256',
         borderWidth: 2,
         marginBottom: 10,
@@ -156,6 +158,40 @@ export const styles = StyleSheet.create({
     pickerButton: {
         paddingHorizontal: 20,
     },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    checkbox: {
+        padding: 0,
+    },
+    buttonDelete: {
+        backgroundColor: '#aa5458',
+        padding: 8,
+        alignItems: 'center',
+        borderRadius: 12,
+        marginBottom: 10,
+    },
+    backButton: {
+        padding: 8,
+        alignItems: 'center',
+        borderRadius: 12,
+        marginBottom: 10,
+        width: 150,
+        borderColor: '#a4a4a4',
+        borderWidth: 2,
+        backgroundColor: '#d3d3d3'
+    },
+    loadingContainer: {
+        marginTop: 30,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    activityIndicatorContainer: {
+        transform: [{ scale: 1.5 }],
+    },
     fileList: {
         marginTop: 20,
         marginBottom: 20,
@@ -172,13 +208,26 @@ export const styles = StyleSheet.create({
     fileName: {
         marginRight: 10,
     },
-    loadingContainer: {
-        marginTop: 30,
-        flex: 1,
-        justifyContent: 'center',
+    buttonActive: {
+        backgroundColor: '#548256',
+        marginTop: 3,
+        padding: 8,
         alignItems: 'center',
+        borderRadius: 12,
     },
-    activityIndicatorContainer: {
-        transform: [{ scale: 1.5}], 
+    additionalInfo: {
+        color: '#6c757d', // Color del texto
+        fontSize: 12, // Tamaño de fuente
+        //marginTop: 5, // Espacio superior
+        marginLeft: 4, // Margen izquierdo
+        marginBottom: 10,
+    },
+    inputSinMargin: {
+        height: 40,
+        borderColor: '#548256',
+        borderWidth: 2,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        fontFamily: 'CatamaranMedium'
     },
 });

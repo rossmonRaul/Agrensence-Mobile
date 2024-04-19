@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './modificar-preparacion-terreno.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -49,8 +49,8 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
         idFinca: idFinca,
         idParcela: idParcela,
         fecha: fecha,
-        actividad : actividad ,
-        maquinaria: maquinaria ,
+        actividad: actividad,
+        maquinaria: maquinaria,
         observaciones: observaciones,
     });
 
@@ -66,7 +66,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
     const validateFirstForm = () => {
         let isValid = true;
 
-        if (!formulario.fecha && !formulario.actividad && !formulario.maquinaria ) {
+        if (!formulario.fecha && !formulario.actividad && !formulario.maquinaria) {
             alert('Por favor rellene el formulario');
             isValid = false;
             return
@@ -86,7 +86,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
             isValid = false;
             return
         }
-        
+
 
         return isValid
     }
@@ -122,10 +122,10 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
             observaciones: formulario.observaciones,
             usuarioCreacionModificacion: userData.identificacion,
         };
-        
+
         //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await ModificarPreparacionTerreno(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Exito en modificar!', '', [
@@ -155,7 +155,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
-                
+
                 setFincas(fincasUnicas);
 
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
@@ -282,7 +282,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
         return `${day}/${month}/${year}`;
     };
     //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
-    const formatDate = () => { 
+    const formatDate = () => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear().toString();
@@ -421,7 +421,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         value={formulario.maquinaria}
                                         onChangeText={(text) => updateFormulario('maquinaria', text)}
                                     />
-                                  
+
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={async () => {
@@ -481,13 +481,13 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent'}]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
-                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle } />
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
                                                 <Text style={styles.buttonTextBack}> Atrás</Text>
                                             </View>
                                         </TouchableOpacity>

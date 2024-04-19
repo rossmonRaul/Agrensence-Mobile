@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-preparacion-terreno.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
@@ -74,7 +74,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
             isValid = false;
             return
         }
-       
+
         return isValid
     }
     // Se defina una función para manejar el registro del identificacion
@@ -109,10 +109,10 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
             usuarioCreacionModificacion: userData.identificacion,
 
         };
-        
+
         //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await InsertarPreparacionTerrenos(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se creo la preparación de terreno correctamente!', '', [
@@ -151,7 +151,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                     idParcela: item.idParcela,
                     nombre: item.nombreParcela,
                 }));
-                
+
                 setParcelas(parcelasUnicas);
 
             } catch (error) {
@@ -163,9 +163,9 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            
+
             const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
-            
+
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -318,7 +318,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Actividad "
-                                        value={formulario.actividad }
+                                        value={formulario.actividad}
                                         onChangeText={(text) => updateFormulario('actividad', text)}
                                     />
                                     <Text style={styles.formText} >Maquinaria</Text>

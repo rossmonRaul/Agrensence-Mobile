@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-parcelas.styles'
+import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
@@ -31,16 +31,16 @@ export const ListaParcelasScreen: React.FC = () => {
     const [fincaDataSort, setFincaDataSort] = useState<DropdownData[]>([]);
 
     const handleValueFinca = (itemValue: any) => {
-        
+
         setFinca(itemValue.value);
         // Convertir itemValue.value a número
         const fincaId = parseInt(itemValue.value, 10)
         ObtenerParcelas()
             .then((response) => {
-                
+
                 //  Filtrar los datos de la api de acuerdo al id de la
                 let fincaSort = response.filter(item => item.idFinca === fincaId);
-                
+
                 //  Filtrar y formatear los datos originales
                 const filteredData = fincaSort.map((item) => ({
                     ...item,
@@ -85,9 +85,9 @@ export const ListaParcelasScreen: React.FC = () => {
         try {
             const fincaIdsArray = fincaDataSort.map((finca) => parseInt(finca.value, 10));
             const response = await ObtenerParcelas();
-            
+
             const fincaSort = response.filter(item => fincaIdsArray.includes(item.idFinca));
-            
+
             const filteredData = fincaSort.map((item) => ({
                 ...item,
                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
@@ -114,7 +114,7 @@ export const ListaParcelasScreen: React.FC = () => {
 
     //funcion para que enviarlo a modificar la parcela
     const handleRectanglePress = (idParcela: string, Nombre: string, Estado: string) => {
-        navigation.navigate(ScreenProps.ModifyPlot.screenName, { idParcela: idParcela, nombre: Nombre, estado: Estado});
+        navigation.navigate(ScreenProps.ModifyPlot.screenName, { idParcela: idParcela, nombre: Nombre, estado: Estado });
     };
 
     return (
@@ -127,7 +127,7 @@ export const ListaParcelasScreen: React.FC = () => {
                     <Text style={styles.textAbove} >Lista de parcelas</Text>
                 </View>
 
-                <View style={styles.searchContainer}>
+                <View style={styles.dropDownContainer}>
 
                     <DropdownComponent
                         placeholder="Finca"

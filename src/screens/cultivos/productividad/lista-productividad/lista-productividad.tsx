@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-productividad-style'
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { processData } from '../../../../utils/processData';
@@ -24,7 +24,7 @@ export const ListaProductividadScreen: React.FC = () => {
     const [apiData, setApiData] = useState<ProduccionDataInterdace[]>([]);
     const [productividadFiltradaData, setProductividadFiltrada] = useState<any[]>([]);
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
-    const [parcelas, setParcelas] = useState<{idFinca: number;idParcela: number;nombreParcela?: string;}[]>([]);
+    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
 
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
@@ -33,11 +33,11 @@ export const ListaProductividadScreen: React.FC = () => {
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
-            const formData = {identificacion  : userData.identificacion};
-            
+            const formData = { identificacion: userData.identificacion };
+
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                
+
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))
@@ -46,10 +46,10 @@ export const ListaProductividadScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
-                
+
                 setFincas(fincasUnicas);
                 //Se obtienen las parcelas para poder hacer los filtros despues
-                
+
 
                 const parcelas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
@@ -60,7 +60,7 @@ export const ListaProductividadScreen: React.FC = () => {
                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, idParcela, nombreParcela };
                     });
-                
+
                 setParcelas(parcelas);
                 //se obtienen los fertilizantes para despues poder filtrarlos
                 const cultivos = await ObtenerProductividadCultivos();
@@ -85,7 +85,7 @@ export const ListaProductividadScreen: React.FC = () => {
         try {
 
             const resultado = parcelas.filter(item => item.idFinca === fincaId);
-            
+
             setParcelasFiltradas(resultado);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -105,9 +105,9 @@ export const ListaProductividadScreen: React.FC = () => {
     //se filtra los feritilizantes por finca y parcela seleccionados en el dropdown
     const obtenerProductividadPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
-            
+
             const productividadFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
-            
+
             setProductividadFiltrada(productividadFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -129,14 +129,14 @@ export const ListaProductividadScreen: React.FC = () => {
     //funcion para la accion del dropdown parcela
     const handleParcelaChange = (item: { label: string; value: string }) => {
         const parcelaId = parseInt(item.value, 10);
-        
+
         //se necesita el fincaId para poder hacer el filtrado
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
         //si finca Id es null no se puede seleciona ni traer el y mostrar los fertilizantes 
         if (fincaId !== null) {
-            
+
             obtenerProductividadPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch fertilizantes.');
@@ -183,7 +183,7 @@ export const ListaProductividadScreen: React.FC = () => {
                     <Text style={styles.textAbove} >Lista de Productividad</Text>
                 </View>
 
-                <View style={styles.searchContainer}>
+                <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"

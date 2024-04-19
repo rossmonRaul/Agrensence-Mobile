@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './modificar-calidad-suelo.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ScreenProps } from '../../../../constants';
@@ -31,7 +31,7 @@ interface RouteParams {
     observaciones: string;
     calidadAgua: number;
     idFinca: string;
-    idParcela:string;
+    idParcela: string;
     estado: string;
 }
 export const ModificarCalidadSueloScreen: React.FC = () => {
@@ -48,11 +48,11 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
         ph, nitratosSuelo, estabilidadAgregados, desleimiento, lombrices,
         observaciones, calidadAgua, idFinca, idParcela, estado } = route.params as RouteParams;
 
-        const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
-        const [parcelas, setParcelas] = useState<ParcelaInterface[]>([]);
-        const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
-        const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
-        const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
+    const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
+    const [parcelas, setParcelas] = useState<ParcelaInterface[]>([]);
+    const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
+    const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
+    const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         medicionesCalidadSuelo: medicionesCalidadSuelo,
@@ -67,8 +67,8 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
         lombrices: lombrices,
         observaciones: observaciones,
         calidadAgua: calidadAgua,
-        idFinca:idFinca,
-        idParcela:idParcela,
+        idFinca: idFinca,
+        idParcela: idParcela,
     });
 
 
@@ -198,10 +198,10 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
         };
-        
+
         //  Se ejecuta el servicio de de modificar calidad de suelo
         const responseInsert = await ModificarMedicionesSuelo(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se modifico la calidad del suelo correctamente!', '', [
@@ -216,7 +216,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
             alert('!Oops! Parece que algo salió mal')
         }
     };
-    
+
 
     //funcion para desactivar o activar el mediciones de suelo
     const handleChangeAccess = async () => {
@@ -279,7 +279,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
-                
+
                 setFincas(fincasUnicas);
 
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
@@ -543,7 +543,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                             {!isSecondFormVisible && isThirdFormVisible && (
 
                                 <>
-                                <Text style={styles.formText} >Finca</Text>
+                                    <Text style={styles.formText} >Finca</Text>
                                     {/* Dropdown para Fincas */}
                                     <DropdownComponent
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}

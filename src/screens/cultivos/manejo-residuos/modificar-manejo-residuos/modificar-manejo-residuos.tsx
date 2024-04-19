@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, PanResponder } from 'react-native';
-import { styles } from './modificar-manejo-residuos.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';

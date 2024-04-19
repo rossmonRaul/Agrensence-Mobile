@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, TextInput } from 'react-native';
-import { styles } from './lista-riesgo-natural.style'
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { processData } from '../../../../utils/processData';
@@ -29,15 +29,15 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
     useEffect(() => {
         // Obtener los IDs de las parcelas del usuario
         const idParcelasUsuario = parcelas.map(parcela => parcela.idParcela);
-        
+
         // Filtrar las residuosFiltradas por los IDs de las parcelas del usuario
         const residuosfiltradas = apiData.filter(item => idParcelasUsuario.includes(item.idParcela));
-        
+
         // Actualizar el estado con las residuos filtradas
         setRiesgosFiltradosData(residuosfiltradas);
         setRiesgos(residuosfiltradas)
     }, [apiData, parcelas]);
-    
+
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -46,7 +46,7 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
             try {
 
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                
+
                 const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idParcela)))
@@ -55,14 +55,14 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
                         return { idParcela, nombreParcela };
                     });
-                setParcelas(parcelasUnicas)   
+                setParcelas(parcelasUnicas)
                 const riesgosNaturales = await ObtenerRiesgosNaturales();
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = riesgosNaturales.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
-                
+
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -75,7 +75,7 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
-        'Fecha' : 'fecha',
+        'Fecha': 'fecha',
         'Finca': 'nombreFinca',
         'Parcela': 'nombreParcela',
         'Riesgo': 'riesgoNatural',
@@ -86,15 +86,16 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
 
 
     //funcion para enviarlo a modificar residuo
-    const handleRectanglePress = (idRiesgoNatural: string,fecha: string, riesgoNatural: string,
-        practicaPreventiva:string, responsable: number, resultadoPractica: string,
+    const handleRectanglePress = (idRiesgoNatural: string, fecha: string, riesgoNatural: string,
+        practicaPreventiva: string, responsable: number, resultadoPractica: string,
         accionesCorrectivas: string, observaciones: string, idFinca: string, idParcela: string,
         estado: string) => {
 
-        navigation.navigate(ScreenProps.ModifyRiskNatural.screenName, {idRiesgoNatural:idRiesgoNatural,fecha:fecha, riesgoNatural:riesgoNatural,
-            practicaPreventiva:practicaPreventiva,responsable:responsable,
-            resultadoPractica:resultadoPractica,accionesCorrectivas:accionesCorrectivas,
-            observaciones:observaciones, idFinca:idFinca,idParcela:idParcela, estado: estado
+        navigation.navigate(ScreenProps.ModifyRiskNatural.screenName, {
+            idRiesgoNatural: idRiesgoNatural, fecha: fecha, riesgoNatural: riesgoNatural,
+            practicaPreventiva: practicaPreventiva, responsable: responsable,
+            resultadoPractica: resultadoPractica, accionesCorrectivas: accionesCorrectivas,
+            observaciones: observaciones, idFinca: idFinca, idParcela: idParcela, estado: estado
         });
     };
     //funcion para poder buscar de acuerdo a al usuario, finca o parcela
@@ -136,8 +137,8 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
                     {riesgos.map((item, index) => {
 
                         return (
-                            <TouchableOpacity key={item.idRiesgoNatural} onPress={() => handleRectanglePress(item.idRiesgoNatural, item.fecha,item.riesgoNatural,
-                                item.practicaPreventiva, item.responsable, item.resultadoPractica, item.accionesCorrectivas,item.observaciones, item.idFinca, item.idParcela,
+                            <TouchableOpacity key={item.idRiesgoNatural} onPress={() => handleRectanglePress(item.idRiesgoNatural, item.fecha, item.riesgoNatural,
+                                item.practicaPreventiva, item.responsable, item.resultadoPractica, item.accionesCorrectivas, item.observaciones, item.idFinca, item.idParcela,
                                 item.estado)}>
                                 <CustomRectangle
                                     key={item.idRiesgoNatural}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Button, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
-import { styles } from './registro-riesgo-natural.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -658,7 +658,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
 
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10,  borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(true);
                                                 setThirdFormVisible(false)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-condiciones-meteorologicas-climaticas.styles';
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { processData } from '../../../../utils/processData';
 import { CustomRectangle } from '../../../../components/CustomRectangle/CustomRectangle';

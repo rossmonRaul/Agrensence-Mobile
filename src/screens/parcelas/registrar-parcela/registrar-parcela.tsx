@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-parcela.styles';
+import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { isEmail } from 'validator'

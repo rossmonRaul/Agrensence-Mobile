@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-productividad-styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
@@ -97,8 +97,8 @@ export const RegistrarProductividadScreen: React.FC = () => {
             isValid = false;
             return;
         }
-        
-        
+
+
 
         if (!formulario.productividad) {
             alert('Ingrese la productividad');
@@ -138,13 +138,13 @@ export const RegistrarProductividadScreen: React.FC = () => {
             Area: formulario.area,
             Produccion: formulario.produccion,
             Productividad: formulario.productividad,
-            Usuario: userData.identificacion 
+            Usuario: userData.identificacion
         };
-        
-        
+
+
         //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await AgregarProductividadCultivo(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se creo el registro de productividad correctamente!', '', [
@@ -183,7 +183,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                     idParcela: item.idParcela,
                     nombre: item.nombreParcela,
                 }));
-                
+
                 setParcelas(parcelasUnicas);
 
             } catch (error) {
@@ -195,9 +195,9 @@ export const RegistrarProductividadScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            
+
             const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
-            
+
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -264,7 +264,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('produccion', text)}
                                         keyboardType="numeric"
                                     />
-                                   <Text style={styles.formText} >Productividad</Text>
+                                    <Text style={styles.formText} >Productividad</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Productividad"
@@ -272,7 +272,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('productividad', text)}
                                         keyboardType="numeric"
                                     />
-                                    
+
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={async () => {
@@ -290,7 +290,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
 
                             ) : (
                                 <>
-                                    
+
                                     <Text style={styles.formText} >Temporada</Text>
                                     {/* Dropdown para Temporadas */}
                                     <DropdownComponent

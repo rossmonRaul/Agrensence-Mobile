@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './modificar-condiciones-meteorologicas-climaticas.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ScreenProps } from '../../../../constants';
@@ -564,21 +564,26 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                         </View>
                                     )}
                                     <Text style={styles.formText} >Hora</Text>
-                                    <View style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }} >
+                                    <View style={{ flexDirection: 'row', gap: 25, alignItems: 'center' }} >
                                         <View style={{
-                                            flexDirection: 'row', alignItems: 'center', width: 100, gap: 10
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: 100,
+                                            gap: 10,
+                                            marginLeft: 40,
                                         }}>
                                             <TextInput
-                                                style={styles.input}
+                                                style={[styles.input, { textAlign: 'center', fontSize: 20 }]}
                                                 placeholder="HH"
                                                 keyboardType="numeric"
                                                 value={hours}
                                                 onChangeText={(text) => handleHourChange(text)}
                                                 maxLength={2}
                                             />
-                                            <Text>:</Text>
+                                            <Text style={{ fontSize: 20, textAlign: 'center' }}>:</Text>
                                             <TextInput
-                                                style={styles.input}
+                                                style={[styles.input, { textAlign: 'center', fontSize: 20 }]}
                                                 placeholder="MM"
                                                 keyboardType="numeric"
                                                 value={minutes}
@@ -586,12 +591,13 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                                 maxLength={2}
                                             />
                                         </View>
-                                        <View style={{ minWidth: 120, minHeight: 50 }}>
+                                        <View style={{ minWidth: 90, minHeight: 40 }}>
                                             <DropdownComponent
                                                 placeholder="Periodo"
                                                 data={dateTimeValues}
                                                 value={period}
                                                 iconName=''
+                                                height={40}
                                                 onChange={(value) => setPeriod(value.value)}
                                             />
                                         </View>
@@ -688,7 +694,7 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                     }}
                                 />
                                 <TouchableOpacity
-                                    style={[styles.button, { width: 150, marginRight: 10, marginBottom: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                    style={styles.backButton}
                                     onPress={() => {
                                         setSecondFormVisible(false);
                                     }}
@@ -740,8 +746,8 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                         </View>
                     </ScrollView>
                 </View>
-            </KeyboardAvoidingView>
+            </KeyboardAvoidingView >
             <BottomNavBar />
-        </View>
+        </View >
     );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-finca.styles';
+import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import { isEmail } from 'validator'
 import { GuardarUsuarioPorSuperUsuario } from '../../../servicios/ServicioUsuario';
@@ -53,7 +53,7 @@ export const RegistrarFincaScreen: React.FC = () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             nombre: formulario.nombre,
-            ubicacion:formulario.ubicacion,
+            ubicacion: formulario.ubicacion,
             idEmpresa: formulario.idEmpresa,
         };
 

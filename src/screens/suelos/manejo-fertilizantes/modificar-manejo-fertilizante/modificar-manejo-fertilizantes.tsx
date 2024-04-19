@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './modificar-manejo-fertilizante.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -152,10 +152,10 @@ export const ModificarFertilizanteScreen: React.FC = () => {
             condicionesAmbientales: formulario.condicionesAmbientales,
             observaciones: formulario.observaciones,
         };
-        
+
         //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await ActualizarManejoFertilizantes(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Exito en modificar!', '', [
@@ -185,7 +185,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
                         return { idFinca, nombreFinca };
                     });
-                
+
                 setFincas(fincasUnicas);
 
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
@@ -312,7 +312,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
         return `${day}/${month}/${year}`;
     };
     //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
-    const formatDate = () => { 
+    const formatDate = () => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear().toString();
@@ -544,13 +544,13 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent'}]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
-                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle } />
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
                                                 <Text style={styles.buttonTextBack}> Atrás</Text>
                                             </View>
                                         </TouchableOpacity>

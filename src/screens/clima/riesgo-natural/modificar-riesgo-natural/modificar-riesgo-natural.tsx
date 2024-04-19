@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, Pressable, Button, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
-import { styles } from './modificar-riesgo-natural.style';
+import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -787,7 +787,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10,  borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
+                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: '#a4a4a4', borderWidth: 2, backgroundColor: '#d3d3d3' }]}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                                 setFirstFormVisible(true)
@@ -835,11 +835,11 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                     <View style={styles.fileList}>
                                         {selectedFiles.map((file, index) => (
                                             <View key={index} style={styles.fileItem}>
-                                                
-                                                    <Text style={styles.fileName}>
-                                                        {file.name.length > 30 ? `${file.name.substring(0, 30)}...` : file.name}
-                                                    </Text>
-                                                
+
+                                                <Text style={styles.fileName}>
+                                                    {file.name.length > 30 ? `${file.name.substring(0, 30)}...` : file.name}
+                                                </Text>
+
                                                 <Button title="X" onPress={() => handleRemoveFile(index, file.idDocumento)} />
                                             </View>
 
@@ -872,20 +872,20 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         </TouchableOpacity>
 
                                     </View>
-                                    
+
                                     <TouchableOpacity
-                                            style={styles.buttonDelete}
-                                            onPress={() => {
-                                                handleChangeAccess();
-                                            }}
-                                        >
-                                            <View style={styles.buttonContent}>
-                                                <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Eliminar</Text>
-                                            </View>
-                                        </TouchableOpacity>    
-                                        
-                                    
+                                        style={styles.buttonDelete}
+                                        onPress={() => {
+                                            handleChangeAccess();
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}> Eliminar</Text>
+                                        </View>
+                                    </TouchableOpacity>
+
+
                                 </>
                             )}
 
