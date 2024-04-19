@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     dropdown: {
-        height: 50,
         borderColor: '#548256',
         borderWidth: 2,
         borderRadius: 8,
