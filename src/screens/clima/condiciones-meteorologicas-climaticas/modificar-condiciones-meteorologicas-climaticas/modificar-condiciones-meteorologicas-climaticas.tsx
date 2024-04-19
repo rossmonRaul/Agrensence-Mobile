@@ -110,7 +110,12 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
     };
     const extractTime = (timeString) => {
         const [time, periodD] = timeString.split(' '); // Dividir la cadena por espacio en hora y período
-        const [hours, minutes] = time.split(':'); // Dividir la hora por los dos puntos en horas y minutos
+        let [hours, minutes] = time.split(':'); // Dividir la hora por los dos puntos en horas y minutos
+
+        // Verifica si la hora comienza con '0' y convertirte en 'n'
+        if (hours.startsWith('0')) {
+            hours = hours.substring(1);
+        }
 
         setHours(hours);
         setMinutes(minutes);
@@ -655,7 +660,9 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={selectedFinca}
-                                        iconName="map-marker"
+                                        iconName="tree"
+                                        selectedTextColor="#548256"
+                                        iconColor="#548256"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
@@ -669,7 +676,9 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                     value={selectedParcela}
-                                    iconName="map-marker"
+                                    iconName="pagelines"
+                                    selectedTextColor="#548256"
+                                    iconColor="#548256"
                                     onChange={(selectedItem) => {
                                         // Manejar el cambio en la selección de la parcela
                                         setSelectedParcela(selectedItem.value);
