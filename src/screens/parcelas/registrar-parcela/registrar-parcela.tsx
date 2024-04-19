@@ -130,7 +130,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
                                 <DropdownComponent
                                     placeholder="Finca"
                                     data={fincaDataSort}
-                                    iconName="map-marker"
+                                    iconName="tree"
                                     value={finca}
                                     onChange={(item) => (setFinca(item.value as never), updateFormulario('idFinca', item.value))}
                                 />

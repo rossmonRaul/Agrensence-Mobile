@@ -455,7 +455,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={selectedFinca}
-                                        iconName="map-marker"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
@@ -470,7 +470,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
-                                        iconName="map-marker"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la parcela
                                             setSelectedParcela(selectedItem.value);

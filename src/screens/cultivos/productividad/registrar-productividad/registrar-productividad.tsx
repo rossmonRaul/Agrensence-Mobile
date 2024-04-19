@@ -297,7 +297,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         placeholder="Seleccione una Temporada"
                                         data={temporadas.map(temporadas => ({ label: temporadas.nombre, value: String(temporadas.nombre) }))}
                                         value={selectedTemporada}
-                                        iconName="map-marker"
+                                        iconName="sun-o"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleTemporadaChange(selectedItem);
@@ -313,7 +313,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         placeholder="Seleccione una Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={selectedFinca}
-                                        iconName="map-marker"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
@@ -328,7 +328,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         placeholder="Seleccione una Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
-                                        iconName="map-marker"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la parcela
                                             setSelectedParcela(selectedItem.value);

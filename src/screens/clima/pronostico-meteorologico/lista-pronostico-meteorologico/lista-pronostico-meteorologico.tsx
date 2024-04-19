@@ -121,7 +121,7 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
           placeholder="Seleccione una Finca"
           data={fincas.map(finca => ({ label: finca.nombre, value: finca.ubicacion }))}
           value={selectedFinca}
-          iconName="map-marker"
+          iconName="tree"
 
           onChange={handleFincaChange}
         />

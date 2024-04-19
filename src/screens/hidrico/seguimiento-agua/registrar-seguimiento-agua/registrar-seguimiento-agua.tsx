@@ -270,7 +270,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                         placeholder="Seleccione una Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={selectedFinca}
-                                        iconName="map-marker"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
@@ -285,7 +285,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                         placeholder="Seleccione una Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
-                                        iconName="map-marker"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la parcela
                                             setSelectedParcela(selectedItem.value);

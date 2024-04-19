@@ -550,7 +550,7 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                                         placeholder="Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={finca}
-                                        iconName='map-marker'
+                                        iconName='tree'
                                         onChange={handleValueFinca}
                                     />
                                 }
@@ -558,7 +558,7 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                                     <DropdownComponent
                                         placeholder="Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
-                                        iconName='map-marker'
+                                        iconName='pagelines'
                                         value={parcela}
                                         onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
                                     />

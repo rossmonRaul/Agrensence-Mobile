@@ -133,7 +133,7 @@ export const ListaParcelasScreen: React.FC = () => {
                         placeholder="Finca"
                         data={fincaDataSort}
                         value={finca}
-                        iconName='map-marker'
+                        iconName='tree'
                         onChange={handleValueFinca}
 
                     />

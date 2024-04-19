@@ -185,7 +185,7 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
-                        iconName="map-marker"
+                        iconName="tree"
                         onChange={handleFincaChange}
                     />
 
@@ -194,7 +194,7 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
-                        iconName="map-marker"
+                        iconName="pagelines"
                         onChange={handleParcelaChange}
                     />
                 </View>
