@@ -400,7 +400,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.ListWeatherClimateConditions.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListPestsDiseases.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
