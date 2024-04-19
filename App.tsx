@@ -62,9 +62,9 @@ import { ListaRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/lis
 import { RegistrarRiesgosScreen } from './src/screens/clima/riesgo-natural/registro-riesgo-natural/registro-riesgo-natural';
 import { ModificarRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/modificar-riesgo-natural/modificar-riesgo-natural';
 import { AdministracionPlagas } from './src/screens/plagas/administracion-plagas/administracion-plagas';
-import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/condiciones-meteorologicas-climaticas/lista-problemas-asociados-plagas/lista-problemas-asociados-plagas';
-import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/condiciones-meteorologicas-climaticas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
-import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/condiciones-meteorologicas-climaticas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
+import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/lista-problemas-asociados-plagas/lista-problemas-asociados-plagas';
+import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
+import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
