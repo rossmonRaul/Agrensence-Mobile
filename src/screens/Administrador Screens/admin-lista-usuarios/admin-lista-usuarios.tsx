@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './admin-lista-usuarios.styles'
+import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerUsuariosPorRol2, ObtenerUsuariosPorRol3, ObtenerUsuariosPorIdEmpresa } from '../../../servicios/ServicioUsuario';
@@ -63,14 +63,14 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     }
     const handleRectanglePress = (item: any) => {
 
-        const { identificacion, nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = item;
+        const { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = item;
         if (userData.idRol === 1) {
-            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela });
+            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela });
         } else if (datoValidacion === '1' && userData.idRol === 2) {
-            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela });
+            navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela });
         }
         else if (userData.idRol === 2) {
-            navigation.navigate(ScreenProps.AdminModifyUser.screenName, { identificacion,nombre,correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela });
+            navigation.navigate(ScreenProps.AdminModifyUser.screenName, { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela });
         }
     };
 
@@ -130,7 +130,7 @@ export const AdminListaUsuarioScreen: React.FC = () => {
         <View style={styles.container} >
             <View style={styles.listcontainer}>
                 <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
-                {userData.idRol === 1 && 
+                {userData.idRol === 1 &&
                     <AddButtonComponent screenName={ScreenProps.AdminRegisterUser.screenName} color={'#274c48'} />
                 }
                 {userData.idRol === 2 && datoValidacion === '1' &&
@@ -167,9 +167,9 @@ export const AdminListaUsuarioScreen: React.FC = () => {
                     })}
                 </ScrollView>
             </View>
-            
+
             <BottomNavBar />
         </View>
-        
+
     );
 }

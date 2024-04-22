@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-calidad-suelo.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../../../../constants';
@@ -20,7 +20,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
     const { userData } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
-    const [parcelas, setParcelas] = useState<{idFinca: number; idParcela: number; nombre: string }[] | []>([]);
+    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
@@ -175,10 +175,10 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
             calidadAgua: formulario.calidadAgua,
             identificacionUsuario: userData.identificacion,
         };
-        
+
         //  Se ejecuta el servicio de insertar calidad de suelo
         const responseInsert = await InsertarMedicionesSuelo(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se registro la calidad de suelo correctamente!', '', [
@@ -397,7 +397,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                                 setThirdFormVisible(false)
@@ -441,7 +441,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
                                         placeholder="Seleccione una Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={selectedFinca}
-                                        iconName="map-marker"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
@@ -456,7 +456,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
                                         placeholder="Seleccione una Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
-                                        iconName="map-marker"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la parcela
                                             setSelectedParcela(selectedItem.value);
@@ -490,7 +490,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
 
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(true);
                                                 setThirdFormVisible(false)

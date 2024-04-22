@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './lista-fincas.styles';
+import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
@@ -25,11 +25,12 @@ export const ListaFincasScreen: React.FC = () => {
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
         'Nombre': 'nombre',
+        'Ubicación': 'ubicacion',
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idFinca: string, Nombre: string, Estado: string) => {
-        navigation.navigate(ScreenProps.ModifyEstate.screenName, { idFinca, nombre: Nombre, estado: Estado });
+    const handleRectanglePress = (idFinca: string, Nombre: string, Ubicacion: string, Estado: string) => {
+        navigation.navigate(ScreenProps.ModifyEstate.screenName, { idFinca, nombre: Nombre, ubicacion: Ubicacion, estado: Estado });
     };
 
     const fetchData = async () => {
@@ -88,7 +89,7 @@ export const ListaFincasScreen: React.FC = () => {
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {apiData.map((item, index) => (
-                        <TouchableOpacity key={item.idFinca} onPress={() => handleRectanglePress(item.idFinca, item.nombre, item.estado)}>
+                        <TouchableOpacity key={item.idFinca} onPress={() => handleRectanglePress(item.idFinca, item.nombre, item.ubicacion, item.estado)}>
                             <CustomRectangle
                                 key={item.idFinca}
                                 data={processData([item], keyMapping)?.data || []} />

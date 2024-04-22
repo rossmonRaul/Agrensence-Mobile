@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     textAbove: {
         fontFamily: 'CatamaranBold',
         fontSize: 24,
-        color: '#274c48',
+        color: '#548256',
         alignSelf: 'flex-start',
     },
     titleContainer: {

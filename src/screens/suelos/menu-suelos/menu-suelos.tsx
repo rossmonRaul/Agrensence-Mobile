@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import { styles } from './menu-suelos.styles';
+import { styles } from '../../../styles/menu-global-styles.styles';
 import { IconRectangle } from '../../../components/IconRectangle/IconRectangle';
-import { Admin_suelo} from '../../../constants';
+import { Admin_suelo } from '../../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
@@ -27,7 +27,7 @@ export const MenuSueloScreen: React.FC = () => {
     }
 
     //  Se renderiza los cuadros con sus respectivos iconos
-    
+
 
     return (
         <>
@@ -40,7 +40,7 @@ export const MenuSueloScreen: React.FC = () => {
                 <View style={styles.rowContainer}>
 
                     {Admin_suelo.map((item) => (
-                        
+
                         <View style={styles.row} key={item.id}>
                             <IconRectangle
                                 onPress={() => HandleRectanglePress(item)}

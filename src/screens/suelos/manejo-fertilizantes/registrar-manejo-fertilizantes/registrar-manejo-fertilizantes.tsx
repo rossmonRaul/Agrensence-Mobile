@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-manejo-fertilizantes.styles';
+import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
@@ -134,10 +134,10 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
             condicionesambientales: formulario.condicionalesambientales,
             observaciones: formulario.observaciones,
         };
-        
+
         //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await InsertarManejoFertilizantes(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se creo el manejo del fertilizante correctamente!', '', [
@@ -176,7 +176,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                     idParcela: item.idParcela,
                     nombre: item.nombreParcela,
                 }));
-                
+
                 setParcelas(parcelasUnicas);
 
             } catch (error) {
@@ -188,9 +188,9 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     }, []);
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-            
+
             const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
-            
+
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
@@ -420,7 +420,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         placeholder="Seleccione una Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                                         value={selectedFinca}
-                                        iconName="map-marker"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la finca
                                             handleFincaChange(selectedItem);
@@ -435,7 +435,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         placeholder="Seleccione una Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                                         value={selectedParcela}
-                                        iconName="map-marker"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
                                             // Manejar el cambio en la selección de la parcela
                                             setSelectedParcela(selectedItem.value);
@@ -446,7 +446,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(false);
                                             }}

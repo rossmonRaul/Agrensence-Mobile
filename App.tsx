@@ -33,7 +33,38 @@ import { ModificarFertilizanteScreen } from "./src/screens/suelos/manejo-fertili
 import { ListaCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/lista-calidad-suelo/lista-calidad-suelo";
 import { RegistrarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/registrar-calidad-suelo/registrar-calidad-suelo";
 import { ModificarCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/modificar-calidad-suelo/modificar-calidad-suelo";
-
+import { ListaRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/lista-rotacion-cultivo/lista-rotacion-cultivo';
+import { InsertarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/insertar-rotacion-cultivo/insertar-rotacion-cultivo';
+import { ModificarRotacionCultivosScreen } from './src/screens/cultivos/rotacion-cultivo/modificar-rotacion-cultivo/modificar-rotacion-cultivo';
+import { ListaProductividadScreen } from './src/screens/cultivos/productividad/lista-productividad/lista-productividad';
+import { RegistrarProductividadScreen } from './src/screens/cultivos/productividad/registrar-productividad/registrar-productividad';
+import { ModificarProductividadScreen } from './src/screens/cultivos/productividad/modificar-productividad/modificar-productividad';
+import { ListaPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/lista-preparacion-terreno/lista-preparacion-terreno';
+import { ModificarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/modificar-preparacion-terreno/modificar-preparacion-terreno';
+import { RegistrarPreparacionTerrenoScreen } from './src/screens/cultivos/preparacion-terreno/registrar-preparacion-terreno/registrar-preparacion-terreno';
+import { ListaManejoResiduosScreen } from './src/screens/cultivos/manejo-residuos/lista-manejo-residuos/lista-manejo-residuos';
+import { RegistrarResiduosScreen } from './src/screens/cultivos/manejo-residuos/registrar-manejo-residuos/registrar-manejo-residuos';
+import { ModificarResiduosScreen } from './src/screens/cultivos/manejo-residuos/modificar-manejo-residuos/modificar-manejo-residuos';
+import { MenuHidricoScreen } from './src/screens/hidrico/menu-hidrico/menu-hidrico';
+import { ListaSeguimientoAguaScreen } from './src/screens/hidrico/seguimiento-agua/lista-seguimiento-agua/lista-seguimiento-agua';
+import { RegistrarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/registrar-seguimiento-agua/registrar-seguimiento-agua';
+import { ModificarUsoAguaScreen } from './src/screens/hidrico/seguimiento-agua/modificar-seguimiento-agua/modificar-seguimiento-agua';
+import { ListaMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/lista-monitoreo-eficiencia-riego/lista-monitoreo-eficiencia-riego';
+import { InsertarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego/insertar-monitoreo-eficiencia-riego';
+import { ModificarMonitoreoEficienciaRiegoScreen } from './src/screens/hidrico/monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego/modificar-monitoreo-eficiencia-riego';
+import { ListaConductividadElectricaSueloScreen } from './src/screens/hidrico/conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo/lista-conductividad-electrica-del-suelo';
+import { AdministracionClima } from "./src/screens/administacion-clima/administacion-clima";
+import { ListaPronosticoMeteorologico } from './src/screens/clima/pronostico-meteorologico/lista-pronostico-meteorologico/lista-pronostico-meteorologico';
+import { ListaCondicionesMeteorologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/lista-condiciones-meteorologicas-climaticas/lista-condiciones-meteorologicas-climaticas';
+import { InsertarCondicionesMeteorologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/insertar-condiciones-meteorologicas-climaticas/insertar-condiciones-meteorologicas-climaticas';
+import { ModificarCondicionesMeterologicasClimaticasScreen } from './src/screens/clima/condiciones-meteorologicas-climaticas/modificar-condiciones-meteorologicas-climaticas/modificar-condiciones-meteorologicas-climaticas';
+import { ListaRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/lista-riesgo-natural/lista-riesgo-natural';
+import { RegistrarRiesgosScreen } from './src/screens/clima/riesgo-natural/registro-riesgo-natural/registro-riesgo-natural';
+import { ModificarRiesgoNaturalScreen } from './src/screens/clima/riesgo-natural/modificar-riesgo-natural/modificar-riesgo-natural';
+import { AdministracionPlagas } from './src/screens/plagas/administracion-plagas/administracion-plagas';
+import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/lista-problemas-asociados-plagas/lista-problemas-asociados-plagas';
+import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
+import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -158,6 +189,42 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListQualityFloorScreen.screenName} component={ListaCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.RegisterQualityFloorScreen.screenName} component={RegistrarCalidadSueloScreen} />
           <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
+          <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
+          <Stack.Screen name={ScreenProps.ListProductivity.screenName} component={ListaProductividadScreen} />
+          <Stack.Screen name={ScreenProps.RegisterProductivity.screenName} component={RegistrarProductividadScreen} />
+          <Stack.Screen name={ScreenProps.ModifyProductivity.screenName} component={ModificarProductividadScreen} />
+          <Stack.Screen name={ScreenProps.ListLandPreparation.screenName} component={ListaPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.RegisterLandPreparation.screenName} component={RegistrarPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.ModifyLandPreparation.screenName} component={ModificarPreparacionTerrenoScreen} />
+          <Stack.Screen name={ScreenProps.ResidueList.screenName} component={ListaManejoResiduosScreen} />
+          <Stack.Screen name={ScreenProps.RegisterResidue.screenName} component={RegistrarResiduosScreen} />
+          <Stack.Screen name={ScreenProps.ModifyResidue.screenName} component={ModificarResiduosScreen} />
+          <Stack.Screen name={ScreenProps.HidricMenu.screenName} component={MenuHidricoScreen} />
+          <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
+          <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
+          <Stack.Screen name={ScreenProps.ModifyUseWatterScreen.screenName} component={ModificarUsoAguaScreen} />
+          <Stack.Screen name={ScreenProps.ListIrrigationEfficiency.screenName} component={ListaMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.InsertIrrigationEfficiency.screenName} component={InsertarMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.ModifyIrrigationEfficiency.screenName} component={ModificarMonitoreoEficienciaRiegoScreen} />
+          <Stack.Screen name={ScreenProps.ListSoilElectricalConductivity.screenName} component={ListaConductividadElectricaSueloScreen} />
+
+          <Stack.Screen name={ScreenProps.AdminWeather.screenName} component={AdministracionClima} />
+          <Stack.Screen name={ScreenProps.WatchWeather.screenName} component={ListaPronosticoMeteorologico} />
+          <Stack.Screen name={ScreenProps.ListWeatherClimateConditions.screenName} component={ListaCondicionesMeteorologicasClimaticasScreen} />
+          <Stack.Screen name={ScreenProps.InsertWeatherClimateConditions.screenName} component={InsertarCondicionesMeteorologicasClimaticasScreen} />
+          <Stack.Screen name={ScreenProps.ModifyWeatherClimateConditions.screenName} component={ModificarCondicionesMeterologicasClimaticasScreen} />
+          <Stack.Screen name={ScreenProps.RiskNaturalList.screenName} component={ListaRiesgoNaturalScreen} />
+          <Stack.Screen name={ScreenProps.ModifyRiskNatural.screenName} component={ModificarRiesgoNaturalScreen} />
+          <Stack.Screen name={ScreenProps.InsertRiskNatural.screenName} component={RegistrarRiesgosScreen} />
+          <Stack.Screen name={ScreenProps.MenuPests.screenName} component={AdministracionPlagas} />
+          <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
+
+
+
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>

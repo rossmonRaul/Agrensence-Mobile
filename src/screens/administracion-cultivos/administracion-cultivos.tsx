@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-native';
-import { styles } from './administracion-cultivos.styles'
+import { styles } from '../../styles/menu-global-styles.styles';
 import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { IconRectangle } from '../../components/IconRectangle/IconRectangle';
 import { Admin_cultivation } from '../../constants';
@@ -29,7 +29,7 @@ export const AdministracionCultivos: React.FC = () => {
 
     return (
         <View style={styles.container} >
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
                 <Text style={styles.textAbove} >Administración de cultivos</Text>
             </View>

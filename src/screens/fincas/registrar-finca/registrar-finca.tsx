@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-finca.styles';
+import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import { isEmail } from 'validator'
 import { GuardarUsuarioPorSuperUsuario } from '../../../servicios/ServicioUsuario';
@@ -21,6 +21,7 @@ export const RegistrarFincaScreen: React.FC = () => {
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         nombre: '',
+        ubicacion: '',
         idEmpresa: userData.idEmpresa,
     });
 
@@ -36,7 +37,7 @@ export const RegistrarFincaScreen: React.FC = () => {
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
 
-        if (!formulario.nombre && !formulario.idEmpresa) {
+        if (!formulario.nombre && !formulario.ubicacion && !formulario.idEmpresa) {
             alert('Por favor rellene el formulario');
             return
         }
@@ -44,9 +45,15 @@ export const RegistrarFincaScreen: React.FC = () => {
             alert('Ingrese un nombre');
             return
         }
+
+        if (!formulario.ubicacion) {
+            alert('Ingrese una ubicacion');
+            return
+        }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             nombre: formulario.nombre,
+            ubicacion: formulario.ubicacion,
             idEmpresa: formulario.idEmpresa,
         };
 
@@ -98,6 +105,14 @@ export const RegistrarFincaScreen: React.FC = () => {
                                     value={formulario.nombre}
                                     onChangeText={(text) => updateFormulario('nombre', text)}
                                 />
+                                <Text style={styles.formText} >Ubicación</Text>
+                                <TextInput
+                                    style={styles.inputSinMargin}
+                                    placeholder="Ubicación de la Finca"
+                                    value={formulario.ubicacion}
+                                    onChangeText={(text) => updateFormulario('ubicacion', text)}
+                                />
+                                <Text style={styles.additionalInfo}>Puede llevar cantón o distrito</Text>
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {

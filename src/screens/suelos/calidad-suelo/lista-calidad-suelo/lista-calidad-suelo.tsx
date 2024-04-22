@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, TextInput } from 'react-native';
-import { styles } from './lista-calidad-suelo.style'
+import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { processData } from '../../../../utils/processData';
@@ -15,12 +15,12 @@ import { FloorDataInterface } from '../../../../interfaces/calidadsueloInterface
 import { ObtenerMedicionesSuelo } from '../../../../servicios/ServicioCalidadSuelo';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 
-import { ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
+import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 
 export const ListaCalidadSueloScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
-    const [fincas, setFincas] = useState<{ idFinca: number }[] | []>([]);
+    const [parcelas, setParcelas] = useState<{ idParcela: number }[] | []>([]);
     const [apiData, setApiData] = useState<FloorDataInterface[]>([]);
     const [calidadSueloFiltradosData, setCalidadSueloFiltradosData] = useState<any[]>([]);
     const [calidadSuelo, setCalidadSuelo] = useState<any[]>([]);
@@ -28,36 +28,36 @@ export const ListaCalidadSueloScreen: React.FC = () => {
     //para poder hacer el filtro de los datos del api
     useEffect(() => {
         // Obtener los IDs de las fincas del usuario
-        const idFincasUsuario = fincas.map(finca => finca.idFinca);
-    
+        const idParcelasUsuario = parcelas.map(parcela => parcela.idParcela);
+
         // Filtrar las medicionesSueloFiltradas por los IDs de las fincas del usuario
-        const medicionesSuelofiltradas = apiData.filter(item => idFincasUsuario.includes(item.idFinca));
-        
+        const medicionesSuelofiltradas = apiData.filter(item => idParcelasUsuario.includes(item.idParcela));
+
         // Actualizar el estado con las mediciones filtradas
         setCalidadSueloFiltradosData(medicionesSuelofiltradas);
         setCalidadSuelo(medicionesSuelofiltradas)
-    }, [apiData, fincas]);
-    
+    }, [apiData, parcelas]);
+
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
-            const formData = { idEmpresa: userData.idEmpresa };
+            const formData = { identificacion: userData.identificacion };
             try {
 
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosPorRol3(formData);
-                
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+
+                const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
+                    .map(item => item!.idParcela)))
+                    .map(idParcela => {
+                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                        return { idParcela, nombreParcela };
                     });
-                    setFincas(fincasUnicas);
+                setParcelas(parcelasUnicas)
                 const medicionesSuelo = await ObtenerMedicionesSuelo();
-                
+
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = medicionesSuelo.map((item) => ({
                     ...item,
@@ -88,14 +88,14 @@ export const ListaCalidadSueloScreen: React.FC = () => {
     const handleRectanglePress = (idMedicionesSuelo: number, medicionesCalidadSuelo: string,
         respiracionSuelo: number, infiltracion: number, densidadAparente: number,
         conductividadElectrica: number, Ph: number, nitratosSuelo: number, estabilidadAgregados: number,
-        desleimiento: number, lombrices: number, observaciones: string, calidadAgua: number, estado: string) => {
+        desleimiento: number, lombrices: number, observaciones: string, calidadAgua: number, idFinca: string, idParcela: string, estado: string) => {
 
         navigation.navigate(ScreenProps.ModifyQualityFloorScreen.screenName, {
             idMedicionesSuelo: idMedicionesSuelo,
             medicionesCalidadSuelo: medicionesCalidadSuelo, respiracionSuelo: respiracionSuelo,
             infiltracion: infiltracion, densidadAparente: densidadAparente, conductividadElectrica: conductividadElectrica,
             ph: Ph, nitratosSuelo: nitratosSuelo, estabilidadAgregados: estabilidadAgregados, desleimiento: desleimiento,
-            lombrices: lombrices, observaciones: observaciones, calidadAgua: calidadAgua, estado: estado
+            lombrices: lombrices, observaciones: observaciones, calidadAgua: calidadAgua, idFinca: idFinca, idParcela: idParcela, estado: estado
         });
     };
     //funcion para poder buscar de acuerdo a al usuario, finca o parcela
@@ -141,7 +141,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
                             <TouchableOpacity key={item.idMedicionesSuelo} onPress={() => handleRectanglePress(item.idMedicionesSuelo,
                                 item.medicionesCalidadSuelo, item.respiracionSuelo, item.infiltracion, item.densidadAparente, item.conductividadElectrica,
                                 item.pH, item.nitratosSuelo, item.estabilidadAgregados, item.desleimiento, item.lombrices, item.observaciones,
-                                item.calidadAgua, item.estado)}>
+                                item.calidadAgua, item.idFinca, item.idParcela, item.estado)}>
                                 <CustomRectangle
                                     key={item.idMedicionesSuelo}
                                     data={processData([item], keyMapping)?.data || []} />

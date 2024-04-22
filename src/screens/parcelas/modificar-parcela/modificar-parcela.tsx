@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './modificar-parcela.styles';
+import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ModificarParcela, CambiarEstadoParcela } from '../../../servicios/ServicioParcela';
 import { ScreenProps } from '../../../constants';
@@ -21,7 +21,7 @@ export const ModificarParcelaScreen: React.FC = () => {
     const { userData } = useAuth();
     const route = useRoute();
     const { idParcela, nombre, estado } = route.params as RouteParams;
-    
+
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idParcela: idParcela,
@@ -96,10 +96,10 @@ export const ModificarParcelaScreen: React.FC = () => {
             idParcela: formulario.idParcela,
             nombre: formulario.nombre,
         };
-        
+
         //  Se realiza la modificación de parcela
         const responseInsert = await ModificarParcela(formData);
-        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert(
@@ -178,7 +178,7 @@ export const ModificarParcelaScreen: React.FC = () => {
                         </TouchableOpacity>
                     }
                 </View>
-                
+
             </View>
             <BottomNavBar />
         </View>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Platform, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './registrar-usuario.styles';
+import { styles } from '../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../components/Dropdown/Dropwdown';
 import { isEmail } from 'validator'
@@ -262,7 +262,7 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                                             placeholder="Finca"
                                             data={fincaDataSort}
                                             value={finca}
-                                            iconName='map-marker'
+                                            iconName='tree'
                                             onChange={handleValueFinca}
                                         />
                                     }
@@ -270,7 +270,7 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                                         <DropdownComponent
                                             placeholder="Parcela"
                                             data={parcelaDataSort}
-                                            iconName='map-marker'
+                                            iconName='pagelines'
                                             value={parcela}
                                             onChange={(item) => (setParcela(item.value as never))}
                                         />

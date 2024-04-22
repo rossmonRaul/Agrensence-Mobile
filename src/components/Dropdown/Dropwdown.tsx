@@ -10,6 +10,9 @@ interface DropdownComponentProps {
     data: { label: string; value: string }[];
     value: string | null;
     iconName: string;
+    selectedTextColor?: string;
+    iconColor?: string;
+    height?: number;
     onChange: (item: { label: string; value: string }) => void;
 }
 const DropdownComponent: React.FC<DropdownComponentProps> = ({
@@ -17,15 +20,20 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({
     data,
     value,
     iconName,
+    selectedTextColor = 'black',
+    iconColor = 'black',
+    height = 50,
     onChange,
 }) => {
+    const placeholderFontFamily = selectedTextColor !== 'black' ? 'CatamaranBold' : 'CatamaranMedium';
+
     return (
         <View style={styles.dropdownView} >
             <Dropdown
-                style={styles.dropdown}
-                placeholderStyle={styles.placeholderStyle}
+                style={[styles.dropdown, { height: height }]}
+                placeholderStyle={[styles.placeholderStyle, { color: selectedTextColor, fontFamily: placeholderFontFamily }]}
                 placeholder={placeholder}
-                selectedTextStyle={styles.selectedTextStyle}
+                selectedTextStyle={[styles.selectedTextStyle, { color: selectedTextColor, fontFamily: placeholderFontFamily }]}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
                 data={data}
@@ -40,7 +48,7 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({
                     <FontAwesome style={styles.icon}
                         name={iconName as never}
                         size={20}
-                        color="black" />
+                        color={iconColor} />
                 )}
             />
         </View>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { styles } from './registrar-parcela.styles';
+import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { isEmail } from 'validator'
@@ -130,7 +130,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
                                 <DropdownComponent
                                     placeholder="Finca"
                                     data={fincaDataSort}
-                                    iconName="map-marker"
+                                    iconName="tree"
                                     value={finca}
                                     onChange={(item) => (setFinca(item.value as never), updateFormulario('idFinca', item.value))}
                                 />
@@ -149,7 +149,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar Finca</Text>
+                                                <Text style={styles.buttonText}> Guardar Parcela</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>

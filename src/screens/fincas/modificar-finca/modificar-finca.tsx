@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
-import { styles } from './modificar-finca.styles';
+import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ModificarFinca, CambiarEstadoFinca } from '../../../servicios/ServicioFinca';
 import { ScreenProps } from '../../../constants';
@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons'
 interface RouteParams {
     idFinca: string;
     nombre: string;
+    ubicacion: string;
     estado: string;
 }
 
@@ -20,12 +21,13 @@ export const ModificarFincaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
     const route = useRoute();
-    const { idFinca, nombre, estado } = route.params as RouteParams;
-    
+    const { idFinca, nombre, ubicacion, estado } = route.params as RouteParams;
+
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idFinca: idFinca,
         nombre: nombre,
+        ubicacion: ubicacion,
         estado: estado
     });
 
@@ -90,11 +92,16 @@ export const ModificarFincaScreen: React.FC = () => {
             alert('Ingrese un nombre');
             return;
         }
+        if (!formulario.ubicacion) {
+            alert('Ingrese una ubicación');
+            return;
+        }
 
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
             nombre: formulario.nombre,
+            ubicacion: formulario.ubicacion
         };
 
         //  Se realiza la modificación de finca
@@ -122,7 +129,7 @@ export const ModificarFincaScreen: React.FC = () => {
 
     };
 
-    
+
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -142,6 +149,13 @@ export const ModificarFincaScreen: React.FC = () => {
                         placeholder="Nombre de finca"
                         value={formulario.nombre}
                         onChangeText={(text) => updateFormulario('nombre', text)}
+                    />
+                    <Text style={styles.formText} >Ubicación</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Ubicación de la finca"
+                        value={formulario.ubicacion}
+                        onChangeText={(text) => updateFormulario('ubicacion', text)}
                     />
                     <TouchableOpacity
                         style={styles.button}
@@ -179,7 +193,7 @@ export const ModificarFincaScreen: React.FC = () => {
                         </TouchableOpacity>
                     }
                 </View>
-                
+
             </View>
             <BottomNavBar />
         </View>
