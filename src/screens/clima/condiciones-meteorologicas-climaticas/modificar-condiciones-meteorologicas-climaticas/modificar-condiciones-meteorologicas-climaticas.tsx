@@ -116,6 +116,9 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
         if (hours.startsWith('0')) {
             hours = hours.substring(1);
         }
+        if (minutes.startsWith('0')) {
+            minutes = minutes.substring(1);
+        }
 
         setHours(hours);
         setMinutes(minutes);
