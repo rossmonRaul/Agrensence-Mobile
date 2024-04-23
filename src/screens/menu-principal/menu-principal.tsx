@@ -30,11 +30,11 @@ export const MenuScreen: React.FC = () => {
     const renderRows = () => {
         let filteredCompanyProps = Company_Props;
         if (userRole === 1) {
-            filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 103);
+            filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 199);
         }
 
         if (userRole === 2) {
-            filteredCompanyProps = Company_Props.filter(company => (company.id >= 50 && company.id <= 54) || company.id === 200);
+            filteredCompanyProps = Company_Props.filter(company => (company.id >= 50 && company.id <= 99) || company.id === 200);
         }
         if (userRole === 3) {
             filteredCompanyProps = Company_Props.slice(0, 10);
