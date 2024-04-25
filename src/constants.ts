@@ -68,7 +68,7 @@ export const ScreenProps = {
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.0.2';
+export const IP_API = '192.168.0.9';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -93,7 +93,7 @@ export const Company_Props = [
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
 
-    { id: 56, iconImage: require('./assets/images/icons/parcela.png'), text: 'Sensores', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
+    { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
 
 
     //SuperAdmin
@@ -134,5 +134,5 @@ export const Admin_plagas = [
 ]
 
 export const Admin_sensor = [
-    { id: 1, iconImage: require('./assets/images/icons/plagas&enfermedades.png'), text: 'Sensores', screen: ScreenProps.ListSensors.screenName },
+    { id: 1, iconImage: require('./assets/images/icons/sensor.png'), text: 'Sensores', screen: ScreenProps.ListSensors.screenName },
 ]

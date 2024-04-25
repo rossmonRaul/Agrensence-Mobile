@@ -65,6 +65,10 @@ import { AdministracionPlagas } from './src/screens/plagas/administracion-plagas
 import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/lista-problemas-asociados-plagas/lista-problemas-asociados-plagas';
 import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
 import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
+import { AdministracionSensores } from './src/screens/administracion-sensores/administracion-sensores';
+import { ListaSensoresScreen } from './src/screens/sensores/registro-sensores/lista-registro-sensores/lista-registro-sensores';
+import { InsertarSensoresScreen } from './src/screens/sensores/registro-sensores/insertar-registro-sensores/insertar-registro-sensores';
+import { ModificarSensoresScreen } from './src/screens/sensores/registro-sensores/modificar-registro-sensores/modificar-registro-sensores';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -222,6 +226,10 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.AdminSensors.screenName} component={AdministracionSensores} />
+          <Stack.Screen name={ScreenProps.ListSensors.screenName} component={ListaSensoresScreen} />
+          <Stack.Screen name={ScreenProps.InsertSensors.screenName} component={InsertarSensoresScreen} />
+          <Stack.Screen name={ScreenProps.ModifySensors.screenName} component={ModificarSensoresScreen} />
 
 
 
