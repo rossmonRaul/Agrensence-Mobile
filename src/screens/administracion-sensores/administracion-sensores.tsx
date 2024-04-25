@@ -29,7 +29,7 @@ export const AdministracionSensores: React.FC = () => {
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Administración de cultivos</Text>
+                <Text style={styles.textAbove} >Administración de sensores</Text>
             </View>
 
             <View style={styles.rowContainer}>
