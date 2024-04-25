@@ -11,10 +11,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 export const AdministracionClima: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const handleBackPress = () => {
-        console.log('Botón de retroceso presionado');
-    };
-
     const HandleRectanglePress = (weather: any) => {
         if (weather.screen !== '') {
             if (weather.datoValidacion !== undefined) {

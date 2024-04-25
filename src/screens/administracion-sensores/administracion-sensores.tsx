@@ -11,9 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 export const AdministracionSensores: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const handleBackPress = () => {
-        console.log('Botón de retroceso presionado');
-    };
+
 
     const HandleRectanglePress = (sensors: any) => {
         if (sensors.screen !== '') {
