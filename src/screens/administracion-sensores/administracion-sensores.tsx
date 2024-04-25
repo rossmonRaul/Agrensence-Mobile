@@ -11,9 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 export const AdministracionSensores: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const handleBackPress = () => {
-        console.log('Botón de retroceso presionado');
-    };
+
 
     const HandleRectanglePress = (sensors: any) => {
         if (sensors.screen !== '') {
@@ -31,7 +29,7 @@ export const AdministracionSensores: React.FC = () => {
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Administración de cultivos</Text>
+                <Text style={styles.textAbove} >Administración de sensores</Text>
             </View>
 
             <View style={styles.rowContainer}>

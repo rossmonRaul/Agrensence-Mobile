@@ -11,9 +11,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 export const AdministracionCultivos: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-    const handleBackPress = () => {
-        console.log('Botón de retroceso presionado');
-    };
 
     const HandleRectanglePress = (crops: any) => {
         if (crops.screen !== '') {
