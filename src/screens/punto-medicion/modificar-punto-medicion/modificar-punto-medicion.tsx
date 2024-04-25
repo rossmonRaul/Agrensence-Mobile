@@ -114,7 +114,7 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
             idPuntoMedicion: idPuntoMedicion,
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
-            codigo: codigo,
+            codigo: formulario.codigo,
             altitud: formulario.altitud,
             latitud: formulario.latitud,
             longitud: formulario.longitud,
