@@ -72,8 +72,7 @@ export const ListaSensoresScreen: React.FC = () => {
                 const parcelasResponse = await ObtenerParcelas();
                 const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
                 setParcelas(parcelasFiltradas);
-                //se obtienen los datos de el registro de sensores
-                 para despues poder filtrarlos
+                //se obtienen los datos de el registro de sensores para despues poder filtrarlos
                 const registroSensores = await ObtenerSensores();
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = registroSensores.map((item) => ({
