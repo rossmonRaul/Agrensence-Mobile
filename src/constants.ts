@@ -64,6 +64,10 @@ export const ScreenProps = {
     ListSensors: { screenName: 'ListSensors' },
     ModifySensors: { screenName: 'ModifySensors' },
     InsertSensors: { screenName: 'InsertSensors' },
+
+    InsertMeasurementPoint: { screenName: 'InsertMeasurementPoint' },
+    ListMeasurementPoint: { screenName: 'ListMeasurementPoint' },
+    ModifyMeasurementPoint: { screenName: 'ModifyMeasurementPoint' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -92,8 +96,7 @@ export const Company_Props = [
     { id: 52, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
-
-    { id: 56, iconImage: require('./assets/images/icons/parcela.png'), text: 'Sensores', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
+    { id: 56, iconImage: require('./assets/images/icons/parcela.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
 
 
     //SuperAdmin
@@ -135,4 +138,5 @@ export const Admin_plagas = [
 
 export const Admin_sensor = [
     { id: 1, iconImage: require('./assets/images/icons/plagas&enfermedades.png'), text: 'Sensores', screen: ScreenProps.ListSensors.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/punto-medicion.png'), text: 'Punto Medición', screen: ScreenProps.ListMeasurementPoint.screenName },
 ]

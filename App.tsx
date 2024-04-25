@@ -66,6 +66,10 @@ import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/proble
 import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
 import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
 
+import { ListaPuntoMedicionScreen } from './src/screens/punto-medicion/lista-punto-medicion/lista-punto-medicion';
+import { InsertarPuntoMedicionScreen } from './src/screens/punto-medicion/registrar-punto-medicion/registrar-punto-medicion';
+import { ModificarPuntoMedicionScreen } from './src/screens/punto-medicion/modificar-punto-medicion/modificar-punto-medicion';
+import { AdministracionSensores } from './src/screens/administracion-sensores/administracion-sensores';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -223,6 +227,11 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
 
+          <Stack.Screen name={ScreenProps.ListMeasurementPoint.screenName} component={ListaPuntoMedicionScreen} />
+          <Stack.Screen name={ScreenProps.InsertMeasurementPoint.screenName} component={InsertarPuntoMedicionScreen} />
+          <Stack.Screen name={ScreenProps.ModifyMeasurementPoint.screenName} component={ModificarPuntoMedicionScreen} />
+
+          <Stack.Screen name={ScreenProps.AdminSensors.screenName} component={AdministracionSensores} />
 
 
         </Stack.Navigator>
