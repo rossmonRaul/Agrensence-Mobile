@@ -72,18 +72,39 @@ export const ModificarSensoresScreen: React.FC = () => {
     const handleModify = async () => {
 
 
-        if (formulario.nombre.trim() === '') {
+        if (!formulario.nombre) {
             alert('El nombre es requerido.');
-            return
+            return;
+        } else if (formulario.nombre.length > 50) {
+            alert('El nombre no puede exceder los 50 caracteres.');
+            return;
+        } else if (/^\s/.test(formulario.nombre)) {
+            alert('El nombre no puede comenzar con espacios en blanco.');
+            return;
         }
-        if (formulario.modelo.trim() === '') {
+
+        if (!formulario.modelo) {
             alert('El modelo es requerido.');
-            return
+            return;
+        } else if (formulario.modelo.length > 150) {
+            alert('El modelo no puede exceder los 150 caracteres.');
+            return;
+        } else if (/^\s/.test(formulario.modelo)) {
+            alert('El modelo no puede comenzar con espacios en blanco.');
+            return;
         }
-        if (formulario.identificadorSensor.trim() === '') {
+
+        if (!formulario.identificadorSensor) {
             alert('El identificador de sensor es requerido.');
-            return
+            return;
+        } else if (formulario.identificadorSensor.length > 100) {
+            alert('El identificador de sensor no puede exceder los 100 caracteres.');
+            return;
+        } else if (/^\s/.test(formulario.identificadorSensor)) {
+            alert('El identificador de sensor no puede comenzar con espacios en blanco.');
+            return;
         }
+
 
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
