@@ -21,7 +21,7 @@ interface RouteParams {
     idFinca: string;
     idParcela: string;
     codigo: string;
-    altitud: string;
+    altitud: number;
     latitud: string;
     longitud: string;
     estado: string;
@@ -332,12 +332,16 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
                                     />
 
 
-                                    <Text style={styles.formText} >Altitud </Text>
+                                    <Text style={styles.formText} >Elevación(m s. n. m.) </Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="altitud "
-                                        value={formulario.altitud}
-                                        onChangeText={(text) => updateFormulario('altitud', text)}
+                                        placeholder="elevación "
+                                        value={formulario.altitud.toString()}
+                                        onChangeText={(text) => {
+                                            const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
+                                            updateFormulario('altitud', numericText);
+                                        }}
+                                        keyboardType="numeric"
                                     />
                                     <Text style={styles.formText} >Latitud</Text>
                                     <TextInput

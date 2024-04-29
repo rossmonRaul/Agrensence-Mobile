@@ -26,13 +26,13 @@ export const ListaPuntoMedicionScreen: React.FC = () => {
     const keyMapping = {
         'Parcela': 'nombreParcela',
         'Código': 'codigo',
-        'Altitud': 'altitud',
+        'Elevación(m s. n. m.)': 'altitud',
         'Latitud': 'latitud',
         'Longitud': 'longitud',
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idPuntoMedicion: string, idFinca: string, idParcela: string, codigo: string, altitud : string, latitud: string, longitud: string, estado: string) => {
+    const handleRectanglePress = (idPuntoMedicion: string, idFinca: string, idParcela: string, codigo: string, altitud : number, latitud: string, longitud: string, estado: string) => {
         navigation.navigate(ScreenProps.ModifyMeasurementPoint.screenName, { idPuntoMedicion:idPuntoMedicion,idFinca: idFinca, idParcela: idParcela, codigo: codigo
             ,altitud:altitud,latitud:latitud, longitud:longitud, estado: estado });
     };

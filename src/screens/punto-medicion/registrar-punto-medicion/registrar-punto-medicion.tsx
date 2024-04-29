@@ -239,12 +239,16 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
                                     />
 
 
-                                    <Text style={styles.formText} >Altitud </Text>
+                                    <Text style={styles.formText} >Elevación(m s. n. m.) </Text>
                                     <TextInput
                                         style={styles.input}
-                                        placeholder="altitud "
+                                        placeholder="elevación "
                                         value={formulario.altitud}
-                                        onChangeText={(text) => updateFormulario('altitud', text)}
+                                        onChangeText={(text) => {
+                                            const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
+                                            updateFormulario('altitud', numericText);
+                                        }}
+                                        keyboardType="numeric"
                                     />
                                     <Text style={styles.formText} >Latitud</Text>
                                     <TextInput
