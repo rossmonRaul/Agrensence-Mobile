@@ -232,9 +232,19 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.ListMeasureSensor.screenName} component={ListaMedicionesSensorScreen} />
+          <Stack.Screen name={ScreenProps.ModifyMeasureSensor.screenName} component={AdminModificarMedicionSensorScreen} />
+          <Stack.Screen name={ScreenProps.RegisterMeasureSensor.screenName} component={AdminRegistrarMedicionScreen} />
 
+          <Stack.Screen name={ScreenProps.AdminSensors.screenName} component={AdministracionSensores} />
+          <Stack.Screen name={ScreenProps.ListSensors.screenName} component={ListaSensoresScreen} />
+          <Stack.Screen name={ScreenProps.InsertSensors.screenName} component={InsertarSensoresScreen} />
+          <Stack.Screen name={ScreenProps.ModifySensors.screenName} component={ModificarSensoresScreen} />
 
-
+          <Stack.Screen name={ScreenProps.ListMeasurementPoint.screenName} component={ListaPuntoMedicionScreen} />
+          <Stack.Screen name={ScreenProps.InsertMeasurementPoint.screenName} component={InsertarPuntoMedicionScreen} />
+          <Stack.Screen name={ScreenProps.ModifyMeasurementPoint.screenName} component={ModificarPuntoMedicionScreen} />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
