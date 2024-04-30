@@ -12,10 +12,11 @@ import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
-import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
-import { ObtenerRegistroSeguimientoPlagasYEnfermedades } from '../../../../servicios/ServicioPlagas&Enfermedades';
+import { ObtenerSensores } from '../../../../servicios/ServiciosSensor';
+import { ObtenerFincas } from '../../../../servicios/ServicioFinca';
+import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 
-export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
+export const ListaSensoresScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
@@ -25,40 +26,38 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     const [problemasAsociadosPlagas, setProblemasAsociadosPlagas] = useState<any[]>([]);
 
-    const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
-    const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
+    const [fincas, setFincas] = useState<[]>([]);
+    const [parcelas, setParcelas] = useState<[]>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
-        'Fecha': 'fecha',
-        'Cultivo': 'cultivo',
-        'Plaga': 'plagaEnfermedad',
-        'Problema': 'problema',
-        'Incidencia': 'incidencia',
-        'Metodología de estimación': 'metodologiaEstimacion',
-        'Acción tomada': 'accionTomada',
+        'Identificador (EUI)': 'identificadorSensor',
+        'Nombre': 'nombre',
+        'Modelo': 'modelo',
+        'Estado sensor': 'estadoSensor',
+        'Punto medición': 'codigoPuntoMedicion',
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idRegistroSeguimientoPlagasYEnfermedades: string, idFinca: string, idParcela: string, fecha: string,
-        cultivo: string, plagaEnfermedad: string, incidencia: string, metodologiaEstimacion: string, problema: string, accionTomada: string, estado: string) => {
+    //item.idSensor, item.identificadorSensor, item.nombre, item.modelo, item.idEstado, item.idPuntoMedicion, item.estado
+
+    const handleRectanglePress = (idSensor: string, identificadorSensor: string, nombre: string, modelo: string,
+        idEstado: string, idPuntoMedicion: string, codigoPuntoMedicion: string, estadoSensor: string, estado: string) => {
         // Encuentra el elemento correspondiente en los datos originales utilizando el ID único
 
         // Si se encuentra el elemento correspondiente, puedes acceder a sus propiedades directamente
-        navigation.navigate(ScreenProps.ModifyPestsDiseases.screenName, {
-            idRegistroSeguimientoPlagasYEnfermedades: idRegistroSeguimientoPlagasYEnfermedades,
-            idFinca: idFinca,
-            idParcela: idParcela,
-            fecha: fecha,
-            cultivo: cultivo,
-            plagaEnfermedad: plagaEnfermedad,
-            incidencia: incidencia,
-            metodologiaEstimacion: metodologiaEstimacion,
-            problema: problema,
-            accionTomada: accionTomada,
+        navigation.navigate(ScreenProps.ModifySensors.screenName, {
+            idSensor: idSensor,
+            identificadorSensor: identificadorSensor,
+            nombre: nombre,
+            modelo: modelo,
+            idEstado: idEstado,
+            idPuntoMedicion: idPuntoMedicion,
+            codigoPuntoMedicion: codigoPuntoMedicion,
+            estadosensor: estadoSensor,
             estado: estado
         });
 
@@ -66,43 +65,21 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
-
             try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
-
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
-
-
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
-
-                setParcelas(parcelas);
-                //se obtienen los datos de el registro problemas asociados a plagas para despues poder filtrarlos
-                const registroProblemasAsociadosPlagasResponse = await ObtenerRegistroSeguimientoPlagasYEnfermedades();
+                const fincasResponse = await ObtenerFincas();
+                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasFiltradas);
+                const parcelasResponse = await ObtenerParcelas();
+                const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
+                setParcelas(parcelasFiltradas);
+                //se obtienen los datos de el registro de sensores para despues poder filtrarlos
+                const registroSensores = await ObtenerSensores();
                 //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = registroProblemasAsociadosPlagasResponse.map((item) => ({
+                const filteredData = registroSensores.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
-                setOriginalApiData(registroProblemasAsociadosPlagasResponse);
+                setOriginalApiData(registroSensores);
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -118,7 +95,7 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
 
-            const resultado = parcelas.filter(item => item.idFinca === fincaId);
+            const resultado = parcelas.filter((item: any) => item.idFinca === fincaId);
 
             setParcelasFiltradas(resultado);
         } catch (error) {
@@ -146,7 +123,8 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar el registro problemas asociados a plagas
+        //si finca Id es null no se puede seleciona ni traer el y mostrar el registro de sensores
+
         if (fincaId !== null) {
 
             obtenerProblemasAsociadosPlagasPorFincaYParcela(fincaId, parcelaId);
@@ -158,7 +136,8 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
 
 
 
-    // filtra los datos de el registro problemas asociados a plagas
+    // filtra los datos de el registro de sensores
+
     const obtenerProblemasAsociadosPlagasPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
 
@@ -174,36 +153,33 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.MenuPests.screenName} color={'#274c48'} />
-                <AddButtonComponent screenName={ScreenProps.InsertPestsDiseases.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.AdminSensors.screenName} color={'#274c48'} />
+                <AddButtonComponent screenName={ScreenProps.InsertSensors.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista problemas asociados a plagas y enfermedades </Text>
+                    <Text style={styles.textAbove} >Lista sensores</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
-                    {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
-                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                        data={fincas.map((finca: any) => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
-                        iconName="tree"
+                        iconName="map-marker"
                         onChange={handleFincaChange}
                     />
 
-                    {/* Dropdown para Parcelas */}
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
-                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
+                        data={parcelasFiltradas.map((parcela: any) => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
-                        iconName="pagelines"
+                        iconName="map-marker"
                         onChange={handleParcelaChange}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {problemasAsociadosPlagas.map((item, index) => (
-                        <TouchableOpacity key={item.idRegistroSeguimientoPlagasYEnfermedades} onPress={() => handleRectanglePress(
-                            item.idRegistroSeguimientoPlagasYEnfermedades, item.idFinca, item.idParcela, item.fecha, item.cultivo, item.plagaEnfermedad, item.incidencia,
-                            item.metodologiaEstimacion, item.problema, item.accionTomada, item.estado
+                        <TouchableOpacity key={item.idSensor} onPress={() => handleRectanglePress(
+                            item.idSensor, item.identificadorSensor, item.nombre, item.modelo, item.idEstado, item.idPuntoMedicion, item.codigoPuntoMedicion, item.estadoSensor, item.estado
                         )}>
                             <CustomRectangle
                                 key={item.idFinca}

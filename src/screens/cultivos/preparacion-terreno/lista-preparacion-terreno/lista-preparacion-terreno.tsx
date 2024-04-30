@@ -40,7 +40,6 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
 
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                //console.log(datosInicialesObtenidos)
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))

@@ -68,7 +68,14 @@ import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/pr
 import { ListaMedicionesSensorScreen } from './src/screens/Administrador Screens/admin-lista-mediciones-sensor/admin-lista-mediciones-sensor';
 import { AdminModificarMedicionSensorScreen } from './src/screens/Administrador Screens/admin-mediciones-sensor/admin-modificar-medicion';
 import { AdminRegistrarMedicionScreen } from './src/screens/Administrador Screens/admin-mediciones-sensor/admin-registrar-medicion';
+import { AdministracionSensores } from './src/screens/administracion-sensores/administracion-sensores';
+import { ListaSensoresScreen } from './src/screens/sensores/registro-sensores/lista-registro-sensores/lista-registro-sensores';
+import { InsertarSensoresScreen } from './src/screens/sensores/registro-sensores/insertar-registro-sensores/insertar-registro-sensores';
+import { ModificarSensoresScreen } from './src/screens/sensores/registro-sensores/modificar-registro-sensores/modificar-registro-sensores';
 
+import { ListaPuntoMedicionScreen } from './src/screens/punto-medicion/lista-punto-medicion/lista-punto-medicion';
+import { InsertarPuntoMedicionScreen } from './src/screens/punto-medicion/registrar-punto-medicion/registrar-punto-medicion';
+import { ModificarPuntoMedicionScreen } from './src/screens/punto-medicion/modificar-punto-medicion/modificar-punto-medicion';
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -225,9 +232,6 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
-          <Stack.Screen name={ScreenProps.ListMeasureSensor.screenName} component={ListaMedicionesSensorScreen} />
-          <Stack.Screen name={ScreenProps.ModifyMeasureSensor.screenName} component={AdminModificarMedicionSensorScreen} />
-          <Stack.Screen name={ScreenProps.RegisterMeasureSensor.screenName} component={AdminRegistrarMedicionScreen} />
 
 
 

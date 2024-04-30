@@ -23,7 +23,7 @@ export const ProcesarDatosApi = async (method: string, url: string, data: any) =
             return { indicador: 500, mensaje: 'Ocurrio un error en el proceso!' }
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 
 }

@@ -63,11 +63,19 @@ export const ScreenProps = {
     ListMeasureSensor: { screenName: 'ListMeasureSensor' },
     ModifyMeasureSensor: { screenName: 'ModifyMeasureSensor' },
     RegisterMeasureSensor: { screenName: 'RegisterMeasureSensor' },
+    AdminSensors: { screenName: 'AdminSensors' },
+    ListSensors: { screenName: 'ListSensors' },
+    ModifySensors: { screenName: 'ModifySensors' },
+    InsertSensors: { screenName: 'InsertSensors' },
+
+    InsertMeasurementPoint: { screenName: 'InsertMeasurementPoint' },
+    ListMeasurementPoint: { screenName: 'ListMeasurementPoint' },
+    ModifyMeasurementPoint: { screenName: 'ModifyMeasurementPoint' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.1.34';
+export const IP_API = '192.168.0.2';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -91,7 +99,6 @@ export const Company_Props = [
     { id: 52, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
-    
 
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
@@ -129,4 +136,9 @@ export const Admin_clima = [
 
 export const Admin_plagas = [
     { id: 1, iconImage: require('./assets/images/icons/plagas&enfermedades.png'), text: 'Problemas asociados a plagas y enfermedades', screen: ScreenProps.ListPestsDiseases.screenName },
+]
+
+export const Admin_sensor = [
+    { id: 1, iconImage: require('./assets/images/icons/sensor.png'), text: 'Sensores', screen: ScreenProps.ListSensors.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/punto-medicion.png'), text: 'Punto Medición', screen: ScreenProps.ListMeasurementPoint.screenName },
 ]

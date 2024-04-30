@@ -166,15 +166,9 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
             usuarioCreacion: userData.identificacion
         };
 
-        console.log('formData')
-        console.log(formData)
-        console.log('formData')
         //  Se ejecuta el servicio de insertar registro de seguimiento del uso del agua
         const responseInsert = await CrearRegistroSeguimientoUsoAgua(formData);
 
-        console.log('responseInsert')
-        console.log(responseInsert)
-        console.log('responseInsert')
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {

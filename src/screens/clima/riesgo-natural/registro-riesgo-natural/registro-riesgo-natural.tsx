@@ -193,7 +193,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                             errorEnviandoArchivos = true; // Marcar que hubo un error
                         }
                     } catch (error) {
-                        console.log('Error al leer el archivo:', error);
+                        console.error('Error al leer el archivo:', error);
                     }
                 }
 
@@ -369,7 +369,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
             setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
 
         } catch (error) {
-            console.log("Error en selecionar el documento: ", error);
+            console.error("Error en selecionar el documento: ", error);
         }
     };
     const handleRemoveFile = (indexToRemove: number) => {

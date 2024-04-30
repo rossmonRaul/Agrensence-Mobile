@@ -3,21 +3,22 @@ import { View, ImageBackground, TextInput, TouchableOpacity, Text } from 'react-
 import { styles } from '../../styles/menu-global-styles.styles';
 import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { IconRectangle } from '../../components/IconRectangle/IconRectangle';
-import { Admin_cultivation } from '../../constants';
+import { Admin_sensor } from '../../constants';
 import { ScreenProps } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export const AdministracionCultivos: React.FC = () => {
+export const AdministracionSensores: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
 
-    const HandleRectanglePress = (crops: any) => {
-        if (crops.screen !== '') {
-            if (crops.datoValidacion !== undefined) {
-                navigation.navigate(crops.screen, { datoValidacion: crops.datoValidacion });
+
+    const HandleRectanglePress = (sensors: any) => {
+        if (sensors.screen !== '') {
+            if (sensors.datoValidacion !== undefined) {
+                navigation.navigate(sensors.screen, { datoValidacion: sensors.datoValidacion });
             } else {
-                navigation.navigate(crops.screen);
+                navigation.navigate(sensors.screen);
             }
         } else {
             alert('Pantalla aún no disponible');
@@ -28,17 +29,17 @@ export const AdministracionCultivos: React.FC = () => {
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Administración de cultivos</Text>
+                <Text style={styles.textAbove} >Administración de sensores</Text>
             </View>
 
             <View style={styles.rowContainer}>
 
-                {Admin_cultivation.map((crops) => (
-                    <View style={styles.row} key={crops.id}>
+                {Admin_sensor.map((sensors) => (
+                    <View style={styles.row} key={sensors.id}>
                         <IconRectangle
-                            onPress={() => HandleRectanglePress(crops)}
-                            iconImg={crops.iconImage}
-                            text={crops.text}
+                            onPress={() => HandleRectanglePress(sensors)}
+                            iconImg={sensors.iconImage}
+                            text={sensors.text}
                         />
                     </View>
                 ))}

@@ -397,7 +397,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                             errorEnviandoArchivos = true; // Marcar que hubo un error
                         }
                     } catch (error) {
-                        console.log('Error al leer el archivo:', error);
+                        console.error('Error al leer el archivo:', error);
                     }
                 }
 
