@@ -65,6 +65,9 @@ import { AdministracionPlagas } from './src/screens/plagas/administracion-plagas
 import { ListaProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/lista-problemas-asociados-plagas/lista-problemas-asociados-plagas';
 import { InsertarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/insertar-problemas-asociados-plagas/insertar-problemas-asociados-plagas';
 import { ModificarProblemasAsociadosPlagasScreen } from './src/screens/plagas/problemas-asociados-plagas/modificar-problemas-asociados-plagas/modificar-problemas-asociados-plagas';
+import { ListaMedicionesSensorScreen } from './src/screens/Administrador Screens/admin-lista-mediciones-sensor/admin-lista-mediciones-sensor';
+import { AdminModificarMedicionSensorScreen } from './src/screens/Administrador Screens/admin-mediciones-sensor/admin-modificar-medicion';
+import { AdminRegistrarMedicionScreen } from './src/screens/Administrador Screens/admin-mediciones-sensor/admin-registrar-medicion';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -222,6 +225,9 @@ const App: React.FC = () => {
           <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
           <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
+          <Stack.Screen name={ScreenProps.ListMeasureSensor.screenName} component={ListaMedicionesSensorScreen} />
+          <Stack.Screen name={ScreenProps.ModifyMeasureSensor.screenName} component={AdminModificarMedicionSensorScreen} />
+          <Stack.Screen name={ScreenProps.RegisterMeasureSensor.screenName} component={AdminRegistrarMedicionScreen} />
 
 
 

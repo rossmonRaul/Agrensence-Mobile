@@ -60,11 +60,14 @@ export const ScreenProps = {
     InsertPestsDiseases: { screenName: 'InsertPestsDiseases' },
     ListPestsDiseases: { screenName: 'ListPestsDiseases' },
     ModifyPestsDiseases: { screenName: 'ModifyPestsDiseases' },
+    ListMeasureSensor: { screenName: 'ListMeasureSensor' },
+    ModifyMeasureSensor: { screenName: 'ModifyMeasureSensor' },
+    RegisterMeasureSensor: { screenName: 'RegisterMeasureSensor' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.0.2';
+export const IP_API = '192.168.1.34';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -88,11 +91,13 @@ export const Company_Props = [
     { id: 52, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
+    
 
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
-    { id: 200, iconImage: '', text: '', screen: '' }
+    { id: 104, iconImage: require('./assets/images/icons/grafico-de-barras.png'), text: 'Mediciones de Sensor', screen: ScreenProps.ListMeasureSensor.screenName, datoValidacion: '0' },
+    
 ]
 
 export const Admin_cultivation = [
