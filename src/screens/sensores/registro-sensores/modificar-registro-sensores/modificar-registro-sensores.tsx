@@ -190,7 +190,7 @@ export const ModificarSensoresScreen: React.FC = () => {
                                     [
                                         {
                                             text: 'OK',
-                                            onPress: () => console.log('OK Pressed')
+                                            onPress: () => { }
                                         }
                                     ],
                                     { cancelable: false }
@@ -202,7 +202,7 @@ export const ModificarSensoresScreen: React.FC = () => {
                                     [
                                         {
                                             text: 'OK',
-                                            onPress: () => console.log('OK Pressed')
+                                            onPress: () => { }
                                         }
                                     ],
                                     { cancelable: false }
@@ -416,7 +416,7 @@ export const ModificarSensoresScreen: React.FC = () => {
                                                     <DropdownComponent
                                                         placeholder="Seleccione..."
                                                         height={50}
-                                                        data={medicionesSensor.map((medicionSensor: any) => ({ label: medicionSensor.nombre, value: String(medicionSensor.idMedicion) }))}
+                                                        data={medicionesSensor.map((medicionSensor: any) => ({ label: (medicionSensor.nombre + '  (' + medicionSensor.nomenclatura + ')'), value: String(medicionSensor.idMedicion) }))}
                                                         iconName=''
                                                         value={input}
                                                         onChange={(newValue) => {
