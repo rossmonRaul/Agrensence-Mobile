@@ -229,5 +229,8 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 10,
         fontFamily: 'CatamaranMedium'
+    }, dropDownContainer: {
+        justifyContent: 'center',
+        minWidth: 300,
     },
 });

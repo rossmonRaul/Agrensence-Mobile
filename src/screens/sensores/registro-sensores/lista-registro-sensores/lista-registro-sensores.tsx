@@ -12,7 +12,7 @@ import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
-import { ObtenerSensores } from '../../../../servicios/ServiciosSensor';
+import { ObtenerSensores, ObtenerMedicionesAutorizadasSensor } from '../../../../servicios/ServiciosSensor';
 import { ObtenerFincas } from '../../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 
@@ -39,13 +39,14 @@ export const ListaSensoresScreen: React.FC = () => {
         'Modelo': 'modelo',
         'Estado sensor': 'estadoSensor',
         'Punto medición': 'codigoPuntoMedicion',
+        'Mediciones autorizadas': 'medicionesAutorizadaSensor',
         'Estado': 'estado'
     };
 
     //item.idSensor, item.identificadorSensor, item.nombre, item.modelo, item.idEstado, item.idPuntoMedicion, item.estado
 
     const handleRectanglePress = (idSensor: string, identificadorSensor: string, nombre: string, modelo: string,
-        idEstado: string, idPuntoMedicion: string, codigoPuntoMedicion: string, estadoSensor: string, estado: string) => {
+        idEstado: string, idPuntoMedicion: string, codigoPuntoMedicion: string, estadoSensor: string, estado: string, idMediciones: number[][]) => {
         // Encuentra el elemento correspondiente en los datos originales utilizando el ID único
 
         // Si se encuentra el elemento correspondiente, puedes acceder a sus propiedades directamente
@@ -58,7 +59,8 @@ export const ListaSensoresScreen: React.FC = () => {
             idPuntoMedicion: idPuntoMedicion,
             codigoPuntoMedicion: codigoPuntoMedicion,
             estadosensor: estadoSensor,
-            estado: estado
+            estado: estado,
+            idMediciones: idMediciones
         });
 
     };
@@ -74,13 +76,24 @@ export const ListaSensoresScreen: React.FC = () => {
                 setParcelas(parcelasFiltradas);
                 //se obtienen los datos de el registro de sensores para despues poder filtrarlos
                 const registroSensores = await ObtenerSensores();
+                const datosSensoresAutorizados = await ObtenerMedicionesAutorizadasSensor();
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = registroSensores.map((item) => ({
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
+                const datosConAutorizacion = filteredData.map((dato: any) => {
+                    const sensoresAutorizados = datosSensoresAutorizados.filter((sensor: any) => sensor.idSensor === dato.idSensor);
+                    const medicionesAutorizadas = sensoresAutorizados.map((sensor: any) => sensor.medicionAutorizadaSensor).join(', ');
+                    const idMediciones = sensoresAutorizados.map((sensor: any) => [sensor.idMedicionAutorizadaSensor, sensor.idMedicion]); // Nuevo array de IdMedicion
+                    return {
+                        ...dato,
+                        medicionesAutorizadaSensor: medicionesAutorizadas,
+                        idMediciones: idMediciones // Nueva propiedad con array de IdMedicion
+                    };
+                });
                 setOriginalApiData(registroSensores);
-                setApiData(filteredData);
+                setApiData(datosConAutorizacion);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -179,7 +192,8 @@ export const ListaSensoresScreen: React.FC = () => {
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {problemasAsociadosPlagas.map((item, index) => (
                         <TouchableOpacity key={item.idSensor} onPress={() => handleRectanglePress(
-                            item.idSensor, item.identificadorSensor, item.nombre, item.modelo, item.idEstado, item.idPuntoMedicion, item.codigoPuntoMedicion, item.estadoSensor, item.estado
+                            item.idSensor, item.identificadorSensor, item.nombre, item.modelo, item.idEstado, item.idPuntoMedicion, item.codigoPuntoMedicion, item.estadoSensor, item.estado,
+                            item.idMediciones
                         )}>
                             <CustomRectangle
                                 key={item.idFinca}
