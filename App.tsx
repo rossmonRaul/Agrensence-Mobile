@@ -72,7 +72,7 @@ import { AdministracionSensores } from './src/screens/administracion-sensores/ad
 import { ListaSensoresScreen } from './src/screens/sensores/registro-sensores/lista-registro-sensores/lista-registro-sensores';
 import { InsertarSensoresScreen } from './src/screens/sensores/registro-sensores/insertar-registro-sensores/insertar-registro-sensores';
 import { ModificarSensoresScreen } from './src/screens/sensores/registro-sensores/modificar-registro-sensores/modificar-registro-sensores';
-import ErrorBoundary from './src/components/ErrorBoundary/ErrosBoundary';
+import ErrorBoundary from './src/components/ErrorBoundary/ErrorBoundary';
 import { ListaPuntoMedicionScreen } from './src/screens/punto-medicion/lista-punto-medicion/lista-punto-medicion';
 import { InsertarPuntoMedicionScreen } from './src/screens/punto-medicion/registrar-punto-medicion/registrar-punto-medicion';
 import { ModificarPuntoMedicionScreen } from './src/screens/punto-medicion/modificar-punto-medicion/modificar-punto-medicion';
