@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-
+import { CerrarSesion } from '../../servicios/ServicioUsuario';
 const BottomNavBar = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
@@ -34,8 +34,21 @@ const BottomNavBar = () => {
                 {
                     text: 'Sí',
                     onPress: async () => {
-                        await AsyncStorage.clear();
-                        navigation.navigate(ScreenProps.Login.screenName);
+                        try {
+                            // Realizar la acción de cerrar sesión
+                            await CerrarSesion();
+                            navigation.navigate(ScreenProps.Login.screenName); // Redirigir a la pantalla de inicio de sesión
+                        } catch (error) {
+                            // Manejar cualquier error que ocurra al cerrar la sesión
+                            console.error('Error al cerrar sesión:', error);
+                            // Mostrar un mensaje de error al usuario
+                            Alert.alert(
+                                'Error',
+                                'Ocurrió un error al cerrar sesión. Por favor, inténtalo de nuevo más tarde.',
+                                [{ text: 'Aceptar' }],
+                                { cancelable: false }
+                            );
+                        }
                     },
                 },
             ],

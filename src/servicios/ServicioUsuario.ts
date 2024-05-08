@@ -37,6 +37,10 @@ export const ObtenerUsuariosPorIdEmpresa = async (data: any) => {
     const url = `${API_URL}/api/v1.0/${controlador}/ObtenerUsuariosPorIdEmpresa`;
     return await ProcesarDatosApi('POST', url, data);
 }
+export const CerrarSesion = async () => {
+    const url = `${API_URL}/api/v1.0/${controlador}/CerrarSesion`;
+    return await ProcesarDatosApi('GET', url, '');
+}
 
 /*Metodos 
 /*Metodos PUT */
