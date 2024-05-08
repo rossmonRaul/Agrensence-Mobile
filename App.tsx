@@ -72,7 +72,7 @@ import { AdministracionSensores } from './src/screens/administracion-sensores/ad
 import { ListaSensoresScreen } from './src/screens/sensores/registro-sensores/lista-registro-sensores/lista-registro-sensores';
 import { InsertarSensoresScreen } from './src/screens/sensores/registro-sensores/insertar-registro-sensores/insertar-registro-sensores';
 import { ModificarSensoresScreen } from './src/screens/sensores/registro-sensores/modificar-registro-sensores/modificar-registro-sensores';
-
+import ErrorBoundary from './src/components/ErrorBoundary/ErrosBoundary';
 import { ListaPuntoMedicionScreen } from './src/screens/punto-medicion/lista-punto-medicion/lista-punto-medicion';
 import { InsertarPuntoMedicionScreen } from './src/screens/punto-medicion/registrar-punto-medicion/registrar-punto-medicion';
 import { ModificarPuntoMedicionScreen } from './src/screens/punto-medicion/modificar-punto-medicion/modificar-punto-medicion';
@@ -167,88 +167,91 @@ const App: React.FC = () => {
         >
   */
   return (
-    <UserContextProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName={userData.idRol !== 0 ? ScreenProps.Menu.screenName : ScreenProps.Login.screenName}
-          screenOptions={{ headerShown: false, gestureEnabled: false, headerLeft: () => null, }}
-        >
-          <Stack.Screen name={ScreenProps.Login.screenName} component={IncioSesionScreen} />
-          <Stack.Screen name={ScreenProps.Register.screenName} component={RegistrarUsuarioScreen} />
-          <Stack.Screen name={ScreenProps.Menu.screenName} component={MenuScreen} />
-          <Stack.Screen name={ScreenProps.MenuFloor.screenName} component={MenuSueloScreen} />
-          <Stack.Screen name={ScreenProps.AdminRegisterUser.screenName} component={AdminRegistrarUsuarioScreen} />
-          <Stack.Screen name={ScreenProps.AssignCompany.screenName} component={AdminAsignarEmpresaScreen} />
-          <Stack.Screen name={ScreenProps.AdminUserList.screenName} component={AdminListaUsuarioScreen} />
-          <Stack.Screen name={ScreenProps.AdminCrops.screenName} component={AdministracionCultivos} />
-          <Stack.Screen name={ScreenProps.CompanyList.screenName} component={ListaEmpresaScreen} />
-          <Stack.Screen name={ScreenProps.AdminModifyCompany.screenName} component={AdminModificarEmpresaScreen} />
-          <Stack.Screen name={ScreenProps.AdminRegisterCompany.screenName} component={AdminRegistrarEmpresaScreen} />
-          <Stack.Screen name={ScreenProps.ListUsersRol4.screenName} component={ListaUsuarioRol4Screen} />
-          <Stack.Screen name={ScreenProps.AdminModifyAdminUser.screenName} component={AdminModificarUsuarioAdmnistradorScreen} />
-          <Stack.Screen name={ScreenProps.AdminModifyUser.screenName} component={AdminModificarUsuarioScreen} />
-          <Stack.Screen name={ScreenProps.ListEstate.screenName} component={ListaFincasScreen} />
-          <Stack.Screen name={ScreenProps.RegisterEstate.screenName} component={RegistrarFincaScreen} />
-          <Stack.Screen name={ScreenProps.ModifyEstate.screenName} component={ModificarFincaScreen} />
-          <Stack.Screen name={ScreenProps.ListPlot.screenName} component={ListaParcelasScreen} />
-          <Stack.Screen name={ScreenProps.RegisterPlot.screenName} component={RegistrarParcelaScreen} />
-          <Stack.Screen name={ScreenProps.ModifyPlot.screenName} component={ModificarParcelaScreen} />
-          <Stack.Screen name={ScreenProps.ListFertilizer.screenName} component={ListaFertilizantesScreen} />
-          <Stack.Screen name={ScreenProps.RegisterFertilizer.screenName} component={RegistrarFertilizanteScreen} />
-          <Stack.Screen name={ScreenProps.ModifyFertilizer.screenName} component={ModificarFertilizanteScreen} />
-          <Stack.Screen name={ScreenProps.ListQualityFloorScreen.screenName} component={ListaCalidadSueloScreen} />
-          <Stack.Screen name={ScreenProps.RegisterQualityFloorScreen.screenName} component={RegistrarCalidadSueloScreen} />
-          <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
-          <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
-          <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
-          <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
-          <Stack.Screen name={ScreenProps.ListProductivity.screenName} component={ListaProductividadScreen} />
-          <Stack.Screen name={ScreenProps.RegisterProductivity.screenName} component={RegistrarProductividadScreen} />
-          <Stack.Screen name={ScreenProps.ModifyProductivity.screenName} component={ModificarProductividadScreen} />
-          <Stack.Screen name={ScreenProps.ListLandPreparation.screenName} component={ListaPreparacionTerrenoScreen} />
-          <Stack.Screen name={ScreenProps.RegisterLandPreparation.screenName} component={RegistrarPreparacionTerrenoScreen} />
-          <Stack.Screen name={ScreenProps.ModifyLandPreparation.screenName} component={ModificarPreparacionTerrenoScreen} />
-          <Stack.Screen name={ScreenProps.ResidueList.screenName} component={ListaManejoResiduosScreen} />
-          <Stack.Screen name={ScreenProps.RegisterResidue.screenName} component={RegistrarResiduosScreen} />
-          <Stack.Screen name={ScreenProps.ModifyResidue.screenName} component={ModificarResiduosScreen} />
-          <Stack.Screen name={ScreenProps.HidricMenu.screenName} component={MenuHidricoScreen} />
-          <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
-          <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
-          <Stack.Screen name={ScreenProps.ModifyUseWatterScreen.screenName} component={ModificarUsoAguaScreen} />
-          <Stack.Screen name={ScreenProps.ListIrrigationEfficiency.screenName} component={ListaMonitoreoEficienciaRiegoScreen} />
-          <Stack.Screen name={ScreenProps.InsertIrrigationEfficiency.screenName} component={InsertarMonitoreoEficienciaRiegoScreen} />
-          <Stack.Screen name={ScreenProps.ModifyIrrigationEfficiency.screenName} component={ModificarMonitoreoEficienciaRiegoScreen} />
-          <Stack.Screen name={ScreenProps.ListSoilElectricalConductivity.screenName} component={ListaConductividadElectricaSueloScreen} />
+    <ErrorBoundary>
+      <UserContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName={userData.idRol !== 0 ? ScreenProps.Menu.screenName : ScreenProps.Login.screenName}
+            screenOptions={{ headerShown: false, gestureEnabled: false, headerLeft: () => null, }}
+          >
+            <Stack.Screen name={ScreenProps.Login.screenName} component={IncioSesionScreen} />
+            <Stack.Screen name={ScreenProps.Register.screenName} component={RegistrarUsuarioScreen} />
+            <Stack.Screen name={ScreenProps.Menu.screenName} component={MenuScreen} />
+            <Stack.Screen name={ScreenProps.MenuFloor.screenName} component={MenuSueloScreen} />
+            <Stack.Screen name={ScreenProps.AdminRegisterUser.screenName} component={AdminRegistrarUsuarioScreen} />
+            <Stack.Screen name={ScreenProps.AssignCompany.screenName} component={AdminAsignarEmpresaScreen} />
+            <Stack.Screen name={ScreenProps.AdminUserList.screenName} component={AdminListaUsuarioScreen} />
+            <Stack.Screen name={ScreenProps.AdminCrops.screenName} component={AdministracionCultivos} />
+            <Stack.Screen name={ScreenProps.CompanyList.screenName} component={ListaEmpresaScreen} />
+            <Stack.Screen name={ScreenProps.AdminModifyCompany.screenName} component={AdminModificarEmpresaScreen} />
+            <Stack.Screen name={ScreenProps.AdminRegisterCompany.screenName} component={AdminRegistrarEmpresaScreen} />
+            <Stack.Screen name={ScreenProps.ListUsersRol4.screenName} component={ListaUsuarioRol4Screen} />
+            <Stack.Screen name={ScreenProps.AdminModifyAdminUser.screenName} component={AdminModificarUsuarioAdmnistradorScreen} />
+            <Stack.Screen name={ScreenProps.AdminModifyUser.screenName} component={AdminModificarUsuarioScreen} />
+            <Stack.Screen name={ScreenProps.ListEstate.screenName} component={ListaFincasScreen} />
+            <Stack.Screen name={ScreenProps.RegisterEstate.screenName} component={RegistrarFincaScreen} />
+            <Stack.Screen name={ScreenProps.ModifyEstate.screenName} component={ModificarFincaScreen} />
+            <Stack.Screen name={ScreenProps.ListPlot.screenName} component={ListaParcelasScreen} />
+            <Stack.Screen name={ScreenProps.RegisterPlot.screenName} component={RegistrarParcelaScreen} />
+            <Stack.Screen name={ScreenProps.ModifyPlot.screenName} component={ModificarParcelaScreen} />
+            <Stack.Screen name={ScreenProps.ListFertilizer.screenName} component={ListaFertilizantesScreen} />
+            <Stack.Screen name={ScreenProps.RegisterFertilizer.screenName} component={RegistrarFertilizanteScreen} />
+            <Stack.Screen name={ScreenProps.ModifyFertilizer.screenName} component={ModificarFertilizanteScreen} />
+            <Stack.Screen name={ScreenProps.ListQualityFloorScreen.screenName} component={ListaCalidadSueloScreen} />
+            <Stack.Screen name={ScreenProps.RegisterQualityFloorScreen.screenName} component={RegistrarCalidadSueloScreen} />
+            <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
+            <Stack.Screen name={ScreenProps.CropRotationList.screenName} component={ListaRotacionCultivosScreen} />
+            <Stack.Screen name={ScreenProps.InsertCropRotation.screenName} component={InsertarRotacionCultivosScreen} />
+            <Stack.Screen name={ScreenProps.ModifyCropRotation.screenName} component={ModificarRotacionCultivosScreen} />
+            <Stack.Screen name={ScreenProps.ListProductivity.screenName} component={ListaProductividadScreen} />
+            <Stack.Screen name={ScreenProps.RegisterProductivity.screenName} component={RegistrarProductividadScreen} />
+            <Stack.Screen name={ScreenProps.ModifyProductivity.screenName} component={ModificarProductividadScreen} />
+            <Stack.Screen name={ScreenProps.ListLandPreparation.screenName} component={ListaPreparacionTerrenoScreen} />
+            <Stack.Screen name={ScreenProps.RegisterLandPreparation.screenName} component={RegistrarPreparacionTerrenoScreen} />
+            <Stack.Screen name={ScreenProps.ModifyLandPreparation.screenName} component={ModificarPreparacionTerrenoScreen} />
+            <Stack.Screen name={ScreenProps.ResidueList.screenName} component={ListaManejoResiduosScreen} />
+            <Stack.Screen name={ScreenProps.RegisterResidue.screenName} component={RegistrarResiduosScreen} />
+            <Stack.Screen name={ScreenProps.ModifyResidue.screenName} component={ModificarResiduosScreen} />
+            <Stack.Screen name={ScreenProps.HidricMenu.screenName} component={MenuHidricoScreen} />
+            <Stack.Screen name={ScreenProps.WatchListWaterScreen.screenName} component={ListaSeguimientoAguaScreen} />
+            <Stack.Screen name={ScreenProps.RegisterUseWaterScreen.screenName} component={RegistrarUsoAguaScreen} />
+            <Stack.Screen name={ScreenProps.ModifyUseWatterScreen.screenName} component={ModificarUsoAguaScreen} />
+            <Stack.Screen name={ScreenProps.ListIrrigationEfficiency.screenName} component={ListaMonitoreoEficienciaRiegoScreen} />
+            <Stack.Screen name={ScreenProps.InsertIrrigationEfficiency.screenName} component={InsertarMonitoreoEficienciaRiegoScreen} />
+            <Stack.Screen name={ScreenProps.ModifyIrrigationEfficiency.screenName} component={ModificarMonitoreoEficienciaRiegoScreen} />
+            <Stack.Screen name={ScreenProps.ListSoilElectricalConductivity.screenName} component={ListaConductividadElectricaSueloScreen} />
 
-          <Stack.Screen name={ScreenProps.AdminWeather.screenName} component={AdministracionClima} />
-          <Stack.Screen name={ScreenProps.WatchWeather.screenName} component={ListaPronosticoMeteorologico} />
-          <Stack.Screen name={ScreenProps.ListWeatherClimateConditions.screenName} component={ListaCondicionesMeteorologicasClimaticasScreen} />
-          <Stack.Screen name={ScreenProps.InsertWeatherClimateConditions.screenName} component={InsertarCondicionesMeteorologicasClimaticasScreen} />
-          <Stack.Screen name={ScreenProps.ModifyWeatherClimateConditions.screenName} component={ModificarCondicionesMeterologicasClimaticasScreen} />
-          <Stack.Screen name={ScreenProps.RiskNaturalList.screenName} component={ListaRiesgoNaturalScreen} />
-          <Stack.Screen name={ScreenProps.ModifyRiskNatural.screenName} component={ModificarRiesgoNaturalScreen} />
-          <Stack.Screen name={ScreenProps.InsertRiskNatural.screenName} component={RegistrarRiesgosScreen} />
-          <Stack.Screen name={ScreenProps.MenuPests.screenName} component={AdministracionPlagas} />
-          <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
-          <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
-          <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
-          <Stack.Screen name={ScreenProps.ListMeasureSensor.screenName} component={ListaMedicionesSensorScreen} />
-          <Stack.Screen name={ScreenProps.ModifyMeasureSensor.screenName} component={AdminModificarMedicionSensorScreen} />
-          <Stack.Screen name={ScreenProps.RegisterMeasureSensor.screenName} component={AdminRegistrarMedicionScreen} />
+            <Stack.Screen name={ScreenProps.AdminWeather.screenName} component={AdministracionClima} />
+            <Stack.Screen name={ScreenProps.WatchWeather.screenName} component={ListaPronosticoMeteorologico} />
+            <Stack.Screen name={ScreenProps.ListWeatherClimateConditions.screenName} component={ListaCondicionesMeteorologicasClimaticasScreen} />
+            <Stack.Screen name={ScreenProps.InsertWeatherClimateConditions.screenName} component={InsertarCondicionesMeteorologicasClimaticasScreen} />
+            <Stack.Screen name={ScreenProps.ModifyWeatherClimateConditions.screenName} component={ModificarCondicionesMeterologicasClimaticasScreen} />
+            <Stack.Screen name={ScreenProps.RiskNaturalList.screenName} component={ListaRiesgoNaturalScreen} />
+            <Stack.Screen name={ScreenProps.ModifyRiskNatural.screenName} component={ModificarRiesgoNaturalScreen} />
+            <Stack.Screen name={ScreenProps.InsertRiskNatural.screenName} component={RegistrarRiesgosScreen} />
+            <Stack.Screen name={ScreenProps.MenuPests.screenName} component={AdministracionPlagas} />
+            <Stack.Screen name={ScreenProps.ListPestsDiseases.screenName} component={ListaProblemasAsociadosPlagasScreen} />
+            <Stack.Screen name={ScreenProps.InsertPestsDiseases.screenName} component={InsertarProblemasAsociadosPlagasScreen} />
+            <Stack.Screen name={ScreenProps.ModifyPestsDiseases.screenName} component={ModificarProblemasAsociadosPlagasScreen} />
+            <Stack.Screen name={ScreenProps.ListMeasureSensor.screenName} component={ListaMedicionesSensorScreen} />
+            <Stack.Screen name={ScreenProps.ModifyMeasureSensor.screenName} component={AdminModificarMedicionSensorScreen} />
+            <Stack.Screen name={ScreenProps.RegisterMeasureSensor.screenName} component={AdminRegistrarMedicionScreen} />
 
-          <Stack.Screen name={ScreenProps.AdminSensors.screenName} component={AdministracionSensores} />
-          <Stack.Screen name={ScreenProps.ListSensors.screenName} component={ListaSensoresScreen} />
-          <Stack.Screen name={ScreenProps.InsertSensors.screenName} component={InsertarSensoresScreen} />
-          <Stack.Screen name={ScreenProps.ModifySensors.screenName} component={ModificarSensoresScreen} />
+            <Stack.Screen name={ScreenProps.AdminSensors.screenName} component={AdministracionSensores} />
+            <Stack.Screen name={ScreenProps.ListSensors.screenName} component={ListaSensoresScreen} />
+            <Stack.Screen name={ScreenProps.InsertSensors.screenName} component={InsertarSensoresScreen} />
+            <Stack.Screen name={ScreenProps.ModifySensors.screenName} component={ModificarSensoresScreen} />
 
-          <Stack.Screen name={ScreenProps.ListMeasurementPoint.screenName} component={ListaPuntoMedicionScreen} />
-          <Stack.Screen name={ScreenProps.InsertMeasurementPoint.screenName} component={InsertarPuntoMedicionScreen} />
-          <Stack.Screen name={ScreenProps.ModifyMeasurementPoint.screenName} component={ModificarPuntoMedicionScreen} />
-          
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserContextProvider>
+            <Stack.Screen name={ScreenProps.ListMeasurementPoint.screenName} component={ListaPuntoMedicionScreen} />
+            <Stack.Screen name={ScreenProps.InsertMeasurementPoint.screenName} component={InsertarPuntoMedicionScreen} />
+            <Stack.Screen name={ScreenProps.ModifyMeasurementPoint.screenName} component={ModificarPuntoMedicionScreen} />
+
+          </Stack.Navigator>
+        </NavigationContainer>
+      </UserContextProvider>
+    </ErrorBoundary>
   );
 };
 
 export default App;
+
