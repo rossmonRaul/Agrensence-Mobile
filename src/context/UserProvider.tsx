@@ -19,7 +19,8 @@ export const UserContext = createContext<UserContextProps>({
         idFinca: 0,
         idParcela: 0,
         idRol: 0,
-        estado: false
+        estado: false,
+        token: ""
     },
     setUserData: () => { }
 });
@@ -39,7 +40,8 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({ childr
         idFinca: 0,
         idParcela: 0,
         idRol: 0,
-        estado: false
+        estado: false,
+        token: ""
     });
 
 

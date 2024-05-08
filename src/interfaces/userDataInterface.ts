@@ -7,6 +7,7 @@ export interface UserDataInterface {
     idParcela: number;
     idRol: number;
     estado: boolean;
+    token: string;
 }
 
 export interface RelacionFincaParcela {

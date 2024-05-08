@@ -1,10 +1,12 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, } from 'react';
+import { Alert } from 'react-native';
 import { UserContext } from '../context/UserProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserDataInterface } from '../interfaces/userDataInterface';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../constants';
+import jwt from 'expo-jwt';
 
 export const useAuth = () => {
     const { userData, setUserData } = useContext(UserContext);
@@ -19,7 +21,31 @@ export const useAuth = () => {
                 if (storedUserData) {
                     //  Comprueba si los datos almacenados son vacíos
                     const parsedUserData: UserDataInterface = JSON.parse(storedUserData);
+                    const storedToken = parsedUserData.token;
+                    const decodedToken = jwt.decode(storedToken, null);
+                    if (decodedToken && typeof decodedToken === 'object' && decodedToken.exp) {
+                        // Obtener la fecha de expiración del token
+                        const expirationTime = decodedToken.exp;
 
+                        // Convertir la fecha de expiración a un objeto Date
+                        const expirationDate = new Date(expirationTime * 1000);
+
+                        // Obtener la fecha y hora actual
+                        const currentDate = new Date();
+
+                        // Verificar si el token ha expirado
+                        if (currentDate.getTime() > expirationDate.getTime()) {
+                            // El token ha expirado
+                            // Muestra un mensaje de alerta informativo al usuario
+                            Alert.alert('¡Atención!', 'Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
+
+                            // Elimina los datos del usuario
+                            await AsyncStorage.clear();
+
+                            // Redirige a la pantalla de inicio de sesión
+                            navigation.navigate(ScreenProps.Login.screenName);
+                        }
+                    }
                     if (Object.values(parsedUserData).some(value => value !== '' && value !== null && value !== false && value !== 0)) {
                         //  Si hay al menos un valor no vacío, considerarlo como datos de usuario válidos
                         setUserData(parsedUserData);
@@ -31,8 +57,19 @@ export const useAuth = () => {
                     //  Si no hay datos de usuario almacenados, redirigir a la pantalla de inicio de sesión
                     navigation.navigate(ScreenProps.Login.screenName);
                 }
-            } catch (error) {
-                console.error('Error al verificar autenticación:', error);
+            } catch (error: any) {
+                if (error.message === "Token has expired") {
+                    // Muestra un mensaje de alerta al usuario
+                    Alert.alert('¡Atención!', 'Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
+
+                    // Elimina los datos del usuario
+                    await AsyncStorage.clear();
+
+                    // Redirige a la pantalla de inicio de sesión
+                    navigation.navigate(ScreenProps.Login.screenName);
+                } else {
+                    console.error('Error al verificar autenticación:', error);
+                }
             }
         };
 
