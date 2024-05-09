@@ -51,9 +51,19 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
     };
     const validateFirstForm = () => {
         let isValid = true;
-
-        if (!formulario.codigo && !formulario.altitud && !formulario.latitud) {
+        
+        if (!formulario.codigo) {
             alert('Por favor rellene el formulario');
+            isValid = false;
+            return
+        }
+        if (!formulario.idFinca || formulario.idFinca === null) {
+            alert('Ingrese la Finca');
+            isValid = false;
+            return
+        }
+        if (!formulario.idParcela || formulario.idParcela === null||formulario.idParcela === '') {
+            alert('Ingrese la Parcela');
             isValid = false;
             return
         }
@@ -62,23 +72,13 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
             isValid = false;
             return
         }
-        if (!formulario.altitud) {
-            alert('Ingrese una altitud');
-            isValid = false;
-            return
-        }
-        if (!formulario.latitud ) {
-            alert('Ingrese una latitud');
-            isValid = false;
-            return
-        }
-
+       
         return isValid
     }
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
 
-        if (!formulario.longitud) {
+        if (!formulario.longitud && !formulario.altitud && !formulario.latitud) {
             alert('Por favor rellene el formulario');
             return
         }
@@ -87,15 +87,18 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
             alert('Ingrese la longitud');
             return
         }
+        if (!formulario.altitud) {
+            alert('Ingrese una altitud');
+            
+            return
+        }
+        if (!formulario.latitud ) {
+            alert('Ingrese una latitud');
+            return
+        }
 
-        if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
-            return
-        }
-        if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
-            return
-        }
+
+       
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
@@ -160,7 +163,8 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
         const fincaId = parseInt(item.value, 10);
         setSelectedFinca(item.value);
 
-        setSelectedParcela('Seleccione una Parcela')
+        setSelectedParcela('Seleccione una Parcela');
+        formulario.idParcela=null;
         obtenerParcelasPorFinca(fincaId);
     };
 
@@ -230,58 +234,6 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
                             {!isSecondFormVisible ? (
                                 <>
 
-                                    <Text style={styles.formText}>Código</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="código "
-                                        value={formulario.codigo}
-                                        onChangeText={(text) => updateFormulario('codigo', text)}
-                                    />
-
-
-                                    <Text style={styles.formText} >Elevación(m s. n. m.) </Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="elevación "
-                                        value={formulario.altitud}
-                                        onChangeText={(text) => {
-                                            const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
-                                            updateFormulario('altitud', numericText);
-                                        }}
-                                        keyboardType="numeric"
-                                    />
-                                    <Text style={styles.formText} >Latitud</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="latitud"
-                                        value={formulario.latitud}
-                                        onChangeText={(text) => updateFormulario('latitud', text)}
-                                    />
-                                    <TouchableOpacity
-                                        style={styles.button}
-                                        onPress={async () => {
-                                            const isValid = validateFirstForm();
-
-                                            if (isValid) {
-                                                setSecondFormVisible(true);
-                                            }
-
-                                        }}
-                                    >
-                                        <Text style={styles.buttonText}>Siguiente</Text>
-                                    </TouchableOpacity>
-                                </>
-
-                            ) : (
-                                <>
-                                    <Text style={styles.formText} >Longitud</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="longitud"
-                                        value={formulario.longitud}
-                                        onChangeText={(text) => updateFormulario('longitud', text)}
-                                    />
-
                                     <Text style={styles.formText} >Finca</Text>
                                     {/* Dropdown para Fincas */}
                                     <DropdownComponent
@@ -312,6 +264,59 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
                                             updateFormulario('idParcela', selectedItem.value);
                                         }}
                                     />
+                                    <Text style={styles.formText}>Código</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="código "
+                                        value={formulario.codigo}
+                                        onChangeText={(text) => updateFormulario('codigo', text)}
+                                    />
+
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={async () => {
+                                            const isValid = validateFirstForm();
+
+                                            if (isValid) {
+                                                setSecondFormVisible(true);
+                                            }
+
+                                        }}
+                                    >
+                                        <Text style={styles.buttonText}>Siguiente</Text>
+                                    </TouchableOpacity>
+                                </>
+
+                            ) : (
+                                <>
+
+                                    <Text style={styles.formText} >Elevación(m s. n. m.) </Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="elevación "
+                                        value={formulario.altitud}
+                                        onChangeText={(text) => {
+                                            const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
+                                            updateFormulario('altitud', numericText);
+                                        }}
+                                        keyboardType="numeric"
+                                    />
+                                    <Text style={styles.formText} >Latitud</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="latitud"
+                                        value={formulario.latitud}
+                                        onChangeText={(text) => updateFormulario('latitud', text)}
+                                    />
+                                    <Text style={styles.formText} >Longitud</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="longitud"
+                                        value={formulario.longitud}
+                                        onChangeText={(text) => updateFormulario('longitud', text)}
+                                    />
+
+                                    
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
                                             style={styles.backButton}
