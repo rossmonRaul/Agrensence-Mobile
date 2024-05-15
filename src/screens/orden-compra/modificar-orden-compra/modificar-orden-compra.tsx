@@ -375,7 +375,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                         // Se ejecuta el cambio de estado
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se actualizó elimino esta orden de compra correctamente!',
+                                '¡Se elimino esta orden de compra correctamente!',
                                 '',
                                 [
                                     {
@@ -465,13 +465,12 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Registro orden de compra</Text>
+                            <Text style={styles.createAccountText} >Modificar orden de compra</Text>
                         </View>
 
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
-                                    <Text style={styles.formText} >Número de orden</Text>
                                     <Text style={styles.formText} >Número de orden</Text>
                                     <TextInput
                                         maxLength={50}
