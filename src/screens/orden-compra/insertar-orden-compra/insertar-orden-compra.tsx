@@ -396,12 +396,9 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                                         style={styles.input}
                                         placeholder="Número de orden..."
                                         value={formulario.numeroOrden}
-                                        keyboardType='numeric'
                                         onChangeText={(text) => {
-                                            const isValidNumber = /^[0-9]*$/gm.test(text);
-                                            if (isValidNumber) {
-                                                updateFormulario('numeroOrden', text);
-                                            }
+                                            updateFormulario('numeroOrden', text);
+
                                         }}
                                     />
                                     <Text style={styles.formText} >Proveedor</Text>

@@ -472,17 +472,15 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                             {!isSecondFormVisible ? (
                                 <>
                                     <Text style={styles.formText} >Número de orden</Text>
+                                    <Text style={styles.formText} >Número de orden</Text>
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
                                         placeholder="Número de orden..."
                                         value={formulario.numeroOrden}
-                                        keyboardType='numeric'
                                         onChangeText={(text) => {
-                                            const isValidNumber = /^[0-9]*$/gm.test(text);
-                                            if (isValidNumber) {
-                                                updateFormulario('numeroOrden', text);
-                                            }
+                                            updateFormulario('numeroOrden', text);
+
                                         }}
                                     />
                                     <Text style={styles.formText} >Proveedor</Text>
