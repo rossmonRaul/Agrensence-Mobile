@@ -71,11 +71,16 @@ export const ScreenProps = {
     InsertMeasurementPoint: { screenName: 'InsertMeasurementPoint' },
     ListMeasurementPoint: { screenName: 'ListMeasurementPoint' },
     ModifyMeasurementPoint: { screenName: 'ModifyMeasurementPoint' },
+    AdminAdminstration: { screenName: 'AdminAdminstration' },
+    ListPurchaseOrder: { screenName: 'ListPurchaseOrder' },
+    ModifyPurchaseOrder: { screenName: 'ModifyPurchaseOrder' },
+    InsertPurchaseOrder: { screenName: 'InsertPurchaseOrder' },
+
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.1.34';
+export const IP_API = '192.168.0.3';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -87,7 +92,7 @@ export const Company_Props = [
     { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: ScreenProps.HidricMenu.screenName },
     { id: 4, iconImage: require('./assets/images/icons/clima.png'), text: 'Clima', screen: ScreenProps.AdminWeather.screenName },
     { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: ScreenProps.MenuPests.screenName },
-    { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: '' },
+    { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
     { id: 7, iconImage: require('./assets/images/icons/comunidad.png'), text: 'Comunidad', screen: '' },
     { id: 8, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
     { id: 9, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de Calidad', screen: '' },
@@ -104,7 +109,7 @@ export const Company_Props = [
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
     { id: 104, iconImage: require('./assets/images/icons/grafico-de-barras.png'), text: 'Mediciones de Sensor', screen: ScreenProps.ListMeasureSensor.screenName, datoValidacion: '0' },
-    
+
 ]
 
 export const Admin_cultivation = [
@@ -141,4 +146,8 @@ export const Admin_plagas = [
 export const Admin_sensor = [
     { id: 1, iconImage: require('./assets/images/icons/sensor.png'), text: 'Sensores', screen: ScreenProps.ListSensors.screenName },
     { id: 2, iconImage: require('./assets/images/icons/punto-medicion.png'), text: 'Punto Medición', screen: ScreenProps.ListMeasurementPoint.screenName },
+]
+
+export const Admin_ordenCompra = [
+    { id: 1, iconImage: require('./assets/images/icons/ordenCompra.png'), text: 'Orden de compra', screen: ScreenProps.ListPurchaseOrder.screenName },
 ]

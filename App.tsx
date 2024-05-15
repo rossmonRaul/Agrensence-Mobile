@@ -76,6 +76,11 @@ import ErrorBoundary from './src/components/ErrorBoundary/ErrorBoundary';
 import { ListaPuntoMedicionScreen } from './src/screens/punto-medicion/lista-punto-medicion/lista-punto-medicion';
 import { InsertarPuntoMedicionScreen } from './src/screens/punto-medicion/registrar-punto-medicion/registrar-punto-medicion';
 import { ModificarPuntoMedicionScreen } from './src/screens/punto-medicion/modificar-punto-medicion/modificar-punto-medicion';
+import { AdminAdministracion } from './src/screens/administacion-orden-compra/administacion-orden-compra';
+import { ListaOrdenCompraScreen } from './src/screens/orden-compra/lista-orden-compra/lista-orden-compra';
+import { InsertarOrdenCompraScreen } from './src/screens/orden-compra/insertar-orden-compra/insertar-orden-compra';
+import { ModificarOrdenCompraScreen } from './src/screens/orden-compra/modificar-orden-compra/modificar-orden-compra';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -245,6 +250,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ListMeasurementPoint.screenName} component={ListaPuntoMedicionScreen} />
             <Stack.Screen name={ScreenProps.InsertMeasurementPoint.screenName} component={InsertarPuntoMedicionScreen} />
             <Stack.Screen name={ScreenProps.ModifyMeasurementPoint.screenName} component={ModificarPuntoMedicionScreen} />
+            <Stack.Screen name={ScreenProps.AdminAdminstration.screenName} component={AdminAdministracion} />
+            <Stack.Screen name={ScreenProps.ListPurchaseOrder.screenName} component={ListaOrdenCompraScreen} />
+            <Stack.Screen name={ScreenProps.InsertPurchaseOrder.screenName} component={InsertarOrdenCompraScreen} />
+            <Stack.Screen name={ScreenProps.ModifyPurchaseOrder.screenName} component={ModificarOrdenCompraScreen} />
 
           </Stack.Navigator>
         </NavigationContainer>
