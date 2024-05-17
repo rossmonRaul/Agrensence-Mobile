@@ -111,7 +111,7 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                 <BackButtonComponent screenName={ScreenProps.AdminAdminstration.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertInflowsOutflows.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista orden de compra</Text>
+                    <Text style={styles.textAbove} >Lista de entradas y salidas</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
