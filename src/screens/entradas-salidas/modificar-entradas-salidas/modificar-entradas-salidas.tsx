@@ -286,7 +286,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
                         // Se ejecuta el cambio de estado
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se elimino esta entrda/salida correctamente!',
+                                '¡Se elimino esta entrada/salida correctamente!',
                                 '',
                                 [
                                     {
