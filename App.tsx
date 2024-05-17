@@ -80,6 +80,9 @@ import { AdminAdministracion } from './src/screens/administacion-orden-compra/ad
 import { ListaOrdenCompraScreen } from './src/screens/orden-compra/lista-orden-compra/lista-orden-compra';
 import { InsertarOrdenCompraScreen } from './src/screens/orden-compra/insertar-orden-compra/insertar-orden-compra';
 import { ModificarOrdenCompraScreen } from './src/screens/orden-compra/modificar-orden-compra/modificar-orden-compra';
+import { ListaEntradasSalidasScreen } from './src/screens/entradas-salidas/lista-entradas-salidas/lista-entradas-salidas';
+import { InsertarEntradasSalidasScreen } from './src/screens/entradas-salidas/entradas-salidas/insertar-entradas-salidas';
+import { ModificarEntradasSalidasScreen } from './src/screens/entradas-salidas/modificar-entradas-salidas/modificar-entradas-salidas';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -254,6 +257,9 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ListPurchaseOrder.screenName} component={ListaOrdenCompraScreen} />
             <Stack.Screen name={ScreenProps.InsertPurchaseOrder.screenName} component={InsertarOrdenCompraScreen} />
             <Stack.Screen name={ScreenProps.ModifyPurchaseOrder.screenName} component={ModificarOrdenCompraScreen} />
+            <Stack.Screen name={ScreenProps.ListInflowsOutflows.screenName} component={ListaEntradasSalidasScreen} />
+            <Stack.Screen name={ScreenProps.InsertInflowsOutflows.screenName} component={InsertarEntradasSalidasScreen} />
+            <Stack.Screen name={ScreenProps.ModifyInflowsOutflows.screenName} component={ModificarEntradasSalidasScreen} />
 
           </Stack.Navigator>
         </NavigationContainer>

@@ -75,12 +75,14 @@ export const ScreenProps = {
     ListPurchaseOrder: { screenName: 'ListPurchaseOrder' },
     ModifyPurchaseOrder: { screenName: 'ModifyPurchaseOrder' },
     InsertPurchaseOrder: { screenName: 'InsertPurchaseOrder' },
-
+    ListInflowsOutflows: { screenName: 'ListInflowsOutflows' },
+    InsertInflowsOutflows: { screenName: 'InsertInflowsOutflows' },
+    ModifyInflowsOutflows: { screenName: 'ModifyInflowsOutflows' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.0.3';
+export const IP_API = '192.168.0.5';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -150,4 +152,5 @@ export const Admin_sensor = [
 
 export const Admin_ordenCompra = [
     { id: 1, iconImage: require('./assets/images/icons/ordenCompra.png'), text: 'Orden de compra', screen: ScreenProps.ListPurchaseOrder.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Entradas y salidas', screen: ScreenProps.ListInflowsOutflows.screenName },
 ]
