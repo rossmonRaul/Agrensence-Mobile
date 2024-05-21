@@ -78,6 +78,9 @@ export const ScreenProps = {
     ListInflowsOutflows: { screenName: 'ListInflowsOutflows' },
     InsertInflowsOutflows: { screenName: 'InsertInflowsOutflows' },
     ModifyInflowsOutflows: { screenName: 'ModifyInflowsOutflows' },
+    ListManoObra: { screenName: 'ListManoObra' },
+    ModifyManoObra: { screenName: 'ModifyManoObra' },
+    InsertManoObra: { screenName: 'InsertManoObra' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -107,6 +110,7 @@ export const Company_Props = [
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
+    { id: 57, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Mano de obra', screen: ScreenProps.ListManoObra.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
