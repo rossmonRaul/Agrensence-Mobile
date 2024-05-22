@@ -19,7 +19,7 @@ import { UseFetchDropdownDataProps } from '../../../hooks/useFetchDropDownData';
 import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
-import { InsertarRegistroManoObra } from '../../../servicios/ServicioManoobra';
+import { InsertarRegistroManoObra } from '../../../servicios/ServicioManoObra';
 
 export const InsertarManoObraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -124,7 +124,7 @@ export const InsertarManoObraScreen: React.FC = () => {
         console.log(responseInsert)
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro mano de obracorrectamente!', '', [
+            Alert.alert('¡Se registro mano de obra correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {

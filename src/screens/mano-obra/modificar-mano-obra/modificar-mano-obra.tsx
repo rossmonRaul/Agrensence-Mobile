@@ -20,7 +20,7 @@ import { UseFetchDropdownDataProps } from '../../../hooks/useFetchDropDownData';
 import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
-import { ModificarRegistroManoObra, CambiarEstadoRegistroManoObra } from '../../../servicios/ServicioManoobra';
+import { ModificarRegistroManoObra, CambiarEstadoRegistroManoObra } from '../../../servicios/ServicioManoObra';
 interface RouteParams {
     idRegistroManoObra: string,
     idFinca: string,

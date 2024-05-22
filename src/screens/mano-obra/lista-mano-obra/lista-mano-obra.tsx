@@ -13,7 +13,7 @@ import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 import { RelacionFincaParcela } from '../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../servicios/ServicioUsuario';
-import { ObtenerDatosRegistroManoObra } from '../../../servicios/ServicioManoobra';
+import { ObtenerDatosRegistroManoObra } from '../../../servicios/ServicioManoObra';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 
 export const ListaManoObraScreen: React.FC = () => {
