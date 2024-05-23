@@ -66,4 +66,43 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         minWidth: 300,
     },
+    datePickerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10,
+    },
+    input: {
+        height: 40,
+        borderColor: '#548256',
+        borderWidth: 2,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        fontFamily: 'CatamaranMedium',
+        width: 120,
+        textAlign: 'center'
+    },
+    iosPickerButtons: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+    },
+    buttonPicker: {
+        borderRadius: 5,
+        padding: 10,
+        backgroundColor: '#ccc',
+    },
+    dateTimePicker: {
+        width: 120,
+    },
+    filterButton: {
+        backgroundColor: '#548256',
+        padding: 10,
+        borderRadius: 5,
+        height: 40,
+        justifyContent: 'center',
+    },
+    filterButtonText: {
+        color: 'white',
+        paddingHorizontal: 10,
+    },
 })

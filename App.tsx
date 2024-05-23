@@ -86,6 +86,7 @@ import { ModificarEntradasSalidasScreen } from './src/screens/entradas-salidas/m
 import { ListaManoObraScreen } from './src/screens/mano-obra/lista-mano-obra/lista-mano-obra';
 import { InsertarManoObraScreen } from './src/screens/mano-obra/insertar-mano-obra/insertar-mano-obra';
 import { ModificarManoObraScreen } from './src/screens/mano-obra/modificar-mano-obra/modificar-mano-obra';
+import { ListaFlujoCajaScreen } from './src/screens/flujo-caja/lista-flujo-caja/lista-flujo-caja';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -266,6 +267,7 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ListManoObra.screenName} component={ListaManoObraScreen} />
             <Stack.Screen name={ScreenProps.InsertManoObra.screenName} component={InsertarManoObraScreen} />
             <Stack.Screen name={ScreenProps.ModifyManoObra.screenName} component={ModificarManoObraScreen} />
+            <Stack.Screen name={ScreenProps.ListCashFlow.screenName} component={ListaFlujoCajaScreen} />
 
           </Stack.Navigator>
         </NavigationContainer>

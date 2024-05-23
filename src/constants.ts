@@ -81,6 +81,7 @@ export const ScreenProps = {
     ListManoObra: { screenName: 'ListManoObra' },
     ModifyManoObra: { screenName: 'ModifyManoObra' },
     InsertManoObra: { screenName: 'InsertManoObra' },
+    ListCashFlow: { screenName: 'ListCashFlow' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -157,4 +158,5 @@ export const Admin_sensor = [
 export const Admin_ordenCompra = [
     { id: 1, iconImage: require('./assets/images/icons/ordenCompra.png'), text: 'Orden de compra', screen: ScreenProps.ListPurchaseOrder.screenName },
     { id: 2, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Entradas y salidas', screen: ScreenProps.ListInflowsOutflows.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Flujo de caja', screen: ScreenProps.ListCashFlow.screenName },
 ]
