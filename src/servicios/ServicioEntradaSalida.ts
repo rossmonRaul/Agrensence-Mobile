@@ -7,6 +7,10 @@ export const ObtenerDatosRegistroEntradaSalida = async () => {
     const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosRegistroEntradaSalida`;
     return await ProcesarDatosApi('GET', url, '');
 }
+export const ObtenerDatosRegistroSalidaPorFecha = async () => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosRegistroSalidaPorFecha`;
+    return await ProcesarDatosApi('GET', url, '');
+}
 
 /*Metodos POST */
 export const InsertarRegistroEntradaSalida = async (data: any) => {
