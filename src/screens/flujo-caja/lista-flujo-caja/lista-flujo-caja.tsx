@@ -18,7 +18,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { createExcelFile } from '../../../utils/fileExportExcel';
-
+import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 export const ListaFlujoCajaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
@@ -51,16 +51,19 @@ export const ListaFlujoCajaScreen: React.FC = () => {
 
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+                const fincasResponse = await ObtenerFincas();
+                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
 
-                setFincas(fincasUnicas);
+                // const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                //     .filter(item => item !== undefined)
+                //     .map(item => item!.idFinca)))
+                //     .map(idFinca => {
+                //         const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                //         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                //         return { idFinca, nombreFinca };
+                //     });
+
+                setFincas(fincasFiltradas);
                 //se obtienen la orden de compra para despues poder filtrarlos
                 const entradaSalidaResponse = await ObtenerDatosRegistroSalidaPorFecha();
                 //si es 0 es inactivo sino es activo resetea los datos

@@ -112,6 +112,7 @@ export const Company_Props = [
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
     { id: 57, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Mano de obra', screen: ScreenProps.ListManoObra.screenName, datoValidacion: '1' },
+    { id: 58, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Flujo de caja', screen: ScreenProps.ListCashFlow.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
@@ -158,5 +159,4 @@ export const Admin_sensor = [
 export const Admin_ordenCompra = [
     { id: 1, iconImage: require('./assets/images/icons/ordenCompra.png'), text: 'Orden de compra', screen: ScreenProps.ListPurchaseOrder.screenName },
     { id: 2, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Entradas y salidas', screen: ScreenProps.ListInflowsOutflows.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Flujo de caja', screen: ScreenProps.ListCashFlow.screenName },
 ]
