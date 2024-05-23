@@ -200,7 +200,7 @@ export const ListaFlujoCajaScreen: React.FC = () => {
                     {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
-                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                        data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
