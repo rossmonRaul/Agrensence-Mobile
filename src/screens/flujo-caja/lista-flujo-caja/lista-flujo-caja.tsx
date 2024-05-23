@@ -191,7 +191,7 @@ export const ListaFlujoCajaScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.AdminAdminstration.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
                     <Text style={styles.textAbove} >Lista flujo de caja</Text>
                 </View>
