@@ -20,6 +20,16 @@ import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import { InsertarRegistroEntradaSalida } from '../../../servicios/ServicioEntradaSalida';
+import ListaComponenteEntradaSalida from '../../../components/ListaComponenteEntradaSalida/ListaComponenteEntradaSalida';
+interface Item {
+    id: string;
+    producto: string;
+    cantidad: string;
+    precioUnitario: string;
+    iva: string;
+    total: string;
+}
+
 export const InsertarEntradasSalidasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
@@ -40,6 +50,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
     const [showFechaOrden, setShowFecha] = useState(false);
     const [dateFecha, setDateFecha] = useState(new Date())
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
+    const [DatosDelHijo, setDatosDelHijo] =  useState<Item[]>([]);
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -48,12 +59,14 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         idRegistroEntradaSalida: '',
         fecha: '',
         detallesCompraVenta: '',
-        tipo: '',
-        cantidad: '',
-        precioUnitario: '',
-        montoTotal: ''
+        tipo: ''
     });
 
+
+    const recibirDatos = (datos: Item[]) => {
+        setDatosDelHijo(datos);
+        
+      };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -89,6 +102,11 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
             alert('Por favor ingrese los detalles de compra/venta.');
             return;
         }
+        if (!formulario.idFinca || formulario.idFinca === null) {
+            isValid = false;
+            alert('Ingrese la Finca');
+            return
+        }
 
         return isValid;
 
@@ -96,23 +114,12 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
 
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
-        if (formulario.cantidad.trim() === '') {
-            alert('Por favor ingrese la cantidad.');
-            return;
-        }
-        if (formulario.precioUnitario.trim() === '') {
-            alert('Por favor ingrese el precio unitario.');
-            return;
-        }
-        if (formulario.tipo.trim() === '') {
-            alert('Por favor ingrese el tipo.');
-            return;
-        }
+            if (DatosDelHijo.length === 0) {
+                alert('Por favor ingrese un producto a la lista.');
+                return;
+            }
 
-        if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
-            return
-        }
+        const MontoTotal = DatosDelHijo.reduce((sum, detalle) => sum + (parseFloat(detalle.total) || 0), 0);
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
@@ -120,14 +127,14 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
             fecha: formatDate(dateFecha),
             detallesCompraVenta: formulario.detallesCompraVenta,
             tipo: formulario.tipo,
-            cantidad: formulario.cantidad,
-            precioUnitario: formulario.precioUnitario,
-            montoTotal: formulario.montoTotal,
+            total: MontoTotal,
+            detalles:DatosDelHijo
         };
 
         //  Se ejecuta el servicio de insertar  la entrada o salida
+        //console.log("DATAEnviar",formData );
         const responseInsert = await InsertarRegistroEntradaSalida(formData);
-        console.log(responseInsert)
+        //console.log(responseInsert)
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se registro la entrada o salida correctamente!', '', [
@@ -142,6 +149,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
             alert('!Oops! Parece que algo salió mal')
         }
     };
+    
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
@@ -374,6 +382,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                                             </TouchableOpacity>
                                         </View>
                                     )}
+                                     <Text style={styles.formText} >Tipo</Text>
                                     <DropdownComponent
                                         placeholder="Tipo"
                                         data={entradasSalidasValues}
@@ -390,6 +399,16 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                                         value={formulario.detallesCompraVenta}
                                         onChangeText={(text) => updateFormulario('detallesCompraVenta', text)}
                                     />
+                                    {empresa &&
+                                    <DropdownComponent
+                                        placeholder="Finca"
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={finca}
+                                        iconName='tree'
+                                        onChange={handleValueFinca}
+                                    />
+                                    }
+
 
                                     <TouchableOpacity
                                         style={styles.button}
@@ -408,55 +427,8 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
 
                             ) : (<>
 
-                                <Text style={styles.formText}>Cantidad</Text>
-                                <TextInput
-                                    keyboardType='numeric'
-                                    maxLength={100}
-                                    style={styles.input}
-                                    placeholder="Cantidad..."
-                                    value={formulario.cantidad}
-                                    onChangeText={(text) => {
-                                        // Actualizar el estado 'cantidad'
-                                        updateFormulario('cantidad', text);
-                                        // Calcular el monto total y actualizar el estado 'montoTotal'
-                                        const montoTotal = Number(text) * Number(formulario.precioUnitario);
-                                        updateFormulario('montoTotal', montoTotal.toString());
-                                    }}
-                                />
-                                <Text style={styles.formText}>Precio unitario (₡/cantidad)</Text>
-                                <TextInput
-                                    keyboardType='numeric'
-                                    maxLength={100}
-                                    style={styles.input}
-                                    placeholder="Precio unitario..."
-                                    value={formulario.precioUnitario}
-                                    onChangeText={(text) => {
-                                        // Actualizar el estado 'precioUnitario'
-                                        updateFormulario('precioUnitario', text);
-                                        // Calcular el monto total y actualizar el estado 'montoTotal'
-                                        const montoTotal = Number(formulario.cantidad) * Number(text);
-                                        updateFormulario('montoTotal', montoTotal.toString());
-                                    }}
-                                />
-                                <Text style={styles.formText} >Monto total</Text>
-                                <TextInput
-                                    maxLength={100}
-                                    keyboardType='numeric'
-                                    style={styles.input}
-                                    placeholder="Monto total..."
-                                    value={formulario.montoTotal}
-                                    onChangeText={(text) => updateFormulario('montoTotal', text)}
-                                    readOnly={true}
-                                />
-                                {empresa &&
-                                    <DropdownComponent
-                                        placeholder="Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
-                                        value={finca}
-                                        iconName='tree'
-                                        onChange={handleValueFinca}
-                                    />
-                                }
+                                <ListaComponenteEntradaSalida enviarDatos={recibirDatos} idRegistroEntradaSalida={0} datosImperdibles={DatosDelHijo}/>
+      
 
                                 <TouchableOpacity
                                     style={styles.backButton}

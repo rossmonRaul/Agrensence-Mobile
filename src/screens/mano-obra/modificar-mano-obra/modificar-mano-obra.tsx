@@ -26,6 +26,7 @@ interface RouteParams {
     idFinca: string,
     fecha: string,
     actividad: string,
+    identificacion: string,
     trabajador: string,
     horasTrabajadas: string,
     pagoPorHora: string,
@@ -44,6 +45,7 @@ export const ModificarManoObraScreen: React.FC = () => {
         idFinca,
         fecha,
         actividad,
+        identificacion,
         trabajador,
         horasTrabajadas,
         pagoPorHora,
@@ -78,6 +80,7 @@ export const ModificarManoObraScreen: React.FC = () => {
         idRegistroManoObra: idRegistroManoObra || '',
         fecha: fecha || '',
         actividad: actividad || '',
+        identificacion: identificacion || '',
         trabajador: trabajador || '',
         horasTrabajadas: horasTrabajadas || '',
         pagoPorHora: pagoPorHora || '',
@@ -115,6 +118,7 @@ export const ModificarManoObraScreen: React.FC = () => {
             usuarioCreacionModificacion: userData.identificacion,
             fecha: dateFecha,
             actividad: formulario.actividad,
+            identificacion:formulario.identificacion,
             trabajador: formulario.trabajador,
             horasTrabajadas: formulario.horasTrabajadas,
             pagoPorHora: formulario.pagoPorHora,
@@ -237,6 +241,11 @@ export const ModificarManoObraScreen: React.FC = () => {
         if (formulario.actividad.trim() === '') {
             isValid = false;
             alert('Por favor ingrese la actividad.');
+            return;
+        }
+        if (formulario.identificacion.trim() === '') {
+            isValid = false;
+            alert('Por favor ingrese la identificación.');
             return;
         }
         if (formulario.trabajador.trim() === '') {
@@ -442,6 +451,14 @@ export const ModificarManoObraScreen: React.FC = () => {
                                         placeholder="Actividad..."
                                         value={formulario.actividad}
                                         onChangeText={(text) => updateFormulario('actividad', text)}
+                                    />
+                                    <Text style={styles.formText} >Identificación</Text>
+                                    <TextInput
+                                        maxLength={200}
+                                        style={styles.input}
+                                        placeholder="Identificación..."
+                                        value={formulario.identificacion}
+                                        onChangeText={(text) => updateFormulario('identificacion', text)}
                                     />
                                     <Text style={styles.formText} >Trabajador</Text>
                                     <TextInput

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
+import { View, ScrollView, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,10 +13,21 @@ import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 import { ObtenerUsuariosPorRol3 } from '../../../servicios/ServicioUsuario';
-import { ObtenerDatosOrdenDeCompra } from '../../../servicios/ServicioOrdenCompra';
+import { ObtenerDatosOrdenDeCompra,ObtenerDetalleOrdenDeCompraPorId, ObtenerDetallesOrdenDeCompraExportar } from '../../../servicios/ServicioOrdenCompra';
 import { RelacionFincaParcela } from '../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../servicios/ServicioUsuario';
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
+import { createExcelFile } from '../../../utils/fileExportExcel';
+interface Item {
+    id: string;
+    producto: string;
+    cantidad: string;
+    precioUnitario: string;
+    iva: string;
+    total: string;
+}
 export const ListaOrdenCompraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
@@ -30,6 +41,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
+    const [idRegistrosExportar, setIdRegistrosExportar] = useState<string | null>(null);
 
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
@@ -37,24 +49,30 @@ export const ListaOrdenCompraScreen: React.FC = () => {
         'Fecha orden': 'fechaOrden',
         'Fecha entrega': 'fechaEntrega',
         'Proveedor': 'proveedor',
-        'Producto adquirido': 'productosAdquiridos',
-        'Precio unitario (₡/kg)': 'precioUnitario',
-        'Cantidad (kg)': 'cantidad',
-        'Monto total': 'montoTotal',
         'Observaciones': 'observaciones',
+        'Monto total': 'total',
         'Estado': 'estado'
+    };
+
+    const keyMapping2 = {
+        'Id': 'idDetalleOrdenDeCompra',
+        'IdOrdenCompra': 'idOrdenDeCompra',
+        'Producto': 'producto',
+        'Cantidad': 'cantidad',
+        'Precio Unitario': 'precioUnitario',
+        'Iva': 'iva',
+        'Total': 'total'
     };
 
     // item.idOrdenDeCompra, item.idFinca, item.idParcela,
     //                         item.numeroDeOrden, item.proveedor, item.fechaOrden, item.fechaEntrega,
     //                         item.productosAdquiridos, item.cantidad, item.precioUnitario,item.montoTotal, item.observaciones,  item.estado
     const handleRectanglePress = (idOrdenDeCompra: string, idFinca: string, idParcela: string, numeroDeOrden: string,
-        proveedor: string, fechaOrden: string, fechaEntrega: string,
-        productosAdquiridos: string, cantidad: string, precioUnitario: string, montoTotal: string, observaciones: string, estado: string) => {
+        proveedor: string, fechaOrden: string, fechaEntrega: string,observaciones: string, total: string,  estado: string) => {
         navigation.navigate(ScreenProps.ModifyPurchaseOrder.screenName, {
             idOrdenDeCompra: idOrdenDeCompra, idFinca: idFinca, idParcela: idParcela,
             numeroDeOrden: numeroDeOrden, proveedor: proveedor, fechaOrden: fechaOrden, fechaEntrega: fechaEntrega,
-            productosAdquiridos: productosAdquiridos, cantidad: cantidad, precioUnitario: precioUnitario, montoTotal: montoTotal, observaciones: observaciones, estado: estado
+            observaciones: observaciones,total: total,  estado: estado
         });
     };
 
@@ -157,13 +175,54 @@ export const ListaOrdenCompraScreen: React.FC = () => {
         try {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
-
+            let listaIds = '';
             setRotacionCultivos(rotacionCultivosFiltrado);
+            rotacionCultivosFiltrado.forEach((item, index) => {
+                // Añadir la ID a la variable y, si no es el último elemento, añadir una coma
+                listaIds += item.idOrdenDeCompra;
+                if (index < listaIds.length - 1) {
+                    listaIds += ',';
+                }
+            });
+
+            setIdRegistrosExportar(listaIds);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    const handleExportFile = async () => {
+        try {
+            // Solicitar permiso de escritura en el almacenamiento
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            const formData2 = { ListaIdsExportar: idRegistrosExportar};
+            const datosListaProductos: Item[] = await ObtenerDetallesOrdenDeCompraExportar(formData2);
+            if (status !== 'granted') {
+                Alert.alert('Permisos insuficientes', 'Se requieren permisos para acceder al almacenamiento.');
+                return;
+            }
+
+            if (datosListaProductos.length === 0) {
+                Alert.alert('No hay datos para exportar');
+                return;
+            }
+            function formatDate(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses son de 0 a 11
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+            const title = 'Detalle de Compra';
+
+            const filePath = await createExcelFile(title, datosListaProductos, keyMapping2, 'Detalle de Compra');
+
+            await Sharing.shareAsync(filePath)
+            Alert.alert('Éxito', 'Archivo exportado correctamente.');
+        } catch (error) {
+            console.error('Error al exportar el archivo:', error);
+            Alert.alert('Error', 'Ocurrió un error al exportar el archivo.');
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -193,6 +252,9 @@ export const ListaOrdenCompraScreen: React.FC = () => {
                         onChange={handleParcelaChange}
                     />
                 </View>
+                <TouchableOpacity style={styles.filterButton} onPress={handleExportFile}>
+                    <Text style={styles.filterButtonText}>Exportar Excel</Text>
+                </TouchableOpacity>
                 {/* <View style={styles.searchContainer}>
                     <TextInput
                         style={styles.searchInput}
@@ -209,7 +271,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
                         <TouchableOpacity key={item.idOrdenDeCompra} onPress={() => handleRectanglePress(
                             item.idOrdenDeCompra, item.idFinca, item.idParcela,
                             item.numeroDeOrden, item.proveedor, item.fechaOrden, item.fechaEntrega,
-                            item.productosAdquiridos, item.cantidad, item.precioUnitario, item.montoTotal, item.observaciones, item.estado
+                            item.observaciones,item.total, item.estado
                         )}>
                             <CustomRectangle
                                 key={item.idFinca}

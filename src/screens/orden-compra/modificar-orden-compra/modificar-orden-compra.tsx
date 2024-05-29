@@ -21,6 +21,7 @@ import { UseFetchDropdownDataProps } from '../../../hooks/useFetchDropDownData';
 import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
+import ListaComponenteOrdenCompra from '../../../components/ListaComponenteOrdenCompra/ListaComponenteOrdenCompra';
 interface RouteParams {
     idOrdenDeCompra: string,
     idFinca: string,
@@ -29,12 +30,18 @@ interface RouteParams {
     proveedor: string,
     fechaOrden: string,
     fechaEntrega: string,
-    productosAdquiridos: string,
-    cantidad: string,
-    precioUnitario: string,
-    montoTotal: string,
     observaciones: string,
+    total: string,
     estado: string
+}
+
+interface Item {
+    id: string;
+    producto: string;
+    cantidad: string;
+    precioUnitario: string;
+    iva: string;
+    total: string;
 }
 
 export const ModificarOrdenCompraScreen: React.FC = () => {
@@ -51,11 +58,8 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         proveedor,
         fechaOrden,
         fechaEntrega,
-        productosAdquiridos,
-        cantidad,
-        precioUnitario,
-        montoTotal,
         observaciones,
+        total,
         estado
     } = route.params as RouteParams;
 
@@ -81,6 +85,8 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
     const [dateFechaEntrega, setDateFechaEntrega] = useState(new Date())
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
+    const [DatosDelHijo, setDatosDelHijo] =  useState<Item[]>([]);
+    
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idFinca: idFinca || '',
@@ -90,11 +96,8 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         fechaOrden: fechaOrden || '',
         fechaEntrega: fechaEntrega || '',
         proveedor: proveedor || '',
-        productoAdquirido: productosAdquiridos || '',
-        precioUnitario: precioUnitario || '',
-        cantidad: cantidad || '',
-        montoTotal: montoTotal || '',
-        observaciones: observaciones || ''
+        observaciones: observaciones || '',
+        total: total || '',
     });
 
 
@@ -106,32 +109,20 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         }));
     };
 
+    const recibirDatos = (datos: Item[]) => {
+        setDatosDelHijo(datos);
+      };
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
-        if (formulario.cantidad.trim() === '') {
-            alert('Por favor ingrese la cantidad.');
+        if (DatosDelHijo.length === 0) {
+            alert('Por favor ingrese un producto a la lista.');
             return;
-        }
-        if (formulario.precioUnitario.trim() === '') {
-            alert('Por favor ingrese el precio unitario.');
-            return;
-        }
-        if (formulario.observaciones.trim() === '') {
-            alert('Por favor ingrese observaciones o n/a.');
-            return;
-        }
-
-        if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
-            return
-        }
-        if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
-            return
         }
         const fechaOrden = parseDate(formulario.fechaOrden);
         const fechaEntrega = parseDate(formulario.fechaEntrega);
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
+        const MontoTotal = DatosDelHijo.reduce((sum, detalle) => sum + (parseFloat(detalle.total) || 0), 0);
+
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
@@ -142,11 +133,10 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
             proveedor: formulario.proveedor,
             fechaOrden: fechaOrden,
             fechaEntrega: fechaEntrega,
-            productosAdquiridos: formulario.productoAdquirido,
-            cantidad: formulario.cantidad,
-            precioUnitario: formulario.precioUnitario,
-            montoTotal: formulario.montoTotal,
-            observaciones: formulario.observaciones
+            total: MontoTotal,
+            observaciones: formulario.observaciones,
+            detalles:DatosDelHijo
+
         };
         //  Se ejecuta el servicio de insertar  de  la orden de compra
         const responseInsert = await ModificarOrdenDeCompra(formData);
@@ -304,6 +294,17 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
     };
     const validateFirstForm = () => {
         let isValid = true;
+
+        if (!formulario.idFinca || formulario.idFinca === null) {
+            isValid = false;
+            alert('Ingrese la Finca');
+            return
+        }
+        if (!formulario.idParcela || formulario.idParcela === null) {
+            isValid = false;
+            alert('Ingrese la Parcela');
+            return
+        }
         if (formulario.numeroOrden.trim() === '') {
             isValid = false;
             alert('Por favor ingrese el número de orden.');
@@ -315,11 +316,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
             return;
         }
 
-        if (formulario.productoAdquirido.trim() === '') {
-            isValid = false;
-            alert('Por favor ingrese el producto adquirido.');
-            return;
-        }
+
         const parseDate = (dateString) => {
             const [day, month, year] = dateString.split('/');
             return new Date(`${year}-${month}-${day}`);
@@ -347,6 +344,11 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
             return isValid;
         }
 
+        if (formulario.observaciones.trim() === '') {
+            isValid = false;
+            alert('Por favor ingrese observaciones o n/a.');
+            return;
+        }
         return isValid;
 
     }
@@ -471,12 +473,41 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
+                                                                {empresa &&
+                                    <DropdownComponent
+                                        placeholder="Seleccionar Finca"
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={selectedFinca}
+                                        iconName="tree"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la finca
+                                            handleFincaChange(selectedItem);
+
+                                            // Actualizar el formulario con la selección de la finca
+                                            updateFormulario('idFinca', selectedItem.value);
+                                        }}
+                                    />
+                                }
+                                <DropdownComponent
+                                    placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
+                                    data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                    value={selectedParcela}
+                                    iconName="pagelines"
+                                    onChange={(selectedItem) => {
+                                        // Manejar el cambio en la selección de la parcela
+                                        setSelectedParcela(selectedItem.value);
+
+                                        // Actualizar el formulario con la selección de la parcela
+                                        updateFormulario('idParcela', selectedItem.value);
+                                    }}
+                                />
                                     <Text style={styles.formText} >Número de orden</Text>
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
                                         placeholder="Número de orden..."
                                         value={formulario.numeroOrden}
+                                        editable={false}
                                         onChangeText={(text) => {
                                             updateFormulario('numeroOrden', text);
 
@@ -624,13 +655,14 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
 
                                         </View>
                                     )}
-                                    <Text style={styles.formText} >Producto Adquirido</Text>
+
+                                    <Text style={styles.formText} >Observaciones</Text>
                                     <TextInput
-                                        maxLength={200}
-                                        style={styles.input}
-                                        placeholder="Producto Adquirido..."
-                                        value={formulario.productoAdquirido}
-                                        onChangeText={(text) => updateFormulario('productoAdquirido', text)}
+                                    maxLength={200}
+                                    style={styles.input}
+                                    placeholder="Observaciones..."
+                                    value={formulario.observaciones}
+                                    onChangeText={(text) => updateFormulario('observaciones', text)}
                                     />
 
                                     <TouchableOpacity
@@ -650,83 +682,9 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
 
                             ) : (<>
 
-                                <Text style={styles.formText}>Cantidad (kg)</Text>
-                                <TextInput
-                                    keyboardType='numeric'
-                                    maxLength={100}
-                                    style={styles.input}
-                                    placeholder="Cantidad..."
-                                    value={formulario.cantidad}
-                                    onChangeText={(text) => {
-                                        // Actualizar el estado 'cantidad'
-                                        updateFormulario('cantidad', text);
-                                        // Calcular el monto total y actualizar el estado 'montoTotal'
-                                        const montoTotal = parseInt(text) * parseInt(formulario.precioUnitario);
-                                        updateFormulario('montoTotal', montoTotal.toString());
-                                    }}
-                                />
-                                <Text style={styles.formText}>Precio unitario (₡/kg)</Text>
-                                <TextInput
-                                    keyboardType='numeric'
-                                    maxLength={100}
-                                    style={styles.input}
-                                    placeholder="Precio unitario..."
-                                    value={formulario.precioUnitario}
-                                    onChangeText={(text) => {
-                                        // Actualizar el estado 'precioUnitario'
-                                        updateFormulario('precioUnitario', text);
-                                        // Calcular el monto total y actualizar el estado 'montoTotal'
-                                        const montoTotal = parseInt(formulario.cantidad) * parseInt(text);
-                                        updateFormulario('montoTotal', montoTotal.toString());
-                                    }}
-                                />
-                                <Text style={styles.formText} >Monto total</Text>
-                                <TextInput
-                                    maxLength={100}
-                                    keyboardType='numeric'
-                                    style={styles.input}
-                                    placeholder="Monto total..."
-                                    value={formulario.montoTotal}
-                                    readOnly={true}
-                                    onChangeText={(text) => updateFormulario('montoTotal', text)}
-                                />
-                                <Text style={styles.formText} >Observaciones</Text>
-                                <TextInput
-                                    maxLength={200}
-                                    keyboardType='numeric'
-                                    style={styles.input}
-                                    placeholder="Observaciones..."
-                                    value={formulario.observaciones}
-                                    onChangeText={(text) => updateFormulario('observaciones', text)}
-                                />
-                                {empresa &&
-                                    <DropdownComponent
-                                        placeholder="Seleccionar Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
-                                        value={selectedFinca}
-                                        iconName="tree"
-                                        onChange={(selectedItem) => {
-                                            // Manejar el cambio en la selección de la finca
-                                            handleFincaChange(selectedItem);
-
-                                            // Actualizar el formulario con la selección de la finca
-                                            updateFormulario('idFinca', selectedItem.value);
-                                        }}
-                                    />
-                                }
-                                <DropdownComponent
-                                    placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
-                                    data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
-                                    value={selectedParcela}
-                                    iconName="pagelines"
-                                    onChange={(selectedItem) => {
-                                        // Manejar el cambio en la selección de la parcela
-                                        setSelectedParcela(selectedItem.value);
-
-                                        // Actualizar el formulario con la selección de la parcela
-                                        updateFormulario('idParcela', selectedItem.value);
-                                    }}
-                                />
+                                
+                                
+                                <ListaComponenteOrdenCompra enviarDatos={recibirDatos} idOrdenDeCompra={parseInt(idOrdenDeCompra)}/>
                                 <TouchableOpacity
                                     style={styles.backButton}
                                     onPress={() => {

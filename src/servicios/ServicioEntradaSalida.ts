@@ -7,6 +7,18 @@ export const ObtenerDatosRegistroEntradaSalida = async () => {
     const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosRegistroEntradaSalida`;
     return await ProcesarDatosApi('GET', url, '');
 }
+
+
+export const ObtenerDetalleRegistroEntradaSalidaPorId = async (data: any) => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDetalleRegistroEntradaSalidaPorId`;
+    return await ProcesarDatosApi('POST', url, data);
+}
+
+export const ObtenerDetallesRegistroEntradaSalidaExportar = async (data: any) => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDetallesRegistroEntradaSalidaExportar`;
+    return await ProcesarDatosApi('POST', url, data);
+}
+
 export const ObtenerDatosRegistroSalidaPorFecha = async () => {
     const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosRegistroSalidaPorFecha`;
     return await ProcesarDatosApi('GET', url, '');

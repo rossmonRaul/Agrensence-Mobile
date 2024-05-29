@@ -21,16 +21,23 @@ import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import { ModificarRegistroEntradaSalida, CambiarEstadoRegistroEntradaSalida } from '../../../servicios/ServicioEntradaSalida';
+import ListaComponenteEntradaSalida from '../../../components/ListaComponenteEntradaSalida/ListaComponenteEntradaSalida';
 interface RouteParams {
     idRegistroEntradaSalida: string,
     idFinca: string,
     fecha: string,
     tipo: string,
     detallesCompraVenta: string,
-    cantidad: string,
-    precioUnitario: string,
-    montoTotal: string,
+    total:string,
     estado: string
+}
+interface Item {
+    id: string;
+    producto: string;
+    cantidad: string;
+    precioUnitario: string;
+    iva: string;
+    total: string;
 }
 
 export const ModificarEntradasSalidasScreen: React.FC = () => {
@@ -45,9 +52,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
         fecha,
         tipo,
         detallesCompraVenta,
-        cantidad,
-        precioUnitario,
-        montoTotal,
+        total,
         estado
     } = route.params as RouteParams;
 
@@ -71,6 +76,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
     const [dateFecha, setDateFecha] = useState(new Date())
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
+    const [DatosDelHijo, setDatosDelHijo] =  useState<Item[]>([]);
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idFinca: idFinca || '',
@@ -79,12 +85,14 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
         fecha: fecha || '',
         detallesCompraVenta: detallesCompraVenta || '',
         tipo: tipo || '',
-        cantidad: cantidad || '',
-        precioUnitario: precioUnitario || '',
-        montoTotal: montoTotal || '',
+        total: total || '',
         estado: estado || '',
     });
 
+
+    const recibirDatos = (datos: Item[]) => {
+        setDatosDelHijo(datos);
+      };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -96,23 +104,15 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
 
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
-        if (formulario.cantidad.toString().trim() === '') {
-            alert('Por favor ingrese la cantidad.');
-            return;
-        }
-        if (formulario.precioUnitario.toString().trim() === '') {
-            alert('Por favor ingrese el precio unitario.');
-            return;
-        }
-        if (formulario.tipo.trim() === '') {
-            alert('Por favor ingrese el tipo.');
+        if (DatosDelHijo.length === 0) {
+            alert('Por favor ingrese un producto a la lista.');
             return;
         }
 
-        if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
-            return
-        }
+        const MontoTotal = DatosDelHijo.reduce((sum, detalle) => sum + (parseFloat(detalle.total) || 0), 0);
+        
+
+      
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
@@ -121,9 +121,8 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
             fecha: dateFecha,
             detallesCompraVenta: formulario.detallesCompraVenta,
             tipo: formulario.tipo,
-            cantidad: formulario.cantidad,
-            precioUnitario: formulario.precioUnitario,
-            montoTotal: formulario.montoTotal,
+            total: MontoTotal,
+            detalles:DatosDelHijo
         };
         //  Se ejecuta el servicio de insertar  de  la entrada/salida
         const responseInsert = await ModificarRegistroEntradaSalida(formData);
@@ -256,6 +255,11 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
             isValid = false;
             alert('Por favor ingrese los detalles de compra/venta.');
             return;
+        }
+        if (!formulario.idFinca || formulario.idFinca === null) {
+            isValid = false;
+            alert('Ingrese la Finca');
+            return
         }
 
         return isValid;
@@ -459,6 +463,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
                                             </TouchableOpacity>
                                         </View>
                                     )}
+                                    <Text style={styles.formText} >Tipo</Text>
                                     <DropdownComponent
                                         placeholder="Tipo"
                                         data={entradasSalidasValues}
@@ -475,6 +480,16 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
                                         value={formulario.detallesCompraVenta}
                                         onChangeText={(text) => updateFormulario('detallesCompraVenta', text)}
                                     />
+
+                                    {empresa &&
+                                    <DropdownComponent
+                                        placeholder="Finca"
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={String(formulario.idFinca)}
+                                        iconName='tree'
+                                        onChange={handleValueFinca}
+                                    />
+                                    }
 
                                     <TouchableOpacity
                                         style={styles.button}
@@ -493,55 +508,8 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
 
                             ) : (<>
 
-                                <Text style={styles.formText}>Cantidad</Text>
-                                <TextInput
-                                    keyboardType='numeric'
-                                    maxLength={100}
-                                    style={styles.input}
-                                    placeholder="Cantidad..."
-                                    value={formulario.cantidad.toString()}
-                                    onChangeText={(text) => {
-                                        // Actualizar el estado 'cantidad'
-                                        updateFormulario('cantidad', text);
-                                        // Calcular el monto total y actualizar el estado 'montoTotal'
-                                        const montoTotal = Number(text) * Number(formulario.precioUnitario);
-                                        updateFormulario('montoTotal', montoTotal.toString());
-                                    }}
-                                />
-                                <Text style={styles.formText}>Precio unitario (₡/cantidad)</Text>
-                                <TextInput
-                                    keyboardType='numeric'
-                                    maxLength={100}
-                                    style={styles.input}
-                                    placeholder="Precio unitario..."
-                                    value={formulario.precioUnitario.toString()}
-                                    onChangeText={(text) => {
-                                        // Actualizar el estado 'precioUnitario'
-                                        updateFormulario('precioUnitario', text);
-                                        // Calcular el monto total y actualizar el estado 'montoTotal'
-                                        const montoTotal = Number(formulario.cantidad) * Number(text);
-                                        updateFormulario('montoTotal', montoTotal.toString());
-                                    }}
-                                />
-                                <Text style={styles.formText} >Monto total</Text>
-                                <TextInput
-                                    maxLength={100}
-                                    keyboardType='numeric'
-                                    style={styles.input}
-                                    placeholder="Monto total..."
-                                    value={formulario.montoTotal.toString()}
-                                    onChangeText={(text) => updateFormulario('montoTotal', text)}
-                                    readOnly={true}
-                                />
-                                {empresa &&
-                                    <DropdownComponent
-                                        placeholder="Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
-                                        value={String(formulario.idFinca)}
-                                        iconName='tree'
-                                        onChange={handleValueFinca}
-                                    />
-                                }
+                            <ListaComponenteEntradaSalida enviarDatos={recibirDatos} idRegistroEntradaSalida={parseInt(idRegistroEntradaSalida)} datosImperdibles={DatosDelHijo}/>
+                                
 
                                 <TouchableOpacity
                                     style={styles.backButton}

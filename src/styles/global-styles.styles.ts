@@ -124,6 +124,7 @@ export const styles = StyleSheet.create({
     iconStyle: {
         width: 20,
         height: 20,
+        marginRight: 5,
     },
     inputSearchStyle: {
         height: 40,
@@ -232,5 +233,10 @@ export const styles = StyleSheet.create({
     }, dropDownContainer: {
         justifyContent: 'center',
         minWidth: 300,
+    },
+    containerv2:{
+        flex: 1,
+        justifyContent: 'center',
+        padding: 20,
     },
 });

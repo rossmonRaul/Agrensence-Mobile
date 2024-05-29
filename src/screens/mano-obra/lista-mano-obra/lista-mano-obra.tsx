@@ -31,6 +31,7 @@ export const ListaManoObraScreen: React.FC = () => {
     const keyMapping = {
         'Fecha': 'fecha',
         'Actividad': 'actividad',
+        'Identificacion': 'identificacion',
         'Trabajador': 'trabajador',
         'Horas trabajadas': 'horasTrabajadas',
         'Pago por hora (₡)': 'pagoPorHora',
@@ -38,11 +39,11 @@ export const ListaManoObraScreen: React.FC = () => {
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idRegistroManoObra: string, idFinca: string, fecha: string, actividad: string, trabajador: string,
+    const handleRectanglePress = (idRegistroManoObra: string, idFinca: string, fecha: string, actividad: string,identificacion:string, trabajador: string,
         horasTrabajadas: string, pagoPorHora: string, totalPago: string, estado: string) => {
         navigation.navigate(ScreenProps.ModifyManoObra.screenName, {
             idRegistroManoObra: idRegistroManoObra, idFinca: idFinca, fecha: fecha,
-            actividad: actividad, trabajador: trabajador, horasTrabajadas: horasTrabajadas, pagoPorHora: pagoPorHora,
+            actividad: actividad,identificacion:identificacion, trabajador: trabajador, horasTrabajadas: horasTrabajadas, pagoPorHora: pagoPorHora,
             totalPago: totalPago, estado: estado
         });
     };
@@ -129,7 +130,7 @@ export const ListaManoObraScreen: React.FC = () => {
                             {manoObra.map((item, index) => (
                                 <TouchableOpacity key={item.idRegistroManoObra} onPress={() => handleRectanglePress(
                                     item.idRegistroManoObra, item.idFinca, item.fecha,
-                                    item.actividad, item.trabajador, item.horasTrabajadas, item.pagoPorHora,
+                                    item.actividad,item.identificacion, item.trabajador, item.horasTrabajadas, item.pagoPorHora,
                                     item.totalPago, item.estado
                                 )}>
                                     <CustomRectangle

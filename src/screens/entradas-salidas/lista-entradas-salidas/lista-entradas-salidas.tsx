@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { processData } from '../../../utils/processData';
@@ -13,8 +13,18 @@ import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 import { RelacionFincaParcela } from '../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../servicios/ServicioUsuario';
-import { ObtenerDatosRegistroEntradaSalida } from '../../../servicios/ServicioEntradaSalida';
-
+import { ObtenerDatosRegistroEntradaSalida, ObtenerDetallesRegistroEntradaSalidaExportar } from '../../../servicios/ServicioEntradaSalida';
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
+import { createExcelFile } from '../../../utils/fileExportExcel';
+interface Item {
+    id: string;
+    producto: string;
+    cantidad: string;
+    precioUnitario: string;
+    iva: string;
+    total: string;
+}
 export const ListaEntradasSalidasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
@@ -25,23 +35,31 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
-
+    const [idRegistrosExportar, setIdRegistrosExportar] = useState<string | null>(null);
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
         'Fecha': 'fecha',
         'Tipo': 'tipo',
         'Detalles': 'detallesCompraVenta',
-        'Precio unitario (₡/cantidad)': 'precioUnitario',
-        'Cantidad': 'cantidad',
-        'Monto total': 'montoTotal',
+        'Monto total': 'total',
         'Estado': 'estado'
     };
+    const keyMapping2 = {
+        'Id': 'idDetalleRegistroEntradaSalida',
+        'IdRegistroEntradaSalida': 'idRegistroEntradaSalida',
+        'Producto': 'producto',
+        'Cantidad': 'cantidad',
+        'Precio Unitario': 'precioUnitario',
+        'Iva': 'iva',
+        'Total': 'total'
+    };
+
     const handleRectanglePress = (idRegistroEntradaSalida: string, idFinca: string, fecha: string, tipo: string,
-        detallesCompraVenta: string, cantidad: string, precioUnitario: string, montoTotal: string, estado: string) => {
+        detallesCompraVenta: string, total: string, estado: string) => {
         navigation.navigate(ScreenProps.ModifyInflowsOutflows.screenName, {
             idRegistroEntradaSalida: idRegistroEntradaSalida, idFinca: idFinca,
-            fecha: fecha, tipo: tipo, detallesCompraVenta: detallesCompraVenta, cantidad: cantidad, precioUnitario: precioUnitario,
-            montoTotal: montoTotal, estado: estado
+            fecha: fecha, tipo: tipo, detallesCompraVenta: detallesCompraVenta,
+            total: total, estado: estado
         });
     };
 
@@ -70,7 +88,7 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                     ...item,
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
-
+                
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -97,13 +115,57 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
         try {
 
             const entradaSalidaFiltrado = apiData.filter(item => item.idFinca === fincaId);
-
+            
+            let listaIds = '';
             setEntradasSalidas(entradaSalidaFiltrado);
+            entradaSalidaFiltrado.forEach((item, index) => {
+                // Añadir la ID a la variable y, si no es el último elemento, añadir una coma
+                listaIds += item.idRegistroEntradaSalida;
+                if (index < listaIds.length - 1) {
+                    listaIds += ',';
+                }
+            });
+
+            setIdRegistrosExportar(listaIds);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+
+     const handleExportFile = async () => {
+        
+       try {
+            // Solicitar permiso de escritura en el almacenamiento
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            const formData2 = { ListaIdsExportar: idRegistrosExportar};
+            const datosListaProductos: Item[] = await ObtenerDetallesRegistroEntradaSalidaExportar(formData2);
+            if (status !== 'granted') {
+                Alert.alert('Permisos insuficientes', 'Se requieren permisos para acceder al almacenamiento.');
+                return;
+            }
+
+            if (datosListaProductos.length === 0) {
+                Alert.alert('No hay datos para exportar');
+                return;
+            }
+            function formatDate(date) {
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses son de 0 a 11
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            }
+            const title = 'Detalle entradas y salidas';
+
+            const filePath = await createExcelFile(title, datosListaProductos, keyMapping2, 'Detalle entradas y salidas');
+
+            await Sharing.shareAsync(filePath)
+            Alert.alert('Éxito', 'Archivo exportado correctamente.');
+        } catch (error) {
+            console.error('Error al exportar el archivo:', error);
+            Alert.alert('Error', 'Ocurrió un error al exportar el archivo.');
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -123,7 +185,9 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                         iconName="tree"
                         onChange={handleFincaChange}
                     />
-
+                <TouchableOpacity style={styles.filterButton} onPress={handleExportFile}>
+                    <Text style={styles.filterButtonText}>Exportar Excel</Text>
+                </TouchableOpacity>
 
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -137,8 +201,8 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                             {entradaSalidas.map((item, index) => (
                                 <TouchableOpacity key={item.idRegistroEntradaSalida} onPress={() => handleRectanglePress(
                                     item.idRegistroEntradaSalida, item.idFinca,
-                                    item.fecha, item.tipo, item.detallesCompraVenta, item.cantidad, item.precioUnitario,
-                                    item.montoTotal, item.estado
+                                    item.fecha, item.tipo, item.detallesCompraVenta,
+                                    item.total, item.estado
                                 )}>
                                     <CustomRectangle
                                         key={item.idFinca}

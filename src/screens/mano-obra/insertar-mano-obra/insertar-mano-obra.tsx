@@ -48,6 +48,7 @@ export const InsertarManoObraScreen: React.FC = () => {
         identificacionUsuario: userData.identificacion,
         fecha: '',
         actividad: '',
+        identificacion: '',
         trabajador: '',
         horasTrabajadas: '',
         pagoPorHora: '',
@@ -83,6 +84,11 @@ export const InsertarManoObraScreen: React.FC = () => {
             alert('Por favor ingrese la actividad.');
             return;
         }
+        if (formulario.identificacion.trim() === '') {
+            isValid = false;
+            alert('Por favor ingrese la identificación.');
+            return;
+        }
         if (formulario.trabajador.trim() === '') {
             isValid = false;
             alert('Por favor ingrese el trabajador.');
@@ -113,6 +119,7 @@ export const InsertarManoObraScreen: React.FC = () => {
             usuarioCreacionModificacion: userData.identificacion,
             fecha: formatDate(dateFecha),
             actividad: formulario.actividad,
+            identificacion:formulario.identificacion,
             trabajador: formulario.trabajador,
             horasTrabajadas: formulario.horasTrabajadas,
             pagoPorHora: formulario.pagoPorHora,
@@ -121,7 +128,7 @@ export const InsertarManoObraScreen: React.FC = () => {
 
         //  Se ejecuta el servicio de insertar  el registro de mano de obra
         const responseInsert = await InsertarRegistroManoObra(formData);
-        console.log(responseInsert)
+        
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se registro mano de obra correctamente!', '', [
@@ -360,6 +367,14 @@ export const InsertarManoObraScreen: React.FC = () => {
                                         placeholder="Actividad..."
                                         value={formulario.actividad}
                                         onChangeText={(text) => updateFormulario('actividad', text)}
+                                    />
+                                     <Text style={styles.formText} >Identificación</Text>
+                                    <TextInput
+                                        maxLength={200}
+                                        style={styles.input}
+                                        placeholder="Identificacion..."
+                                        value={formulario.identificacion}
+                                        onChangeText={(text) => updateFormulario('identificacion', text)}
                                     />
                                     <Text style={styles.formText} >Trabajador</Text>
                                     <TextInput
