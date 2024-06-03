@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { ObtenerDetalleRegistroEntradaSalidaPorId } from '../../servicios/ServicioEntradaSalida';
-
+import { Ionicons } from '@expo/vector-icons'
 interface Item {
     id: string;
     producto: string;
@@ -32,25 +32,21 @@ const ListaComponenteEntradaSalida: React.FC<PropsEnviarDatos> = ({enviarDatos,i
     
 
       const verificarHistorialDatos = async (datosImperdibles:Item[]) => {
-        console.log(datosImperdibles);
         setItems([...datosImperdibles]);
-        //nviarDatos([...items, newItem]);
-
       }
 
       const verificarIdRegistroEntradaSalida = async () => {
         if(idRegistroEntradaSalida===0){
-            console.log('Método llamado al montar el componente, el id compra es 0',idRegistroEntradaSalida);
+            //console.log('Método llamado al montar el componente, el id compra es 0',idRegistroEntradaSalida);
         }else{
-            console.log('El id compra es diferente a 0', idRegistroEntradaSalida);
             const formData = { IdRegistroEntradaSalida: idRegistroEntradaSalida};
 
             try {
                 const datosListaProductos: Item[] = await ObtenerDetalleRegistroEntradaSalidaPorId(formData);
-                console.log("ADAEDWERWEW666",datosListaProductos);
                 if (Array.isArray(datosListaProductos)) {
                     // Actualizar el estado 'items' agregando los nuevos productos
                     setItems(prevItems => [...prevItems, ...datosListaProductos]);
+                    enviarDatos([...datosListaProductos]);
                 } else {
                     console.error("datosListaProductos no es un array");
                 }
@@ -67,6 +63,14 @@ const ListaComponenteEntradaSalida: React.FC<PropsEnviarDatos> = ({enviarDatos,i
     };
 
     const addItem = () => {
+        if (parseFloat(cantidad) < 0.1) {
+            alert('La cantidad debe ser mayor que cero.');
+            return;
+        }
+        if (parseFloat(precioUnitario) < 0.1) {
+            alert('El precio unitario debe ser mayor que cero.');
+            return;
+        }
         if (producto.trim() !== '' && cantidad.trim() !== '' && precioUnitario.trim() !== '') {
             const total = calculateTotal(cantidad, precioUnitario, iva).toFixed(2);
             const newItem: Item = {
@@ -123,7 +127,7 @@ const ListaComponenteEntradaSalida: React.FC<PropsEnviarDatos> = ({enviarDatos,i
                 onValueChange={(itemValue) => setIva(itemValue)}
                 style={styles.picker}
             >
-                <Picker.Item label="exento" value="0" />
+                <Picker.Item label="Exento" value="0" />
                 <Picker.Item label="1%" value="1" />
                 <Picker.Item label="2%" value="2" />
                 <Picker.Item label="3%" value="3" />
@@ -138,7 +142,17 @@ const ListaComponenteEntradaSalida: React.FC<PropsEnviarDatos> = ({enviarDatos,i
                 <Picker.Item label="12%" value="12" />
                 <Picker.Item label="13%" value="13" />
             </Picker>
-            <Button  color="#548256" title="Agregar" onPress={addItem}  />
+            <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => {
+                                        addItem();
+                                    }}
+                                >
+                                    <View style={styles.buttonContent}>
+                                        <Ionicons name="add-circle" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}>Agregar</Text>
+                                    </View>
+                                </TouchableOpacity>
             {items.map(item => (
                 <View key={item.id} style={styles.itemContainer}>
                     <View  style={styles.recuadroContainer}>
@@ -213,7 +227,32 @@ const styles = StyleSheet.create({
     recuadroContainer:{
         justifyContent:"flex-end",
         alignItems:"flex-end"
-    }
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 20,
+        fontFamily: 'CatamaranBold'
+    },
+  button: {
+        backgroundColor: '#548256',
+        //padding: 8,
+        alignItems: 'center',
+        borderRadius: 12,
+        marginBottom: 10,
+        //width: ,
+        height: 35,
+    },
+ buttonContent: {
+        marginTop: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+ iconStyle: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
 });
 
 export default ListaComponenteEntradaSalida;

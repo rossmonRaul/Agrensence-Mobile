@@ -62,6 +62,11 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         tipo: ''
     });
 
+    const [title, setTitle] = useState('Entradas y salidas');
+
+    const toggleTitle = () => {
+        setTitle((prevTitle) => (prevTitle === 'Entradas y salidas' ? 'Listado productos' : 'Entradas y salidas'));
+    };
 
     const recibirDatos = (datos: Item[]) => {
         setDatosDelHijo(datos);
@@ -317,7 +322,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>
-                            <Text style={styles.createAccountText} >Registro entradas y salidas</Text>
+                            <Text style={styles.createAccountText} >{title}</Text>
                         </View>
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
@@ -417,6 +422,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
 
                                             if (isValid) {
                                                 setSecondFormVisible(true);
+                                                toggleTitle();
                                             }
 
                                         }}
@@ -434,6 +440,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                                     style={styles.backButton}
                                     onPress={() => {
                                         setSecondFormVisible(false);
+                                        toggleTitle();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>

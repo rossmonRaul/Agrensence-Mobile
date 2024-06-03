@@ -59,8 +59,11 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
     const [DatosDelHijo, setDatosDelHijo] =  useState<Item[]>([]);
     const [inputs, setInputs] = useState(['']);
     const [ultimoIdOrdenDeCompra, setUltimoIdOrdenDeCompra] = useState(null);
-    
-    
+    const [title, setTitle] = useState('Orden de compra');
+
+    const toggleTitle = () => {
+        setTitle((prevTitle) => (prevTitle === 'Orden de compra' ? 'Listado productos' : 'Orden de compra'));
+    };
 
     const handleInputsChange = (index, newValue) => {
         const newInputs = [...inputs];
@@ -221,7 +224,8 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);
+                        //navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);ScreenProps.ListPurchaseOrder.screenName
+                        navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
                     },
                 },
             ]);
@@ -403,7 +407,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Registro orden de compra</Text>
+                            <Text style={styles.createAccountText} >{title}</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -599,6 +603,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
 
                                             if (isValid) {
                                                 setSecondFormVisible(true);
+                                                toggleTitle();
                                             }
 
                                         }}
@@ -618,7 +623,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                                     style={styles.backButton}
                                     onPress={() => {
                                         setSecondFormVisible(false);
-                                        
+                                        toggleTitle();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>

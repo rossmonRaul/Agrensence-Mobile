@@ -185,11 +185,10 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                         iconName="tree"
                         onChange={handleFincaChange}
                     />
+                </View>
                 <TouchableOpacity style={styles.filterButton} onPress={handleExportFile}>
                     <Text style={styles.filterButtonText}>Exportar Excel</Text>
                 </TouchableOpacity>
-
-                </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                     {!entradaSalidas ? (

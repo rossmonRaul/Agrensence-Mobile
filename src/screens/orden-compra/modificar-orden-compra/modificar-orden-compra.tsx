@@ -100,6 +100,11 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         total: total || '',
     });
 
+    const [title, setTitle] = useState('Orden de compra');
+
+    const toggleTitle = () => {
+        setTitle((prevTitle) => (prevTitle === 'Orden de compra' ? 'Listado productos' : 'Orden de compra'));
+    };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -147,7 +152,9 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);
+                        //navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);
+                        navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
+                        
                     },
                 },
             ]);
@@ -467,7 +474,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Modificar orden de compra</Text>
+                            <Text style={styles.createAccountText} >{title}</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -672,6 +679,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
 
                                             if (isValid) {
                                                 setSecondFormVisible(true);
+                                                toggleTitle();  
                                             }
 
                                         }}
@@ -689,6 +697,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                                     style={styles.backButton}
                                     onPress={() => {
                                         setSecondFormVisible(false);
+                                        toggleTitle();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>

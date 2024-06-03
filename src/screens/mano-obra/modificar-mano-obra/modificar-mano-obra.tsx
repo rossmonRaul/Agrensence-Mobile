@@ -99,6 +99,14 @@ export const ModificarManoObraScreen: React.FC = () => {
 
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
+        if (parseFloat(formulario.pagoPorHora) < 0.1) {
+            alert('El pago por hora debe ser mayor que cero.');
+            return;
+        }
+        if (parseFloat(formulario.horasTrabajadas) < 0.1) {
+            alert('Las horas trabajadas deben ser mayor que cero.');
+            return;
+        }
         if (formulario.horasTrabajadas.toString().trim() === '') {
             alert('Por favor ingrese las horas trabajadas.');
             return;

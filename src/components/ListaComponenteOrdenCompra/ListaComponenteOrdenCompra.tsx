@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { ObtenerDetalleOrdenDeCompraPorId } from '../../servicios/ServicioOrdenCompra';
+import { Ionicons } from '@expo/vector-icons'
 
 interface Item {
     id: string;
@@ -32,25 +33,21 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
     
 
       const verificarHistorialDatos = async (datosImperdibles:Item[]) => {
-        console.log(datosImperdibles);
         setItems([...datosImperdibles]);
-        //nviarDatos([...items, newItem]);
-
       }
 
       const verificarIdOrdenDeCompra = async () => {
         if(idOrdenDeCompra===0){
-            console.log('Método llamado al montar el componente, el id compra es 0',idOrdenDeCompra);
+            //console.log('Método llamado al montar el componente, el id compra es 0',idOrdenDeCompra);
         }else{
-            console.log('El id compra es diferente a 0', idOrdenDeCompra);
             const formData = { IdOrdenDeCompra: idOrdenDeCompra};
 
             try {
                 const datosListaProductos: Item[] = await ObtenerDetalleOrdenDeCompraPorId(formData);
-                console.log("ADAEDWERWEW666",datosListaProductos);
                 if (Array.isArray(datosListaProductos)) {
                     // Actualizar el estado 'items' agregando los nuevos productos
                     setItems(prevItems => [...prevItems, ...datosListaProductos]);
+                    enviarDatos([...datosListaProductos]);
                 } else {
                     console.error("datosListaProductos no es un array");
                 }
@@ -67,6 +64,16 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
     };
 
     const addItem = () => {
+
+        if (parseFloat(cantidad) < 0.1) {
+            alert('La cantidad debe ser mayor que cero.');
+            return;
+        }
+        if (parseFloat(precioUnitario) < 0.1) {
+            alert('El precio unitario debe ser mayor que cero.');
+            return;
+        }
+        
         if (producto.trim() !== '' && cantidad.trim() !== '' && precioUnitario.trim() !== '') {
             const total = calculateTotal(cantidad, precioUnitario, iva).toFixed(2);
             const newItem: Item = {
@@ -122,9 +129,9 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
             <Picker
                 selectedValue={iva}
                 onValueChange={(itemValue) => setIva(itemValue)}
-                style={styles.picker}
+                style={[styles.picker,styles.pickerBorder]}
             >
-                <Picker.Item label="exento" value="0" />
+                <Picker.Item label="Exento" value="0" />
                 <Picker.Item label="1%" value="1" />
                 <Picker.Item label="2%" value="2" />
                 <Picker.Item label="3%" value="3" />
@@ -139,7 +146,17 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
                 <Picker.Item label="12%" value="12" />
                 <Picker.Item label="13%" value="13" />
             </Picker>
-            <Button  color="#548256" title="Agregar" onPress={addItem}  />
+            <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => {
+                                        addItem();
+                                    }}
+                                >
+                                    <View style={styles.buttonContent}>
+                                        <Ionicons name="add-circle" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}>Agregar</Text>
+                                    </View>
+                                </TouchableOpacity>
             {items.map(item => (
                 <View key={item.id} style={styles.itemContainer}>
                     <View  style={styles.recuadroContainer}>
@@ -175,6 +192,11 @@ const styles = StyleSheet.create({
         height: 50,
         width: '100%',
         marginBottom: 10,
+    },
+    pickerBorder: {
+        borderWidth: 1, // Ancho del borde
+        borderColor: 'gray', // Color del borde
+        borderRadius: 4, // Radio del borde
     },
     itemContainer: {
         padding: 10,
@@ -214,7 +236,32 @@ const styles = StyleSheet.create({
     recuadroContainer:{
         justifyContent:"flex-end",
         alignItems:"flex-end"
-    }
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 20,
+        fontFamily: 'CatamaranBold'
+    },
+  button: {
+        backgroundColor: '#548256',
+        //padding: 8,
+        alignItems: 'center',
+        borderRadius: 12,
+        marginBottom: 10,
+        //width: ,
+        height: 35,
+    },
+ buttonContent: {
+        marginTop: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+ iconStyle: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
 });
 
 export default ListaComponenteOrdenCompra;

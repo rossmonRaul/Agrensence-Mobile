@@ -89,6 +89,11 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
         estado: estado || '',
     });
 
+    const [title, setTitle] = useState('Entradas y salidas');
+
+    const toggleTitle = () => {
+        setTitle((prevTitle) => (prevTitle === 'Entradas y salidas' ? 'Listado productos' : 'Entradas y salidas'));
+    };
 
     const recibirDatos = (datos: Item[]) => {
         setDatosDelHijo(datos);
@@ -397,7 +402,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Modificar entradas y salidas</Text>
+                            <Text style={styles.createAccountText} >{title}</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -498,6 +503,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
 
                                             if (isValid) {
                                                 setSecondFormVisible(true);
+                                                toggleTitle();
                                             }
 
                                         }}
@@ -515,6 +521,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
                                     style={styles.backButton}
                                     onPress={() => {
                                         setSecondFormVisible(false);
+                                        toggleTitle();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>
