@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
@@ -20,6 +20,8 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../servicios/Se
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { createExcelFile } from '../../../utils/fileExportExcel';
+import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
+
 interface Item {
     id: string;
     producto: string;
@@ -34,7 +36,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const [ordenCompra, setRotacionCultivos] = useState<any[]>([]);
+    const [ordenCompra, setOrdenCompra] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
@@ -76,54 +78,163 @@ export const ListaOrdenCompraScreen: React.FC = () => {
         });
     };
 
+    const fetchData = async () => {
+        const formData = { identificacion: userData.identificacion };
+    
+                try {
+                    setSelectedFinca(null);
+                    setSelectedParcela(null);
+                    setOrdenCompra([]);
+                    // const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+                    // const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                    //     .filter(item => item !== undefined)
+                    //     .map(item => item!.idFinca)))
+                    //     .map(idFinca => {
+                    //         const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                    //         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                    //         return { idFinca, nombreFinca };
+                    //     });
+    
+                    // setFincas(fincasUnicas);
+                    // //Se obtienen las parcelas para poder hacer los filtros despues
+    
+    
+                    // const parcelas = Array.from(new Set(datosInicialesObtenidos
+                    //     .filter(item => item !== undefined)
+                    //     .map(item => item!.idParcela)))
+                    //     .map(idParcela => {
+                    //         const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    //         const idFinca = relacion ? relacion.idFinca : -1;
+                    //         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                    //         return { idFinca, idParcela, nombreParcela };
+                    //     });
+    
+                    // setParcelas(parcelas);
+                    const fincasResponse = await ObtenerFincas();
+                    const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                    setFincas(fincasFiltradas);
+                    const parcelasResponse = await ObtenerParcelas();
+                    const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
+                    setParcelas(parcelasFiltradas);
+                    //se obtienen la orden de compra para despues poder filtrarlos
+                    const ordenCompraResponse = await ObtenerDatosOrdenDeCompra();
+                    //si es 0 es inactivo sino es activo resetea los datos
+                    const filteredData = ordenCompraResponse.map((item) => ({
+                        ...item,
+                        estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+                    }));
+    
+                    setApiData(filteredData);
+                  
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
-
-            try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
-
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+      };
+    
+      useFocusEffect(
+        useCallback(() => {
+          fetchData();
+        }, [])
+      );
 
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
+    // useFocusEffect(
+    //     React.useCallback(() => {
+    //         const obtenerDatosIniciales = async () => {
+    //             // Lógica para obtener datos desde la API
+    //             const formData = { identificacion: userData.identificacion };
+    
+    //             try {
+    //                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+    //                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+    //                     .filter(item => item !== undefined)
+    //                     .map(item => item!.idFinca)))
+    //                     .map(idFinca => {
+    //                         const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+    //                         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+    //                         return { idFinca, nombreFinca };
+    //                     });
+    
+    //                 setFincas(fincasUnicas);
+    //                 //Se obtienen las parcelas para poder hacer los filtros despues
+    
+    
+    //                 const parcelas = Array.from(new Set(datosInicialesObtenidos
+    //                     .filter(item => item !== undefined)
+    //                     .map(item => item!.idParcela)))
+    //                     .map(idParcela => {
+    //                         const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+    //                         const idFinca = relacion ? relacion.idFinca : -1;
+    //                         const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+    //                         return { idFinca, idParcela, nombreParcela };
+    //                     });
+    
+    //                 setParcelas(parcelas);
+    //                 //se obtienen la orden de compra para despues poder filtrarlos
+    //                 const ordenCompraResponse = await ObtenerDatosOrdenDeCompra();
+    //                 //si es 0 es inactivo sino es activo resetea los datos
+    //                 const filteredData = ordenCompraResponse.map((item) => ({
+    //                     ...item,
+    //                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+    //                 }));
+    
+    //                 setApiData(filteredData);
+    //             } catch (error) {
+    //                 console.error('Error fetching data:', error);
+    //             }
+    //         };
+    
+    //         obtenerDatosIniciales();
+    //     }, [])
+    //   );
+    // useFocusEffect(() => {
+    //     const obtenerDatosIniciales = async () => {
+    //         // Lógica para obtener datos desde la API
+    //         const formData = { identificacion: userData.identificacion };
 
-                setParcelas(parcelas);
-                //se obtienen la orden de compra para despues poder filtrarlos
-                const ordenCompraResponse = await ObtenerDatosOrdenDeCompra();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = ordenCompraResponse.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
+    //         try {
+    //             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+    //             const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+    //                 .filter(item => item !== undefined)
+    //                 .map(item => item!.idFinca)))
+    //                 .map(idFinca => {
+    //                     const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+    //                     const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+    //                     return { idFinca, nombreFinca };
+    //                 });
 
-                setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+    //             setFincas(fincasUnicas);
+    //             //Se obtienen las parcelas para poder hacer los filtros despues
 
-        obtenerDatosIniciales();
-    }, []);
+
+    //             const parcelas = Array.from(new Set(datosInicialesObtenidos
+    //                 .filter(item => item !== undefined)
+    //                 .map(item => item!.idParcela)))
+    //                 .map(idParcela => {
+    //                     const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+    //                     const idFinca = relacion ? relacion.idFinca : -1;
+    //                     const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+    //                     return { idFinca, idParcela, nombreParcela };
+    //                 });
+
+    //             setParcelas(parcelas);
+    //             //se obtienen la orden de compra para despues poder filtrarlos
+    //             const ordenCompraResponse = await ObtenerDatosOrdenDeCompra();
+    //             //si es 0 es inactivo sino es activo resetea los datos
+    //             const filteredData = ordenCompraResponse.map((item) => ({
+    //                 ...item,
+    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+    //             }));
+
+    //             setApiData(filteredData);
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
+
+    //     obtenerDatosIniciales();
+    // }, );
 
 
 
@@ -176,7 +287,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
 
             const rotacionCultivosFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
             let listaIds = '';
-            setRotacionCultivos(rotacionCultivosFiltrado);
+            setOrdenCompra(rotacionCultivosFiltrado);
             rotacionCultivosFiltrado.forEach((item, index) => {
                 // Añadir la ID a la variable y, si no es el último elemento, añadir una coma
                 listaIds += item.idOrdenDeCompra;
@@ -237,7 +348,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
                     {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
-                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                        data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
@@ -246,7 +357,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
                     {/* Dropdown para Parcelas */}
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
-                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
+                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}

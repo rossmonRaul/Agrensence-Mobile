@@ -88,6 +88,14 @@ import { InsertarManoObraScreen } from './src/screens/mano-obra/insertar-mano-ob
 import { ModificarManoObraScreen } from './src/screens/mano-obra/modificar-mano-obra/modificar-mano-obra';
 import { ListaFlujoCajaScreen } from './src/screens/flujo-caja/lista-flujo-caja/lista-flujo-caja';
 
+import { AdministracionReportes } from "./src/screens/administracion-reportes/administracion-reportes";
+import { ReporteEntradaSalidaTotal } from "./src/screens/reporte/reporte-entrada-salida-total/reporte-entrada-salida-total";
+import { ReporteEntradaTotal } from "./src/screens/reporte/reporte-entrada-total/reporte-entrada-total";
+import { ReporteSalidaTotal } from "./src/screens/reporte/reporte-salida-total/reporte-salida-total";
+import { ReporteOrdenDeCompra } from "./src/screens/reporte/reporte-orden-de-compra/reporte-orden-de-compra";
+import { ReportePlanilla } from "./src/screens/reporte/reporte-planilla/reporte-planilla";
+
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -269,6 +277,13 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ModifyManoObra.screenName} component={ModificarManoObraScreen} />
             <Stack.Screen name={ScreenProps.ListCashFlow.screenName} component={ListaFlujoCajaScreen} />
 
+            <Stack.Screen name={ScreenProps.AdminReports.screenName} component={AdministracionReportes} />
+
+            <Stack.Screen name={ScreenProps.ReportEntradaSalidaTotal.screenName} component={ReporteEntradaSalidaTotal } />
+            <Stack.Screen name={ScreenProps.ReportEntradaTotal.screenName} component={ReporteEntradaTotal } />
+            <Stack.Screen name={ScreenProps.ReportSalidaTotal.screenName} component={ReporteSalidaTotal } />
+            <Stack.Screen name={ScreenProps.ReportOrdenDeCompra.screenName} component={ReporteOrdenDeCompra } />
+            <Stack.Screen name={ScreenProps.ReportPlanilla.screenName} component={ReportePlanilla } />
           </Stack.Navigator>
         </NavigationContainer>
       </UserContextProvider>

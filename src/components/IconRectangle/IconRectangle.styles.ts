@@ -10,11 +10,12 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#264d49',
         width: 350,
-        height: 120,
+        height: 100,
         padding: 0,
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'space-around',
+        
     },
     text: {
         fontFamily: 'CatamaranBold',

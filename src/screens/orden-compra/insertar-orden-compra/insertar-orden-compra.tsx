@@ -245,24 +245,30 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
 
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+                // const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                //     .filter(item => item !== undefined)
+                //     .map(item => item!.idFinca)))
+                //     .map(idFinca => {
+                //         const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                //         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                //         return { idFinca, nombreFinca };
+                //     });
 
-                setFincas(fincasUnicas);
+                // setFincas(fincasUnicas);
 
-                const parcelasUnicas = datosInicialesObtenidos.map(item => ({
-                    idFinca: item.idFinca,
-                    idParcela: item.idParcela,
-                    nombre: item.nombreParcela,
-                }));
+                // const parcelasUnicas = datosInicialesObtenidos.map(item => ({
+                //     idFinca: item.idFinca,
+                //     idParcela: item.idParcela,
+                //     nombre: item.nombreParcela,
+                // }));
 
-                setParcelas(parcelasUnicas);
+                // setParcelas(parcelasUnicas);
+                const fincasResponse = await ObtenerFincas();
+                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasFiltradas);
+                const parcelasResponse = await ObtenerParcelas();
+                const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
+                setParcelas(parcelasFiltradas);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -416,7 +422,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                                 {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                                         value={finca}
                                         iconName='tree'
                                         onChange={handleValueFinca}

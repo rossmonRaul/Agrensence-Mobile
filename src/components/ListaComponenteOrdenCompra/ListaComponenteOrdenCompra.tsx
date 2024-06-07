@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'rea
 import { Picker } from '@react-native-picker/picker';
 import { ObtenerDetalleOrdenDeCompraPorId } from '../../servicios/ServicioOrdenCompra';
 import { Ionicons } from '@expo/vector-icons'
+import DropdownComponent from '../Dropdown/Dropwdown';
 
 interface Item {
     id: string;
@@ -25,6 +26,23 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
     const [cantidad, setCantidad] = useState('');
     const [precioUnitario, setPrecioUnitario] = useState('');
     const [iva, setIva] = useState('0');
+
+    const dropdownItems = [
+        {label: 'Exento', value: '0'},
+        {label: '1%', value: '1'},
+        {label: '2%', value: '2'},
+        {label: '3%', value: '3'},
+        {label: '4%', value: '4'},
+        {label: '5%', value: '5'},
+        {label: '6%', value: '6'},
+        {label: '7%', value: '7'},
+        {label: '8%', value: '8'},
+        {label: '9%', value: '9'},
+        {label: '10%', value: '10'},
+        {label: '11%', value: '11'},
+        {label: '12%', value: '12'},
+        {label: '13%', value: '13'},
+    ];
 
     useEffect(() => {
         verificarIdOrdenDeCompra();
@@ -65,6 +83,19 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
 
     const addItem = () => {
 
+        if (producto==='') {
+            alert('Digite un producto.');
+            return;
+        }
+        if (cantidad==='') {
+            alert('Digite una cantidad.');
+            return;
+        }
+        if (precioUnitario==='') {
+            alert('Digite el precio unitario.');
+            return;
+        }
+
         if (parseFloat(cantidad) < 0.1) {
             alert('La cantidad debe ser mayor que cero.');
             return;
@@ -73,7 +104,7 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
             alert('El precio unitario debe ser mayor que cero.');
             return;
         }
-        
+    
         if (producto.trim() !== '' && cantidad.trim() !== '' && precioUnitario.trim() !== '') {
             const total = calculateTotal(cantidad, precioUnitario, iva).toFixed(2);
             const newItem: Item = {
@@ -98,6 +129,10 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
         setItems(items.filter(item => item.id !== id));
         enviarDatos(items.filter(item => item.id !== id));
     };
+
+    const handleIvaChange = async (item: { label: string; value: string }) => {
+        setIva(item.value);
+    }
 
     return (
         
@@ -126,26 +161,17 @@ const ListaComponenteOrdenCompra: React.FC<PropsEnviarDatos> = ({enviarDatos,idO
                 style={styles.input}
             />
             <Text style={styles.formText} >Iva</Text>
-            <Picker
-                selectedValue={iva}
-                onValueChange={(itemValue) => setIva(itemValue)}
-                style={[styles.picker,styles.pickerBorder]}
-            >
-                <Picker.Item label="Exento" value="0" />
-                <Picker.Item label="1%" value="1" />
-                <Picker.Item label="2%" value="2" />
-                <Picker.Item label="3%" value="3" />
-                <Picker.Item label="4%" value="4" />
-                <Picker.Item label="5%" value="5" />
-                <Picker.Item label="6%" value="6" />
-                <Picker.Item label="7%" value="7" />
-                <Picker.Item label="8%" value="8" />
-                <Picker.Item label="9%" value="9" />
-                <Picker.Item label="10%" value="10" />
-                <Picker.Item label="11%" value="11" />
-                <Picker.Item label="12%" value="12" />
-                <Picker.Item label="13%" value="13" />
-            </Picker>
+
+        <View >
+        {/* Dropdown para IVA */}
+        <DropdownComponent 
+          placeholder="Seleccione un IVA"
+          data={dropdownItems}
+          value={iva}
+          iconName="percent"
+          onChange={handleIvaChange}
+        />
+      </View>
             <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {

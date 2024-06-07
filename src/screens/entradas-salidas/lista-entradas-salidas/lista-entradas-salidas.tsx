@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
@@ -17,6 +17,7 @@ import { ObtenerDatosRegistroEntradaSalida, ObtenerDetallesRegistroEntradaSalida
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { createExcelFile } from '../../../utils/fileExportExcel';
+import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 interface Item {
     id: string;
     producto: string;
@@ -63,40 +64,82 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
         });
     };
 
+    const fetchData = async () => {
+        const formData = { identificacion: userData.identificacion };
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
 
-            try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+        try {
+            setSelectedFinca(null);
+            setEntradasSalidas([]);
 
-                setFincas(fincasUnicas);
-                //se obtienen la orden de compra para despues poder filtrarlos
-                const entradaSalidaResponse = await ObtenerDatosRegistroEntradaSalida();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = entradaSalidaResponse.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
+            // const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            // const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+            //     .filter(item => item !== undefined)
+            //     .map(item => item!.idFinca)))
+            //     .map(idFinca => {
+            //         const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+            //         const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+            //         return { idFinca, nombreFinca };
+            //     });
+
+            // setFincas(fincasUnicas);
+            const fincasResponse = await ObtenerFincas();
+            const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+            setFincas(fincasFiltradas);
+            //se obtienen la orden de compra para despues poder filtrarlos
+            const entradaSalidaResponse = await ObtenerDatosRegistroEntradaSalida();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = entradaSalidaResponse.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
+            
+            setApiData(filteredData);
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+      };
+    
+      useFocusEffect(
+        useCallback(() => {
+          fetchData();
+        }, [])
+      );
+      
+    // useEffect(() => {
+    //     const obtenerDatosIniciales = async () => {
+    //         // Lógica para obtener datos desde la API
+    //         const formData = { identificacion: userData.identificacion };
+
+    //         try {
+    //             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+    //             const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+    //                 .filter(item => item !== undefined)
+    //                 .map(item => item!.idFinca)))
+    //                 .map(idFinca => {
+    //                     const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+    //                     const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+    //                     return { idFinca, nombreFinca };
+    //                 });
+
+    //             setFincas(fincasUnicas);
+    //             //se obtienen la orden de compra para despues poder filtrarlos
+    //             const entradaSalidaResponse = await ObtenerDatosRegistroEntradaSalida();
+    //             //si es 0 es inactivo sino es activo resetea los datos
+    //             const filteredData = entradaSalidaResponse.map((item) => ({
+    //                 ...item,
+    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+    //             }));
                 
-                setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+    //             setApiData(filteredData);
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
 
-        obtenerDatosIniciales();
-    }, []);
+    //     obtenerDatosIniciales();
+    // }, []);
 
 
 
@@ -180,7 +223,7 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                     {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
-                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                        data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}

@@ -82,11 +82,18 @@ export const ScreenProps = {
     ModifyManoObra: { screenName: 'ModifyManoObra' },
     InsertManoObra: { screenName: 'InsertManoObra' },
     ListCashFlow: { screenName: 'ListCashFlow' },
+
+    AdminReports: { screenName: 'adminReports' },
+    ReportEntradaSalidaTotal: { screenName: 'reportEntradaSalidaTotal' },
+    ReportEntradaTotal: { screenName: 'reportEntradaTotal' },
+    ReportSalidaTotal: { screenName: 'reportSalidaTotal' },
+    ReportOrdenDeCompra: { screenName: 'reportOrdenDeCompra' },
+    ReportPlanilla: { screenName: 'reportPlanilla' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.0.5';
+export const IP_API = '192.168.100.20';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -98,7 +105,7 @@ export const Company_Props = [
     { id: 3, iconImage: require('./assets/images/icons/hidrico.png'), text: 'Hídrico', screen: ScreenProps.HidricMenu.screenName },
     { id: 4, iconImage: require('./assets/images/icons/clima.png'), text: 'Clima', screen: ScreenProps.AdminWeather.screenName },
     { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: ScreenProps.MenuPests.screenName },
-    { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
+    { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: '' },
     { id: 7, iconImage: require('./assets/images/icons/comunidad.png'), text: 'Comunidad', screen: '' },
     { id: 8, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
     { id: 9, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de Calidad', screen: '' },
@@ -112,7 +119,8 @@ export const Company_Props = [
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
     { id: 57, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Mano de obra', screen: ScreenProps.ListManoObra.screenName, datoValidacion: '1' },
-    { id: 58, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Flujo de caja', screen: ScreenProps.ListCashFlow.screenName, datoValidacion: '1' },
+    { id: 58, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
+    { id: 59, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
@@ -159,4 +167,13 @@ export const Admin_sensor = [
 export const Admin_ordenCompra = [
     { id: 1, iconImage: require('./assets/images/icons/ordenCompra.png'), text: 'Orden de compra', screen: ScreenProps.ListPurchaseOrder.screenName },
     { id: 2, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Entradas y salidas', screen: ScreenProps.ListInflowsOutflows.screenName },
+]
+
+
+export const Admin_Reports = [
+    { id: 1, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Reporte Entrada Salida Total', screen: ScreenProps.ReportEntradaSalidaTotal.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/entrada.png'), text: 'Reporte Entrada Total', screen: ScreenProps.ReportEntradaTotal.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/salida.png'), text: 'Reporte Salida Total', screen: ScreenProps.ReportSalidaTotal.screenName },
+    { id: 4, iconImage: require('./assets/images/icons/orden-compra.png'), text: 'Reporte Orden De Compra', screen: ScreenProps.ReportOrdenDeCompra.screenName },
+    { id: 5, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Reporte Planilla', screen: ScreenProps.ReportPlanilla.screenName },
 ]
