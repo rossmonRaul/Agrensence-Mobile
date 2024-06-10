@@ -124,17 +124,9 @@ export const ReporteEntradaSalidaTotal: React.FC = () => {
             }
             const title = startDate && endDate ? formatDate(startDate) + ' ' + formatDate(endDate) : 'Ingresos Gastos';
 
-            //setEntradasSalidasExportar(entradaSalidas);
-            let valorIngresoTotal=0;
-            let valorGastoTotal=0;
-            
-            entradaSalidasExportar.forEach(obj => {
-                valorIngresoTotal+=obj.montoIngreso;
-                valorGastoTotal+=obj.montoGasto;
-            });
-            let valorBalanceTotal=valorIngresoTotal-valorGastoTotal;
 
-            const objEntradaSalida={idRegistroEntradaSalida:'',fecha:'',detallesCompraVenta:'Total',montoIngreso:valorIngresoTotal,montoGasto:valorGastoTotal,tipo:'',balance:valorBalanceTotal}
+
+            const objEntradaSalida={idRegistroEntradaSalida:'',fecha:'',detallesCompraVenta:'Total',montoIngreso:entradaSalidasTotales[0].ingresoTotal,montoGasto:entradaSalidasTotales[0].gastoTotal,tipo:'',balance:entradaSalidasTotales[0].balanceTotal }
             entradaSalidasExportar.push(objEntradaSalida);
             const filePath = await createExcelFile(title, entradaSalidasExportar, keyMapping, 'Ingresos Gastos');
             entradaSalidasExportar.pop();
@@ -247,9 +239,12 @@ export const ReporteEntradaSalidaTotal: React.FC = () => {
         entradaSalidaResponse.forEach(obj => {
             valorIngresoTotal+=obj.montoIngreso;
             valorGastoTotal+=obj.montoGasto;
+            obj.montoIngreso=formatNumber(obj.montoIngreso);
+            obj.montoGasto=formatNumber(obj.montoGasto);
+            obj.balance=formatNumber(obj.balance);
         });
         let valorBalanceTotal= valorIngresoTotal-valorGastoTotal;
-        const totales={ingresoTotal:valorIngresoTotal, gastoTotal:valorGastoTotal, balanceTotal:valorBalanceTotal};
+        const totales={ingresoTotal:formatNumber(valorIngresoTotal), gastoTotal:formatNumber(valorGastoTotal), balanceTotal:formatNumber(valorBalanceTotal)};
 
         setEntradaSalidasTotales([totales]);
         setCurrentPage(1);
@@ -257,7 +252,12 @@ export const ReporteEntradaSalidaTotal: React.FC = () => {
 
     
     };
-
+    const formatNumber = (number: number) => {
+        return number.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = entradaSalidas.slice(indexOfFirstItem, indexOfLastItem);
@@ -381,6 +381,7 @@ export const ReporteEntradaSalidaTotal: React.FC = () => {
                                     onChange={(event, selectedDate) => onChange(event, selectedDate, 'start')}
                                     style={styles.dateTimePicker}
                                     minimumDate={new Date('2015-1-2')}
+                                    maximumDate={new Date()} // No permite seleccionar una fecha futura
                                 />
                             )}
                             {showStartDatePicker && Platform.OS === 'ios' && (
@@ -412,7 +413,8 @@ export const ReporteEntradaSalidaTotal: React.FC = () => {
                                 display='spinner'
                                 onChange={(event, selectedDate) => onChange(event, selectedDate, 'end')}
                                 style={styles.dateTimePicker}
-                                minimumDate={new Date('2015-1-2')}
+                                minimumDate={startDate || new Date('2015-1-2')} // La fecha mínima es la fecha de inicio seleccionada
+                                maximumDate={new Date()} // No permite seleccionar una fecha futura
                             />
                         )}
                         {showEndDatePicker && Platform.OS === 'ios' && (

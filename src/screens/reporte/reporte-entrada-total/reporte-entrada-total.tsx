@@ -123,11 +123,8 @@ export const ReporteEntradaTotal:  React.FC = () => {
             const title = startDate && endDate ? formatDate(startDate) + ' ' + formatDate(endDate) : 'Reporte Ingresos';
 
 
-            let valorIngresoTotal=0;
-            entradaSalidasExportar.forEach(obj => {
-               valorIngresoTotal+=obj.montoIngreso;
-            });
-            const objEntradaSalida={idRegistroEntradaSalida:'',fecha:'',detallesCompraVenta:'Total',montoIngreso:valorIngresoTotal,tipo:'',balance:valorIngresoTotal}
+            
+            const objEntradaSalida={idRegistroEntradaSalida:'',fecha:'',detallesCompraVenta:'Total',montoIngreso:entradaTotales[0].ingresoTotal,tipo:'',balance:entradaTotales[0].ingresoTotal}
             entradaSalidasExportar.push(objEntradaSalida);
             const filePath = await createExcelFile(title, entradaSalidasExportar, keyMapping, 'Reporte Ingresos');
             entradaSalidasExportar.pop();
@@ -236,8 +233,10 @@ export const ReporteEntradaTotal:  React.FC = () => {
         let valorIngresoTotal=0;
         entradaSalidaResponse.forEach(obj => {
             valorIngresoTotal+=obj.montoIngreso;
+            obj.montoIngreso=formatNumber(obj.montoIngreso);
+            obj.balance=formatNumber(obj.balance);
         });
-        const totales={ingresoTotal:valorIngresoTotal};
+        const totales={ingresoTotal:formatNumber(valorIngresoTotal)};
         setEntradaTotales([totales]);
         setCurrentPage(1);
 
@@ -246,6 +245,12 @@ export const ReporteEntradaTotal:  React.FC = () => {
         setApiData(entradaSalidaResponse);
 
     
+    };
+    const formatNumber = (number: number) => {
+        return number.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     };
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -372,6 +377,7 @@ export const ReporteEntradaTotal:  React.FC = () => {
                                     onChange={(event, selectedDate) => onChange(event, selectedDate, 'start')}
                                     style={styles.dateTimePicker}
                                     minimumDate={new Date('2015-1-2')}
+                                    maximumDate={new Date()}
                                 />
                             )}
                             {showStartDatePicker && Platform.OS === 'ios' && (
@@ -403,7 +409,9 @@ export const ReporteEntradaTotal:  React.FC = () => {
                                 display='spinner'
                                 onChange={(event, selectedDate) => onChange(event, selectedDate, 'end')}
                                 style={styles.dateTimePicker}
-                                minimumDate={new Date('2015-1-2')}
+                                minimumDate={startDate || new Date('2015-1-2')} 
+                                maximumDate={new Date()} 
+                                
                             />
                         )}
                         {showEndDatePicker && Platform.OS === 'ios' && (

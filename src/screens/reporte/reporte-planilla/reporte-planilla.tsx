@@ -123,13 +123,9 @@ export const ReportePlanilla:   React.FC = () => {
             }
             const title = startDate && endDate ? formatDate(startDate) + ' ' + formatDate(endDate) : 'Reporte Planilla';
 
-            let valorTotal=0;
-            
-            planillaExportar.forEach(obj => {
-                valorTotal+=obj.totalPago;
-            });
+
         
-            const objplanilla={idRegistroManoObra:'',identificacion:'',trabajador:'',fecha:'',actividad:'',horasTrabajadas:'',pagoPorHora:'Total',totalPago:valorTotal}
+            const objplanilla={idRegistroManoObra:'',identificacion:'',trabajador:'',fecha:'',actividad:'',horasTrabajadas:'',pagoPorHora:'Total',totalPago:planillaTotal[0].montoPlanillaTotal}
             planillaExportar.push(objplanilla);
             const filePath = await createExcelFile(title, planillaExportar, keyMapping, 'Reporte Planilla');
             planillaExportar.pop();
@@ -240,8 +236,10 @@ export const ReportePlanilla:   React.FC = () => {
             
         entradaSalidaResponse.forEach(obj => {
                 valorTotal+=obj.totalPago;
+                obj.pagoPorHora=formatNumber(obj.pagoPorHora);
+                obj.totalPago=formatNumber(obj.totalPago);
             });
-        const totales={montoPlanillaTotal:valorTotal};
+        const totales={montoPlanillaTotal:formatNumber(valorTotal)};
         
         //entradaSalidasTotales.push(totales);
         setPlanillaTotal([totales]);
@@ -251,6 +249,13 @@ export const ReportePlanilla:   React.FC = () => {
 
     
     };
+    const formatNumber = (number: number) => {
+        return number.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = planilla.slice(indexOfFirstItem, indexOfLastItem);
@@ -375,6 +380,7 @@ export const ReportePlanilla:   React.FC = () => {
                                     onChange={(event, selectedDate) => onChange(event, selectedDate, 'start')}
                                     style={styles.dateTimePicker}
                                     minimumDate={new Date('2015-1-2')}
+                                    maximumDate={new Date()} // No permite seleccionar una fecha futura
                                 />
                             )}
                             {showStartDatePicker && Platform.OS === 'ios' && (
@@ -406,7 +412,8 @@ export const ReportePlanilla:   React.FC = () => {
                                 display='spinner'
                                 onChange={(event, selectedDate) => onChange(event, selectedDate, 'end')}
                                 style={styles.dateTimePicker}
-                                minimumDate={new Date('2015-1-2')}
+                                minimumDate={startDate || new Date('2015-1-2')} // La fecha mínima es la fecha de inicio seleccionada
+                                maximumDate={new Date()} // No permite seleccionar una fecha futura
                             />
                         )}
                         {showEndDatePicker && Platform.OS === 'ios' && (

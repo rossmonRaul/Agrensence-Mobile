@@ -123,13 +123,9 @@ export const ReporteOrdenDeCompra:   React.FC = () => {
             }
             const title = startDate && endDate ? formatDate(startDate) + ' ' + formatDate(endDate) : 'Reporte Orden De Compra';
             
-            let valorTotal=0;
-            
-            ordenCompraExportar.forEach(obj => {
-                valorTotal+=obj.total;
-            });
 
-            const objOrdenCompra={numeroDeOrden:'',proveedor:'',fechaOrden:'',fechaEntrega:'',observaciones:'Total',total:valorTotal}
+
+            const objOrdenCompra={numeroDeOrden:'',proveedor:'',fechaOrden:'',fechaEntrega:'',observaciones:'Total',total:ordenCompraTotales[0].ordenCompraTotal}
             ordenCompraExportar.push(objOrdenCompra);
             const filePath = await createExcelFile(title, ordenCompraExportar, keyMapping, 'Reporte Orden De Compra');
             ordenCompraExportar.pop();
@@ -241,8 +237,9 @@ export const ReporteOrdenDeCompra:   React.FC = () => {
         
         ordenCompraResponse.forEach(obj => {
             valorTotal+=obj.total;
+            obj.total=formatNumber(obj.total);
         });
-        const totales={ordenCompraTotal:valorTotal};
+        const totales={ordenCompraTotal:formatNumber(valorTotal)};
         //entradaSalidasTotales.push(totales);
         setOrdenCompraTotales([totales]);
         setCurrentPage(1);
@@ -251,6 +248,13 @@ export const ReporteOrdenDeCompra:   React.FC = () => {
 
     
     };
+    const formatNumber = (number: number) => {
+        return number.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = ordenCompra.slice(indexOfFirstItem, indexOfLastItem);
@@ -373,6 +377,7 @@ export const ReporteOrdenDeCompra:   React.FC = () => {
                                     onChange={(event, selectedDate) => onChange(event, selectedDate, 'start')}
                                     style={styles.dateTimePicker}
                                     minimumDate={new Date('2015-1-2')}
+                                    maximumDate={new Date()} // No permite seleccionar una fecha futura
                                 />
                             )}
                             {showStartDatePicker && Platform.OS === 'ios' && (
@@ -404,7 +409,8 @@ export const ReporteOrdenDeCompra:   React.FC = () => {
                                 display='spinner'
                                 onChange={(event, selectedDate) => onChange(event, selectedDate, 'end')}
                                 style={styles.dateTimePicker}
-                                minimumDate={new Date('2015-1-2')}
+                                minimumDate={startDate || new Date('2015-1-2')} // La fecha mínima es la fecha de inicio seleccionada
+                                maximumDate={new Date()} // No permite seleccionar una fecha futura
                             />
                         )}
                         {showEndDatePicker && Platform.OS === 'ios' && (
