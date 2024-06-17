@@ -572,7 +572,15 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
                                     placeholder="Valor de Clorofila"
                                     value={formulario.valorDeClorofila.toString()}
                                     onChangeText={(text) => {
-                                        const numericText = text.replace(/[^0-9.,]/g, '').replace(',', '.'); // Elimina caracteres no numéricos menos las comas y puntos
+                                        const numericText = text.replace(/[^0-9.]/g, '');
+
+                                        // Verifica la cantidad de puntos en el texto
+                                        const pointCount = (numericText.match(/\./g) || []).length;
+                                    
+                                        // Si hay más de un punto, no actualiza el estado
+                                        if (pointCount > 1) {
+                                          return;
+                                        }
                                         updateFormulario('valorDeClorofila', numericText);
                                     }}
                                     

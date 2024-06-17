@@ -389,7 +389,7 @@ export const RegistrarSaludPlantaScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Salud de la planta</Text>
+                            <Text style={styles.createAccountText} >Insertar salud de la planta</Text>
                         </View>
                         {loading && (
                             <View style={styles.loadingContainer}>
