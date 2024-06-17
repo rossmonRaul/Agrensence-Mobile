@@ -89,6 +89,15 @@ export const ScreenProps = {
     ReportSalidaTotal: { screenName: 'reportSalidaTotal' },
     ReportOrdenDeCompra: { screenName: 'reportOrdenDeCompra' },
     ReportPlanilla: { screenName: 'reportPlanilla' },
+
+    MenuPrecisionAgriculture: { screenName: 'MenuPrecisionAgriculture' },
+    PlantHealthList: { screenName: 'ListaSaludPlantaScreen' },
+    InsertPlantHealth: { screenName: 'RegistrarSaludPlantaScreen' },
+    ModifyPlantHealth: { screenName: 'ModificarSaludPlantaScreen' },
+
+    ChlorophyllContentList: { screenName: 'ListaContenidoClorofilaScreen' },
+    InsertChlorophyllContent: { screenName: 'RegistrarContenidoClorofilaScreen' },
+    ModifyChlorophyllContent: { screenName: 'ModificarContenidoClorofilaScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -106,10 +115,11 @@ export const Company_Props = [
     { id: 4, iconImage: require('./assets/images/icons/clima.png'), text: 'Clima', screen: ScreenProps.AdminWeather.screenName },
     { id: 5, iconImage: require('./assets/images/icons/plagas.png'), text: 'Plagas', screen: ScreenProps.MenuPests.screenName },
     { id: 6, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: '' },
-    { id: 7, iconImage: require('./assets/images/icons/comunidad.png'), text: 'Comunidad', screen: '' },
-    { id: 8, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
-    { id: 9, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de Calidad', screen: '' },
-    { id: 10, iconImage: require('./assets/images/icons/preferencias.png'), text: 'Preferencias', screen: '' },
+    { id: 7, iconImage: require('./assets/images/icons/agricultura-precision.png'), text: 'Agricultura de precisión', screen: ScreenProps.MenuPrecisionAgriculture.screenName  },
+    { id: 8, iconImage: require('./assets/images/icons/comunidad.png'), text: 'Comunidad', screen: '' },
+    { id: 9, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
+    { id: 10, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de Calidad', screen: '' },
+    { id: 11, iconImage: require('./assets/images/icons/preferencias.png'), text: 'Preferencias', screen: '' },
 
     //Administrador
     { id: 50, iconImage: require('./assets/images/icons/lista-usuarios-habilitados.png'), text: 'Lista usuarios habilitados', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
@@ -154,6 +164,12 @@ export const Admin_clima = [
     { id: 2, iconImage: require('./assets/images/icons/condiciones-climaticas.png'), text: 'Condiciones meteorológicas y climáticas', screen: ScreenProps.ListWeatherClimateConditions.screenName },
     { id: 3, iconImage: require('./assets/images/icons/calentamiento-global.png'), text: 'Riesgos Naturales', screen: ScreenProps.RiskNaturalList.screenName },
 ]
+
+export const Admin_Agricultura_Precision = [
+    { id: 1, iconImage: require('./assets/images/icons/salud-planta.png'), text: 'Salud de la Planta', screen: ScreenProps.PlantHealthList.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Contenido Clorofila', screen: ScreenProps.ChlorophyllContentList.screenName },
+]
+
 
 export const Admin_plagas = [
     { id: 1, iconImage: require('./assets/images/icons/plagas&enfermedades.png'), text: 'Problemas asociados a plagas y enfermedades', screen: ScreenProps.ListPestsDiseases.screenName },
