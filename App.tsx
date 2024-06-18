@@ -95,13 +95,13 @@ import { ReporteSalidaTotal } from "./src/screens/reporte/reporte-salida-total/r
 import { ReporteOrdenDeCompra } from "./src/screens/reporte/reporte-orden-de-compra/reporte-orden-de-compra";
 import { ReportePlanilla } from "./src/screens/reporte/reporte-planilla/reporte-planilla";
 
-import { ListaSaludPlantaScreen } from './src/screens/clima/salud-planta/lista-salud-planta/lista-salud-planta';
-import { RegistrarSaludPlantaScreen } from './src/screens/clima/salud-planta/registro-salud-planta/registro-salud-planta';
-import { ModificarSaludPlantaScreen } from './src/screens/clima/salud-planta/modificar-salud-planta/modificar-salud-planta';
+import { ListaSaludPlantaScreen } from './src/screens/agricultura-precision/salud-planta/lista-salud-planta/lista-salud-planta';
+import { RegistrarSaludPlantaScreen } from './src/screens/agricultura-precision/salud-planta/registro-salud-planta/registro-salud-planta';
+import { ModificarSaludPlantaScreen } from './src/screens/agricultura-precision/salud-planta/modificar-salud-planta/modificar-salud-planta';
 
-import { ListaContenidoClorofilaScreen } from './src/screens/clima/contenido-clorofila/lista-contenido-clorofila/lista-contenido-clorofila';
-import { InsertarContenidoClorofilaScreen } from './src/screens/clima/contenido-clorofila/registro-contenido-clorofila/insertar-contenido-clorofila';
-import { ModificarContenidoClorofilaScreen } from './src/screens/clima/contenido-clorofila/modificar-contenido-clorofila/modificar-contenido-clorofila';
+import { ListaContenidoClorofilaScreen } from './src/screens/agricultura-precision/contenido-clorofila/lista-contenido-clorofila/lista-contenido-clorofila';
+import { InsertarContenidoClorofilaScreen } from './src/screens/agricultura-precision/contenido-clorofila/registro-contenido-clorofila/insertar-contenido-clorofila';
+import { ModificarContenidoClorofilaScreen } from './src/screens/agricultura-precision/contenido-clorofila/modificar-contenido-clorofila/modificar-contenido-clorofila';
 import { AdministracionAgriculturaPrecision } from './src/screens/administacion-agricultura-precision/administacion-agricultura-precision';
 
 const Stack = createNativeStackNavigator();

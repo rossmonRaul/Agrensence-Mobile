@@ -16,6 +16,7 @@ import { ObtenerSaludDeLaPlanta } from '../../../../servicios/ServicioSaludDeLaP
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import { paginationStyles } from '../../../../styles/pagination-styles.styles';
 
 export const ListaSaludPlantaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -24,7 +25,14 @@ export const ListaSaludPlantaScreen: React.FC = () => {
     const [apiData, setApiData] = useState<riesgoNaturalDataInterface[]>([]);
     const [saludPlantaFiltradosData, setSaludPlantaFiltradosData] = useState<any[]>([]);
     const [saludPlanta, setSaludPlanta] = useState<any[]>([]);
+     // Estados para la paginación
+     const [currentPage, setCurrentPage] = useState(1);  // Añadido
+     const itemsPerPage = 3;
 
+
+const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = saludPlanta.slice(indexOfFirstItem, indexOfLastItem);
     //para poder hacer el filtro de los datos del api
     useEffect(() => {
         // Obtener los IDs de las parcelas del usuario
@@ -110,6 +118,67 @@ export const ListaSaludPlantaScreen: React.FC = () => {
         setSaludPlanta(filteredData);
     };
 
+    const renderPagination = () => {
+        const totalPages = Math.ceil(saludPlanta.length / itemsPerPage);
+        let startPage = 1;
+        let endPage = Math.min(totalPages, 3); // Máximo de 3 páginas visibles
+    
+        // Calcula el rango de páginas visibles
+        if (currentPage > 1 && currentPage + 1 <= totalPages) {
+            startPage = currentPage - 1;
+            endPage = currentPage + 1;
+        } else if (currentPage === totalPages) {
+            startPage = currentPage - 2;
+            endPage = currentPage;
+        }
+    
+        const pageNumbers: number[] = [];
+        for (let i = startPage; i <= endPage; i++) {
+            if (i > 0 && i <= totalPages) { 
+                pageNumbers.push(i);
+            }
+        }
+    
+        //apartado para que no aparezca la paginación cuando todo quepa en una sola página
+        if (totalPages <= 1) return null;
+        return (
+            <View style={paginationStyles.paginationContainer}>
+                {/* Botón para ir a la primera página */}
+                <TouchableOpacity
+                    style={[
+                        paginationStyles.pageButton,
+                        currentPage === 1 && paginationStyles.activePageButton
+                    ]}
+                    onPress={() => setCurrentPage(1)}
+                >
+                    <Text style={paginationStyles.pageButtonText}>{'<<'}</Text>
+                </TouchableOpacity>
+                {/* Botones para páginas */}
+                {pageNumbers.map(number => (
+                    <TouchableOpacity
+                        key={number}
+                        style={[
+                            paginationStyles.pageButton,
+                            currentPage === number && paginationStyles.activePageButton
+                        ]}
+                        onPress={() => setCurrentPage(number)}
+                    >
+                        <Text style={paginationStyles.pageButtonText}>{number}</Text>
+                    </TouchableOpacity>
+                ))}
+                {/* Botón para ir a la última página */}
+                <TouchableOpacity
+                    style={[
+                        paginationStyles.pageButton,
+                        currentPage === totalPages && paginationStyles.activePageButton
+                    ]}
+                    onPress={() => setCurrentPage(totalPages)}
+                >
+                    <Text style={paginationStyles.pageButtonText}>{'>>'}</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container} >
@@ -133,19 +202,26 @@ export const ListaSaludPlantaScreen: React.FC = () => {
                     </TouchableOpacity>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {saludPlanta.map((item, index) => {
-
-                        return (
+                {!currentItems ? (
+                    <>
+                        <Text>No se encontraron datos</Text>
+                    </>
+                    ) : (
+                    <>
+                        {currentItems.map((item, index) => (
+                            
                             <TouchableOpacity key={item.idSaludDeLaPlanta} onPress={() => handleRectanglePress(item.idSaludDeLaPlanta, item.idFinca, item.idParcela,
                                 item.fecha, item.cultivo, item.idColorHojas, item.idTamanoFormaHoja, item.idEstadoTallo, item.idEstadoRaiz, item.estado)}>
                                 <CustomRectangle
-                                    key={item.idSaludDeLaPlanta}
-                                    data={processData([item], keyMapping)?.data || []} />
-                            </TouchableOpacity>
-                        );
-                    })}
+                                key={item.idSaludDeLaPlanta}
+                                data={processData([item], keyMapping)?.data || []} />
+                                </TouchableOpacity>
+                            
+                        ))}
+                    </>
+                    )}
                 </ScrollView>
-
+                {renderPagination()}
             </View>
 
             <BottomNavBar />

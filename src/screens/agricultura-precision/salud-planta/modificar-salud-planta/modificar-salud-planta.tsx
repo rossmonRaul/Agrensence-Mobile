@@ -350,6 +350,10 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
     };
 
     const handleRegister = async () => {
+        if (selectedFiles.length<1) {
+            alert('Se debe insertar minimo una imagen');
+            return;
+        }
         try {
             setLoading(true)
             setThirdFormVisible(false)
@@ -727,7 +731,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                             { label: "Manchas (indicativas de enfermedades o plagas) ", value: "4" },
                                         ]}
                                         value={formulario.idColorHojas.toString()}
-                                        iconName="exclamation"
+                                        iconName="leaf"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -743,7 +747,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                             { label: "Deformaciones o irregularidades", value: "2" },
                                         ]}
                                         value={formulario.idTamanoFormaHoja.toString()}
-                                        iconName="check"
+                                        iconName="envira"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -760,7 +764,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                             { label: "Lesiones o daños físicos", value: "3" },
                                         ]}
                                         value={formulario.idEstadoTallo.toString()}
-                                        iconName="exclamation"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -777,7 +781,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                             { label: "Plagas o enfermedades", value: "3" },
                                         ]}
                                         value={formulario.idEstadoRaiz.toString()}
-                                        iconName="check"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -879,7 +883,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
-                                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                                            <Ionicons name="trash-bin" size={20} color="white" style={styles.iconStyle} />
                                             <Text style={styles.buttonText}> Eliminar</Text>
                                         </View>
                                     </TouchableOpacity>

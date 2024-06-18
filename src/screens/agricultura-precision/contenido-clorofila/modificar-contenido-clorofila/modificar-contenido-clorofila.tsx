@@ -625,8 +625,8 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
-                                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Desactivar</Text>
+                                            <Ionicons name="trash-bin" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}>Eliminar</Text>
                                         </View>
                                     </TouchableOpacity>
                                     :

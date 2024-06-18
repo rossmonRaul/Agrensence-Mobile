@@ -151,6 +151,10 @@ export const RegistrarSaludPlantaScreen: React.FC = () => {
 
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
+        if (selectedFiles.length<1) {
+            alert('Se debe insertar minimo una imagen');
+            return;
+        }
         try {
             setLoading(true)
             setThirdFormVisible(false)
@@ -544,7 +548,7 @@ export const RegistrarSaludPlantaScreen: React.FC = () => {
                                             { label: "Manchas (indicativas de enfermedades o plagas) ", value: "4" },
                                         ]}
                                         value={formulario.idColorHojas}
-                                        iconName="exclamation"
+                                        iconName="leaf"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -560,7 +564,7 @@ export const RegistrarSaludPlantaScreen: React.FC = () => {
                                             { label: "Deformaciones o irregularidades", value: "2" },
                                         ]}
                                         value={formulario.idTamanoFormaHoja}
-                                        iconName="check"
+                                        iconName="envira"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -577,7 +581,7 @@ export const RegistrarSaludPlantaScreen: React.FC = () => {
                                             { label: "Lesiones o daños físicos", value: "3" },
                                         ]}
                                         value={formulario.idEstadoTallo}
-                                        iconName="exclamation"
+                                        iconName="tree"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría
@@ -594,7 +598,7 @@ export const RegistrarSaludPlantaScreen: React.FC = () => {
                                             { label: "Plagas o enfermedades", value: "3" },
                                         ]}
                                         value={formulario.idEstadoRaiz}
-                                        iconName="check"
+                                        iconName="pagelines"
                                         onChange={(selectedItem) => {
 
                                             // Actualizar el formulario con la selección de la categoría

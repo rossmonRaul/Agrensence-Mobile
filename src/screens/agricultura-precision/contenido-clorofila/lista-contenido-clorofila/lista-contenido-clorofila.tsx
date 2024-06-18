@@ -14,6 +14,7 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerRegistroContenidoDeClorofila } from '../../../../servicios/ServicioContenidoClorofila';
+import { paginationStyles } from '../../../../styles/pagination-styles.styles';
 
 export const ListaContenidoClorofilaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -23,13 +24,18 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
     const [apiData, setApiData] = useState<any[]>([]);
 
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
-    const [eficienciaRiego, setEficienciaRiego] = useState<any[]>([]);
+    const [contenidoClorofila, setContenidoClorofila] = useState<any[]>([]);
 
     const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombreParcela?: string; }[]>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombreParcela?: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
+
+       // Estados para la paginación
+       const [currentPage, setCurrentPage] = useState(1);  // Añadido
+       const itemsPerPage = 3;
+
 
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
@@ -103,6 +109,8 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                 }));
                 setOriginalApiData(registroContenidoClorofilaResponse);
+                setCurrentPage(1);
+
                 setApiData(filteredData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -112,7 +120,9 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
         obtenerDatosIniciales();
     }, []);
 
-
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = contenidoClorofila.slice(indexOfFirstItem, indexOfLastItem);
 
     //funcion para poder filtrar las parcelas por finca
     const obtenerParcelasPorFinca = async (fincaId: number) => {
@@ -146,6 +156,7 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
+        
         //si finca Id es null no se puede seleciona ni traer el y mostrar el registro condiciones meteorologica
         if (fincaId !== null) {
 
@@ -164,12 +175,74 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
 
             const ContenidoClorofilaFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
 
-            setEficienciaRiego(ContenidoClorofilaFiltrado);
+            setContenidoClorofila(ContenidoClorofilaFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+
+    const renderPagination = () => {
+        const totalPages = Math.ceil(contenidoClorofila.length / itemsPerPage);
+        let startPage = 1;
+        let endPage = Math.min(totalPages, 3); // Máximo de 3 páginas visibles
+    
+        // Calcula el rango de páginas visibles
+        if (currentPage > 1 && currentPage + 1 <= totalPages) {
+            startPage = currentPage - 1;
+            endPage = currentPage + 1;
+        } else if (currentPage === totalPages) {
+            startPage = currentPage - 2;
+            endPage = currentPage;
+        }
+    
+        const pageNumbers: number[] = [];
+        for (let i = startPage; i <= endPage; i++) {
+            if (i > 0 && i <= totalPages) { 
+                pageNumbers.push(i);
+            }
+        }
+    
+        //apartado para que no aparezca la paginación cuando todo quepa en una sola página
+        if (totalPages <= 1) return null;
+        return (
+            <View style={paginationStyles.paginationContainer}>
+                {/* Botón para ir a la primera página */}
+                <TouchableOpacity
+                    style={[
+                        paginationStyles.pageButton,
+                        currentPage === 1 && paginationStyles.activePageButton
+                    ]}
+                    onPress={() => setCurrentPage(1)}
+                >
+                    <Text style={paginationStyles.pageButtonText}>{'<<'}</Text>
+                </TouchableOpacity>
+                {/* Botones para páginas */}
+                {pageNumbers.map(number => (
+                    <TouchableOpacity
+                        key={number}
+                        style={[
+                            paginationStyles.pageButton,
+                            currentPage === number && paginationStyles.activePageButton
+                        ]}
+                        onPress={() => setCurrentPage(number)}
+                    >
+                        <Text style={paginationStyles.pageButtonText}>{number}</Text>
+                    </TouchableOpacity>
+                ))}
+                {/* Botón para ir a la última página */}
+                <TouchableOpacity
+                    style={[
+                        paginationStyles.pageButton,
+                        currentPage === totalPages && paginationStyles.activePageButton
+                    ]}
+                    onPress={() => setCurrentPage(totalPages)}
+                >
+                    <Text style={paginationStyles.pageButtonText}>{'>>'}</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -200,17 +273,29 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {eficienciaRiego.map((item, index) => (
-                        <TouchableOpacity key={item.idContenidoDeClorofila} onPress={() => handleRectanglePress(
-                            item.idContenidoDeClorofila, item.idFinca, item.idParcela,item.idPuntoMedicion, item.cultivo, item.fecha, item.valorDeClorofila, item.temperatura,
-                            item.humedad, item.observaciones, item.estado
-                        )}>
-                            <CustomRectangle
+                             {!currentItems ? (
+                    <>
+                        <Text>No se encontraron datos</Text>
+                    </>
+                    ) : (
+                    <>
+                        {currentItems.map((item, index) => (
+                            
+                            <TouchableOpacity key={item.idContenidoDeClorofila} onPress={() => handleRectanglePress(
+                                item.idContenidoDeClorofila, item.idFinca, item.idParcela,item.idPuntoMedicion, item.cultivo, item.fecha, item.valorDeClorofila, item.temperatura,
+                                item.humedad, item.observaciones, item.estado
+                            )}>
+                                <CustomRectangle
                                 key={item.idContenidoDeClorofila}
                                 data={processData([item], keyMapping)?.data || []} />
-                        </TouchableOpacity>
-                    ))}
+                                </TouchableOpacity>
+                            
+                        ))}
+                    </>
+                    )}
+                       
                 </ScrollView>
+                {renderPagination()}
             </View>
             <BottomNavBar />
         </View>
