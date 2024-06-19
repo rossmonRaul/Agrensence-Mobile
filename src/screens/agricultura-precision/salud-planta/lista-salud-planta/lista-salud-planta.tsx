@@ -47,13 +47,47 @@ const indexOfLastItem = currentPage * itemsPerPage;
     }, [apiData, parcelas]);
 
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
-            try {
+    // useEffect(() => {
+    //     const obtenerDatosIniciales = async () => {
+    //         // Lógica para obtener datos desde la API
+    //         const formData = { identificacion: userData.identificacion };
+    //         try {
 
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+    //             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+
+    //             const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
+    //                 .filter(item => item !== undefined)
+    //                 .map(item => item!.idParcela)))
+    //                 .map(idParcela => {
+    //                     const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+    //                     const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+    //                     return { idParcela, nombreParcela };
+    //                 });
+    //             setParcelas(parcelasUnicas)
+    //             const saludPlanta = await ObtenerSaludDeLaPlanta();
+    //             //si es 0 es inactivo sino es activo resetea los datos
+    //             const filteredData = saludPlanta.map((item) => ({
+    //                 ...item,
+    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+    //             }));
+
+    //             setApiData(filteredData);
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
+
+    //     obtenerDatosIniciales();
+    // }, [userData.identificacion]);
+
+
+    const fetchData = async () => {
+        const formData = { identificacion: userData.identificacion };
+
+
+        try {
+            setSaludPlanta([]);
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
                 const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
@@ -72,14 +106,17 @@ const indexOfLastItem = currentPage * itemsPerPage;
                 }));
 
                 setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
 
-        obtenerDatosIniciales();
-    }, [userData.identificacion]);
-
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+      };
+    
+      useFocusEffect(
+        useCallback(() => {
+          fetchData();
+        }, [])
+      );
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {

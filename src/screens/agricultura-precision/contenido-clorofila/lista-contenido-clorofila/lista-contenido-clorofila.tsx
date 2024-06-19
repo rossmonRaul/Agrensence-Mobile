@@ -70,12 +70,69 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
 
     };
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
+    // useEffect(() => {
+    //     const obtenerDatosIniciales = async () => {
+    //         // Lógica para obtener datos desde la API
+    //         const formData = { identificacion: userData.identificacion };
 
-            try {
+    //         try {
+    //             setSelectedFinca(null);
+    //             setContenidoClorofila([]);
+
+    //             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+    //             const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+    //                 .filter(item => item !== undefined)
+    //                 .map(item => item!.idFinca)))
+    //                 .map(idFinca => {
+    //                     const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+    //                     const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+    //                     return { idFinca, nombreFinca };
+    //                 });
+
+    //             setFincas(fincasUnicas);
+    //             //Se obtienen las parcelas para poder hacer los filtros despues
+
+
+    //             const parcelas = Array.from(new Set(datosInicialesObtenidos
+    //                 .filter(item => item !== undefined)
+    //                 .map(item => item!.idParcela)))
+    //                 .map(idParcela => {
+    //                     const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+    //                     const idFinca = relacion ? relacion.idFinca : -1;
+    //                     const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+    //                     return { idFinca, idParcela, nombreParcela };
+    //                 });
+
+    //             setParcelas(parcelas);
+    //             //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
+    //             const registroContenidoClorofilaResponse = await ObtenerRegistroContenidoDeClorofila();
+    //             //si es 0 es inactivo sino es activo resetea los datos
+    //             const filteredData = registroContenidoClorofilaResponse.map((item) => ({
+    //                 ...item,
+    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+    //             }));
+    //             setOriginalApiData(registroContenidoClorofilaResponse);
+    //             setCurrentPage(1);
+
+    //             setApiData(filteredData);
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
+
+    //     obtenerDatosIniciales();
+    // }, []);
+
+
+    const fetchData = async () => {
+        const formData = { identificacion: userData.identificacion };
+
+
+        try {
+            setSelectedFinca(null);
+            setSelectedParcela(null);
+            setContenidoClorofila([]);
+
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
@@ -112,13 +169,17 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
                 setCurrentPage(1);
 
                 setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
 
-        obtenerDatosIniciales();
-    }, []);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+      };
+    
+      useFocusEffect(
+        useCallback(() => {
+          fetchData();
+        }, [])
+      );
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;

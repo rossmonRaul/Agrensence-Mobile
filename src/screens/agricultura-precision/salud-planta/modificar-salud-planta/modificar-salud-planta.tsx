@@ -126,7 +126,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.MenuPrecisionAgriculture.screenName
+                                                ScreenProps.PlantHealthList.screenName
                                             );
                                         },
                                     },
@@ -414,7 +414,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                         {
                             text: 'OK',
                             onPress: () => {
-                                navigation.navigate(ScreenProps.MenuPrecisionAgriculture.screenName as never);
+                                navigation.navigate(ScreenProps.PlantHealthList.screenName as never);
                             },
                         },
                     ]);

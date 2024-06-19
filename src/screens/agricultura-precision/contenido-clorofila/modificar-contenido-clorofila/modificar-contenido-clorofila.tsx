@@ -143,7 +143,7 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.MenuPrecisionAgriculture.screenName as never);
+                        navigation.navigate(ScreenProps.ChlorophyllContentList.screenName as never);
                     },
                 },
             ]);
@@ -289,7 +289,7 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.MenuPrecisionAgriculture.screenName
+                                                ScreenProps.ChlorophyllContentList.screenName
                                             );
                                         },
                                     },

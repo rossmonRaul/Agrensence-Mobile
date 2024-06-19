@@ -137,7 +137,7 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.MenuPrecisionAgriculture.screenName as never);
+                        navigation.navigate(ScreenProps.ChlorophyllContentList.screenName as never);
                     },
                 },
             ]);
