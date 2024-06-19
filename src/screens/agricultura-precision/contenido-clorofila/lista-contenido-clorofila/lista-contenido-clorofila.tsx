@@ -41,7 +41,7 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
     const keyMapping = {
         'Cultivo': 'cultivo',
         'Fecha': 'fecha',
-        'Valor de Clorofila': 'valorDeClorofila',
+        'Valor de Clorofila (μmol m²)': 'valorDeClorofila',
         'Punto de medición': 'codigo',
         'Temperatura': 'temperatura',
         'Humedad': 'humedad',

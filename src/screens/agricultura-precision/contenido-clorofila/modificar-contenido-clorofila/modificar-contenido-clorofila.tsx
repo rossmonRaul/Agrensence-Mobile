@@ -267,8 +267,8 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
 
         //  Se muestra una alerta con opción de aceptar o cancelar
         Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del registro de contenido de clorofila?',
+            'Confirmar eliminación',
+            '¿Estás seguro de que deseas eliminar el registro de contenido de clorofila?',
             [
                 {
                     text: 'Cancelar',
@@ -282,7 +282,7 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
                         // Se ejecuta el cambio de estado
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se actualizó el estado del registro de contenido de clorofila!',
+                                '¡Se eliminó el registro de contenido de clorofila!',
                                 '',
                                 [
                                     {
@@ -564,7 +564,7 @@ export const ModificarContenidoClorofilaScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                <Text style={styles.formText} >Valor de Clorofila</Text>
+                                <Text style={styles.formText} >Valor de Clorofila (μmol m²)</Text>
                                 <TextInput
                                     maxLength={100}
                                     keyboardType='numeric'

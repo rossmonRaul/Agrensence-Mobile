@@ -438,7 +438,7 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                <Text style={styles.formText} >Valor de Clorofila</Text>
+                                <Text style={styles.formText} >Valor de Clorofila (μmol m²)</Text>
                                 <TextInput
                                     maxLength={100}
                                     keyboardType='numeric'

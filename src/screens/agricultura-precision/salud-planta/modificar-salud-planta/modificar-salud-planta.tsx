@@ -119,7 +119,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                         //Se valida si los datos recibidos de la api son correctos
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se elimino el registro de salud de la planta correctamente!',
+                                '¡Se eliminó el registro de salud de la planta correctamente!',
                                 '',
                                 [
                                     {
