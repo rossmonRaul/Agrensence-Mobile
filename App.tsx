@@ -112,7 +112,10 @@ import { ListaContenidoAguaScreen } from './src/screens/agricultura-precision/co
 import { InsertarContenidoAguaScreen } from './src/screens/agricultura-precision/contenido-agua/registro-contenido-agua/registro-contenido-agua';
 import { ModificarContenidoAguaScreen } from './src/screens/agricultura-precision/contenido-agua/modificar-contenido-agua/modificar-contenido-agua';
 
-
+//Cobertura Vegetal
+import { ListaCoberturaVegetalScreen } from './src/screens/agricultura-precision/cobertura-vegetal/lista-cobertura-vegetal/lista-cobertura-vegetal';
+import { InsertarCoberturaVegetalScreen } from './src/screens/agricultura-precision/cobertura-vegetal/registro-cobertura-vegetal/insertar-cobertura-vegetal';
+import { ModificarCoberturaVegetalScreen } from './src/screens/agricultura-precision/cobertura-vegetal/modificar-cobertura-vegetal/modificar-cobertura-vegetal';
 
 
 const Stack = createNativeStackNavigator();
@@ -321,7 +324,9 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.InsertWaterContent.screenName} component={InsertarContenidoAguaScreen } />
             <Stack.Screen name={ScreenProps.ModifyWaterContent.screenName} component={ModificarContenidoAguaScreen } />
 
-
+            <Stack.Screen name={ScreenProps.VegetationcoverList.screenName} component={ListaCoberturaVegetalScreen } />
+            <Stack.Screen name={ScreenProps.InsertVegetationcover.screenName} component={InsertarCoberturaVegetalScreen } />
+            <Stack.Screen name={ScreenProps.ModifyVegetationcover.screenName} component={ModificarCoberturaVegetalScreen } />
 
 
           </Stack.Navigator>

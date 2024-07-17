@@ -108,6 +108,11 @@ export const ScreenProps = {
     InsertWaterContent: { screenName: 'RegistrarContenidoAguaScreen' },
     ModifyWaterContent: { screenName: 'ModificarContenidoAguaScreen' },
 
+        //ContenidoVegetal
+        VegetationcoverList: { screenName: 'ListaCoberturaVegetalScreen' },
+        InsertVegetationcover: { screenName: 'InsertarCoberturaVegetalScreen' },
+        ModifyVegetationcover: { screenName: 'ModificarCoberturaVegetalScreen' },
+
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -179,6 +184,7 @@ export const Admin_Agricultura_Precision = [
     { id: 2, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Contenido Clorofila', screen: ScreenProps.ChlorophyllContentList.screenName },
     { id: 3, iconImage: require('./assets/images/icons/cantidad-plantas.png'), text: 'Cantidad de Plantas', screen: ScreenProps.NumberOfPlantsList.screenName },
     { id: 4, iconImage: require('./assets/images/icons/contenidodeagua.png'), text: 'Contenido de Agua', screen: ScreenProps.WaterContentList.screenName },
+    { id: 5, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Cobertura Vegetal', screen: ScreenProps.VegetationcoverList.screenName },
 
 
 ]
