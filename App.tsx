@@ -117,6 +117,9 @@ import { ListaCoberturaVegetalScreen } from './src/screens/agricultura-precision
 import { InsertarCoberturaVegetalScreen } from './src/screens/agricultura-precision/cobertura-vegetal/registro-cobertura-vegetal/insertar-cobertura-vegetal';
 import { ModificarCoberturaVegetalScreen } from './src/screens/agricultura-precision/cobertura-vegetal/modificar-cobertura-vegetal/modificar-cobertura-vegetal';
 
+import { ListaContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/lista-contenido-nitrogeno/lista-contenido-nitrogeno';
+import { InsertarContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/registro-contenido-nitrogeno/insertar-contenido-nitrogeno';
+import { ModificarContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/modificar-contenido-nitrogeno/modificar-contenido-nitrogeno';
 
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
@@ -328,6 +331,9 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.InsertVegetationcover.screenName} component={InsertarCoberturaVegetalScreen } />
             <Stack.Screen name={ScreenProps.ModifyVegetationcover.screenName} component={ModificarCoberturaVegetalScreen } />
 
+            <Stack.Screen name={ScreenProps.NitrogenContentList.screenName} component={ListaContenidoNitrogenoScreen} />
+            <Stack.Screen name={ScreenProps.InsertNitrogenContent.screenName} component={InsertarContenidoNitrogenoScreen}/>
+            <Stack.Screen name={ScreenProps.ModifyNitrogenContent.screenName} component={ModificarContenidoNitrogenoScreen}/>
 
           </Stack.Navigator>
         </NavigationContainer>
