@@ -141,7 +141,7 @@ export const ModificarManoObraScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.ListManoObra.screenName as never);
                     },
                 },
             ]);
@@ -296,7 +296,7 @@ export const ModificarManoObraScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.Menu.screenName
+                                                ScreenProps.ListManoObra.screenName
                                             );
                                         },
                                     },

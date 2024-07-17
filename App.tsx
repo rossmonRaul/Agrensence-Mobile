@@ -104,6 +104,10 @@ import { InsertarContenidoClorofilaScreen } from './src/screens/agricultura-prec
 import { ModificarContenidoClorofilaScreen } from './src/screens/agricultura-precision/contenido-clorofila/modificar-contenido-clorofila/modificar-contenido-clorofila';
 import { AdministracionAgriculturaPrecision } from './src/screens/administacion-agricultura-precision/administacion-agricultura-precision';
 
+import { ListaCantidadDePlantasScreen } from './src/screens/agricultura-precision/cantidad-plantas/lista-cantidad-plantas/lista-cantidad-plantas';
+import { InsertarCantidadDePlantasScreen } from './src/screens/agricultura-precision/cantidad-plantas/registro-cantidad-plantas/insertar-cantidad-plantas';
+import { ModificarCantidadDePlantasScreen } from './src/screens/agricultura-precision/cantidad-plantas/modificar-cantidad-plantas/modificar-cantidad-plantas';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -301,6 +305,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ChlorophyllContentList.screenName} component={ListaContenidoClorofilaScreen } />
             <Stack.Screen name={ScreenProps.InsertChlorophyllContent.screenName} component={InsertarContenidoClorofilaScreen } />
             <Stack.Screen name={ScreenProps.ModifyChlorophyllContent.screenName} component={ModificarContenidoClorofilaScreen } />
+
+            <Stack.Screen name={ScreenProps.NumberOfPlantsList.screenName} component={ListaCantidadDePlantasScreen } />
+            <Stack.Screen name={ScreenProps.InsertNumberOfPlantsContent.screenName} component={InsertarCantidadDePlantasScreen } />
+            <Stack.Screen name={ScreenProps.ModifyNumberOfPlantsContent.screenName} component={ModificarCantidadDePlantasScreen } />
 
           </Stack.Navigator>
         </NavigationContainer>

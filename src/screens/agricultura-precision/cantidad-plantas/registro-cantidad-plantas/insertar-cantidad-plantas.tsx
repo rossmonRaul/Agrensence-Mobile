@@ -20,14 +20,14 @@ import { UseFetchDropdownDataProps } from '../../../../hooks/useFetchDropDownDat
 import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
-import { InsertarRegistroContenidoDeClorofila,ObtenerPuntoMedicionFincaParcela } from '../../../../servicios/ServicioContenidoClorofila';
+import { InsertarRegistroCantidadDePlantas,ObtenerPuntoMedicionFincaParcela } from '../../../../servicios/ServicioCantidadDePlantas';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 
-export const InsertarContenidoClorofilaScreen: React.FC = () => {
+export const InsertarCantidadDePlantasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
-
+ 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
     const [parcela, setParcela] = useState(null);
@@ -53,10 +53,8 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
         idParcela: parcela,
         idPuntoMedicion:puntoMedicion,
         identificacionUsuario: userData.identificacion,
-        fecha: '',
         cultivo: '',
-        valorDeClorofila:'',
-        observaciones:'',
+        cantidadPromedioMetroCuadrado:'',
         usuarioCreacionModificacion: ''
     });
 
@@ -68,6 +66,34 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
             [key]: value
         }));
     };
+
+
+    const handleValueFinca = (itemValue: any) => {
+        setFinca(itemValue.value);
+        setParcela(null);
+        setPuntoMedicion(null);
+        updateFormulario('idFinca', itemValue.value)
+        obtenerParcelasPorFinca(itemValue.value);
+        let parcelaSort = parcelaDataOriginal.filter(item => item.id === itemValue.value);
+
+    }
+
+    const handleValueParcela = async (itemValue: any) => {
+        setParcela(itemValue.value);
+
+        const fincaParcela = {
+            idFinca: finca,
+            idParcela: itemValue.value
+        }
+
+        setPuntoMedicion(null);
+        updateFormulario('idParcela', itemValue.value)
+        
+        const puntosMedicion = await ObtenerPuntoMedicionFincaParcela(fincaParcela);
+        setPuntosMedicion(puntosMedicion)
+        
+
+    }
 
     const validateFirstForm = () => {
         let isValid = true;
@@ -83,18 +109,12 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
             return;
         }
 
-        if (!formulario.idPuntoMedicion|| formulario.idPuntoMedicion === null) {
+        if (!formulario.idPuntoMedicion || formulario.idPuntoMedicion === null) {
             isValid = false;
             alert('Ingrese el punto de Medición');
             return;
         }
         
-        if (formulario.fecha.trim() === '') {
-            isValid = false;
-            alert('La fecha es requerida.');
-            return isValid;
-        }
-
 
         return isValid;
     };
@@ -107,37 +127,35 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
             return;
         }
         
-        if (formulario.valorDeClorofila.trim() === '') {
-            alert('El campo de valor de clorofila requerido.');
+        if (formulario.cantidadPromedioMetroCuadrado.trim() === '') {
+            alert('El campo de cantidad promedio (m²) requerido.');
             return;
         }
 
-        if (formulario.observaciones.trim() === '') {
-            alert('El campo observaciones es requerido.');
-            return;
-        }
 
+        console.log('formulario antes de insertar')
+        console.log(formulario)
+        console.log('formulario antes de insertar')
+        
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
             idPuntoMedicion: formulario.idPuntoMedicion,
             usuarioCreacionModificacion: userData.identificacion,
-            fecha: formatFecha(formulario.fecha),
             cultivo: formulario.cultivo,
-            valorDeClorofila:formulario.valorDeClorofila,
-            observaciones:formulario.observaciones,
+            cantidadPromedioMetroCuadrado:formulario.cantidadPromedioMetroCuadrado,
         };
         //  Se ejecuta el servicio de insertar problemas asociados a plagas y enfermedades
-        const responseInsert = await InsertarRegistroContenidoDeClorofila(formData);
+        const responseInsert = await InsertarRegistroCantidadDePlantas(formData);
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro el registro de contenido clorofila correctamente!', '', [
+            Alert.alert('¡Se registro el registro de cantidad de plantas correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.ChlorophyllContentList.screenName as never);
+                        navigation.navigate(ScreenProps.NumberOfPlantsList.screenName as never);
                     },
                 },
             ]);
@@ -192,23 +210,6 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
         }
     };
 
-    const onChange = (event, selectedDate, picker) => {
-        const currentDate = selectedDate || new Date(); // Selecciona la fecha actual si no hay ninguna seleccionada
-        switch (picker) {
-            case 'fecha':
-                setShowFecha(Platform.OS === 'ios');
-                setDateFecha(currentDate);
-                break;
-            default:
-                break;
-        }
-
-        if (event.type === 'set') {
-            const formattedDate = formatSpanishDate(currentDate);
-            updateFormulario(picker === 'fecha' ? 'fecha' : '', formattedDate);
-        }
-    };
-
     const handleValueEmpresa = (idEmpresa: number) => {
         setEmpresa(idEmpresa);
         let fincaSort = fincaDataOriginal.filter(item => item.id === userData.idEmpresa.toString());
@@ -222,28 +223,7 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
         }
     }, [userData.idEmpresa, fincaDataOriginal, handleEmpresaCalled]);
 
-    const handleValueFinca = (itemValue: any) => {
-        setFinca(itemValue.value);
-        obtenerParcelasPorFinca(itemValue.value);
-        let parcelaSort = parcelaDataOriginal.filter(item => item.id === itemValue.value);
-        setParcela(null);
-        setPuntoMedicion(null);
-        updateFormulario('idFinca', itemValue.value)
-    }
 
-    const handleValueParcela = async (itemValue: any) => {
-        setParcela(itemValue.value);
-
-        const fincaParcela = {
-            idFinca: finca,
-            idParcela: itemValue.value
-        }
-        
-        const puntosMedicion = await ObtenerPuntoMedicionFincaParcela(fincaParcela);
-        setPuntosMedicion(puntosMedicion)
-        setPuntoMedicion(null); 
-        updateFormulario('idParcela', itemValue.value)
-    }
 
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
         fetchDataFunction: ObtenerFincas,
@@ -259,27 +239,6 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
         labelKey: 'nombre',
         valueKey: 'idParcela',
         idKey: 'idFinca',
-    };
-
-
-    const confirmIOSDate = (picker) => {
-        switch (picker) {
-            case 'fecha':
-                setShowFecha(false);
-                updateFormulario('fecha', formatSpanishDate(dateFecha));
-                break;
-            default:
-                break;
-        }
-    };
-    const toggleDatePicker = (picker) => {
-        switch (picker) {
-            case "fecha":
-                setShowFecha(!showFecha);
-                break;
-            default:
-                break;
-        }
     };
 
     /*  Se utiliza el hook useFetchDropdownData para obtener
@@ -301,12 +260,12 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.ChlorophyllContentList.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.NumberOfPlantsList.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Insertar contenido clorofila</Text>
+                            <Text style={styles.createAccountText} >Insertar cantidad de plantas</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -341,77 +300,6 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
                                         value={puntoMedicion}
                                         onChange={(item) => (setPuntoMedicion(item.value as never), (updateFormulario('idPuntoMedicion', item.value)))}
                                     />
-       
-                                    <Text style={styles.formText} >Fecha</Text>
-                                    {!showFecha && (
-                                        <Pressable
-                                            onPress={() => toggleDatePicker('fecha')}
-
-                                        >
-                                            <TextInput
-                                                style={styles.input}
-                                                placeholder='00/00/00'
-                                                value={formulario.fecha}
-                                                onChangeText={(text) => updateFormulario('fecha', text)}
-                                                editable={false}
-                                                onPressIn={() => toggleDatePicker('fecha')}
-                                            />
-                                        </Pressable>
-
-                                    )}
-
-                                    {showFecha && (
-                                        <DateTimePicker
-                                            mode="date"
-                                            display='spinner'
-                                            value={dateFecha}
-                                            onChange={(event, selectedDate) => onChange(event, selectedDate, 'fecha')}
-                                            style={styles.dateTimePicker}
-                                            maximumDate={new Date()}
-                                            minimumDate={new Date('2015-1-2')}
-                                        />
-                                    )}
-                                    {showFecha && Platform.OS === 'ios' && (
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                justifyContent: "space-around"
-                                            }}
-                                        >
-                                            <TouchableOpacity style={[
-                                                styles.buttonPicker,
-                                                styles.pickerButton,
-                                                { backgroundColor: "#11182711" },
-                                            ]}
-                                                onPress={() => toggleDatePicker('fecha')}
-                                            >
-
-                                                <Text style={[
-                                                    styles.buttonTextPicker,
-                                                    { color: "#075985" }
-                                                ]}>Cancelar</Text>
-
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={[
-                                                styles.buttonPicker,
-                                                styles.pickerButton,
-                                                { backgroundColor: "#11182711" },
-                                            ]}
-                                                onPress={() => confirmIOSDate('fecha')}
-                                            >
-
-                                                <Text style={[
-                                                    styles.buttonTextPicker,
-                                                    { color: "#075985" }
-                                                ]}>Confirmar</Text>
-
-                                            </TouchableOpacity>
-
-                                        </View>
-                                    )}
-                                    
-                                    
-
 
                                     <TouchableOpacity
                                         style={styles.button}
@@ -438,13 +326,13 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                <Text style={styles.formText} >Valor de Clorofila (μmol m²)</Text>
+                                <Text style={styles.formText} >Cantidad Promedio (m²)</Text>
                                 <TextInput
                                     maxLength={100}
                                     keyboardType='numeric'
                                     style={styles.input}
-                                    placeholder="Valor de Clorofila"
-                                    value={formulario.valorDeClorofila}
+                                    placeholder="0.0"
+                                    value={formulario.cantidadPromedioMetroCuadrado}
                                     onChangeText={(text) => {
                                         const numericText = text.replace(/[^0-9.]/g, '');
 
@@ -455,17 +343,8 @@ export const InsertarContenidoClorofilaScreen: React.FC = () => {
                                         if (pointCount > 1) {
                                           return;
                                         }// Elimina caracteres no numéricos menos las comas y puntos
-                                        updateFormulario('valorDeClorofila', numericText);
+                                        updateFormulario('cantidadPromedioMetroCuadrado', numericText);
                                     }}
-                                />
-
-                                <Text style={styles.formText} >Observaciones</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Observaciones"
-                                    value={formulario.observaciones}
-                                    onChangeText={(text) => updateFormulario('observaciones', text)}
-                                    maxLength={200}
                                 />
                               
                                 <TouchableOpacity

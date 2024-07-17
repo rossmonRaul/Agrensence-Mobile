@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
@@ -39,46 +39,46 @@ export const ListaManoObraScreen: React.FC = () => {
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idRegistroManoObra: string, idFinca: string, fecha: string, actividad: string,identificacion:string, trabajador: string,
+    const handleRectanglePress = (idRegistroManoObra: string, idFinca: string, fecha: string, actividad: string, identificacion: string, trabajador: string,
         horasTrabajadas: string, pagoPorHora: string, totalPago: string, estado: string) => {
         navigation.navigate(ScreenProps.ModifyManoObra.screenName, {
             idRegistroManoObra: idRegistroManoObra, idFinca: idFinca, fecha: fecha,
-            actividad: actividad,identificacion:identificacion, trabajador: trabajador, horasTrabajadas: horasTrabajadas, pagoPorHora: pagoPorHora,
+            actividad: actividad, identificacion: identificacion, trabajador: trabajador, horasTrabajadas: horasTrabajadas, pagoPorHora: pagoPorHora,
             totalPago: totalPago, estado: estado
         });
     };
 
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
+    const fetchData = async () => {
+        const formData = { identificacion: userData.identificacion };
+        setSelectedFinca(null)
+        setManoObra([])
 
-            try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasResponse = await ObtenerFincas();
-                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-                setFincas(fincasFiltradas);
+        try {
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            const fincasResponse = await ObtenerFincas();
+            const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+            setFincas(fincasFiltradas);
 
-                //se obtienen la mano de obra para despues poder filtrarlos
-                const manoObreaResponse = await ObtenerDatosRegistroManoObra();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = manoObreaResponse.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
+            //se obtienen la mano de obra para despues poder filtrarlos
+            const manoObreaResponse = await ObtenerDatosRegistroManoObra();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = manoObreaResponse.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
+            setApiData(filteredData);
 
-                setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-        obtenerDatosIniciales();
-    }, []);
-
-
-
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+        }, [])
+    );
 
 
     //funcion para la accion del dropdown de finca
@@ -105,7 +105,7 @@ export const ListaManoObraScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.AdminAdminstration.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertManoObra.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
                     <Text style={styles.textAbove} >Lista de registros de mano obra</Text>
@@ -130,7 +130,7 @@ export const ListaManoObraScreen: React.FC = () => {
                             {manoObra.map((item, index) => (
                                 <TouchableOpacity key={item.idRegistroManoObra} onPress={() => handleRectanglePress(
                                     item.idRegistroManoObra, item.idFinca, item.fecha,
-                                    item.actividad,item.identificacion, item.trabajador, item.horasTrabajadas, item.pagoPorHora,
+                                    item.actividad, item.identificacion, item.trabajador, item.horasTrabajadas, item.pagoPorHora,
                                     item.totalPago, item.estado
                                 )}>
                                     <CustomRectangle

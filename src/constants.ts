@@ -98,11 +98,15 @@ export const ScreenProps = {
     ChlorophyllContentList: { screenName: 'ListaContenidoClorofilaScreen' },
     InsertChlorophyllContent: { screenName: 'RegistrarContenidoClorofilaScreen' },
     ModifyChlorophyllContent: { screenName: 'ModificarContenidoClorofilaScreen' },
+
+    NumberOfPlantsList: { screenName: 'ListaCantidadDePlantasScreen' },
+    InsertNumberOfPlantsContent: { screenName: 'RegistrarCantidadDePlantasScreen' },
+    ModifyNumberOfPlantsContent: { screenName: 'ModificarCantidadDePlantasScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.100.20';
+export const IP_API = '192.168.0.4';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -128,9 +132,8 @@ export const Company_Props = [
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
-    { id: 57, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Mano de obra', screen: ScreenProps.ListManoObra.screenName, datoValidacion: '1' },
-    { id: 58, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
-    { id: 59, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
+    { id: 57, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
+    { id: 58, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
@@ -168,6 +171,7 @@ export const Admin_clima = [
 export const Admin_Agricultura_Precision = [
     { id: 1, iconImage: require('./assets/images/icons/salud-planta.png'), text: 'Salud de la Planta', screen: ScreenProps.PlantHealthList.screenName },
     { id: 2, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Contenido Clorofila', screen: ScreenProps.ChlorophyllContentList.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/cantidad-plantas.png'), text: 'Cantidad de Plantas', screen: ScreenProps.NumberOfPlantsList.screenName },
 ]
 
 
@@ -183,6 +187,7 @@ export const Admin_sensor = [
 export const Admin_ordenCompra = [
     { id: 1, iconImage: require('./assets/images/icons/ordenCompra.png'), text: 'Orden de compra', screen: ScreenProps.ListPurchaseOrder.screenName },
     { id: 2, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Entradas y salidas', screen: ScreenProps.ListInflowsOutflows.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Mano de obra', screen: ScreenProps.ListManoObra.screenName},
 ]
 
 
