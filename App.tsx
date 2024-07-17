@@ -108,6 +108,13 @@ import { ListaCantidadDePlantasScreen } from './src/screens/agricultura-precisio
 import { InsertarCantidadDePlantasScreen } from './src/screens/agricultura-precision/cantidad-plantas/registro-cantidad-plantas/insertar-cantidad-plantas';
 import { ModificarCantidadDePlantasScreen } from './src/screens/agricultura-precision/cantidad-plantas/modificar-cantidad-plantas/modificar-cantidad-plantas';
 
+import { ListaContenidoAguaScreen } from './src/screens/agricultura-precision/contenido-agua/lista-contenido-agua/lista-contenido-agua';
+import { InsertarContenidoAguaScreen } from './src/screens/agricultura-precision/contenido-agua/registro-contenido-agua/registro-contenido-agua';
+import { ModificarContenidoAguaScreen } from './src/screens/agricultura-precision/contenido-agua/modificar-contenido-agua/modificar-contenido-agua';
+
+
+
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -309,6 +316,13 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.NumberOfPlantsList.screenName} component={ListaCantidadDePlantasScreen } />
             <Stack.Screen name={ScreenProps.InsertNumberOfPlantsContent.screenName} component={InsertarCantidadDePlantasScreen } />
             <Stack.Screen name={ScreenProps.ModifyNumberOfPlantsContent.screenName} component={ModificarCantidadDePlantasScreen } />
+
+            <Stack.Screen name={ScreenProps.WaterContentList.screenName} component={ListaContenidoAguaScreen } />
+            <Stack.Screen name={ScreenProps.InsertWaterContent.screenName} component={InsertarContenidoAguaScreen } />
+            <Stack.Screen name={ScreenProps.ModifyWaterContent.screenName} component={ModificarContenidoAguaScreen } />
+
+
+
 
           </Stack.Navigator>
         </NavigationContainer>
