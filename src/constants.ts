@@ -25,6 +25,9 @@ export const ScreenProps = {
     ListFertilizer: { screenName: 'ListaFertilizantesScreen' },
     RegisterFertilizer: { screenName: 'RegistrarFertilizanteScreen' },
     ModifyFertilizer: { screenName: 'ModificarFertilizanteScreen' },
+    ListApplicationType: { screenName: 'ListaTipoAplicacionScreen' },
+    RegisterApplicationType: { screenName: 'RegistrarTipoAplicacionScreen' },
+    ModifyApplicationType: { screenName: 'ModificarTipoAplicacionScreen' },
     ListQualityFloorScreen: { screenName: 'ListaCalidadSueloScreen' },
     RegisterQualityFloorScreen: { screenName: 'RegistrarCalidadSueloScreen' },
     ModifyQualityFloorScreen: { screenName: 'ModificarCalidadSueloScreen' },
@@ -165,7 +168,7 @@ export const Admin_cultivation = [
 export const Admin_suelo = [
     { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de Fertilizantes', screen: ScreenProps.ListFertilizer.screenName },
     { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
-    //{ id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Recopilacion de la información por análisis', screen: '' },
+    { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Tipo de aplicación', screen: ScreenProps.ListApplicationType.screenName },
 ]
 
 

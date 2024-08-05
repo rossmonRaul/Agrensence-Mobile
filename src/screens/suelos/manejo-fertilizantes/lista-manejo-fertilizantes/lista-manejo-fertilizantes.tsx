@@ -150,6 +150,9 @@ export const ListaFertilizantesScreen: React.FC = () => {
         'Fertilizante': 'fertilizante',
         'Aplicación': 'aplicacion',
         'Dosis': 'dosis',
+
+        'Unidad de medida': 'dosisUnidad',
+
         'Cultivo Tratado': 'cultivoTratado',
         'Acciones Adicionales': 'accionesAdicionales',
         'Condiciones Ambientales ': 'condicionesAmbientales',
@@ -161,12 +164,18 @@ export const ListaFertilizantesScreen: React.FC = () => {
 
     //funcion para que enviarlo a modificar la el manejo de fertilizantes
     const handleRectanglePress = (idManejoFertilizantes: string, idFinca: string, idParcela: string, Fecha: string,
-        Fertilizante: string, Aplicacion: string, Dosis: string,
+        Fertilizante: string, Aplicacion: string, Dosis: string, 
+        
+        dosisUnidad: string,
+
         CultivoTratado: string, AccionesAdicionales: string,
         CondicionesAmbientales: string, Observaciones: string, Estado: string) => {
         navigation.navigate(ScreenProps.ModifyFertilizer.screenName, {
             idmanejoFertilizantes: idManejoFertilizantes, idFinca: idFinca, idParcela: idParcela,
-            fecha: Fecha, fertilizante: Fertilizante, aplicacion: Aplicacion, dosis: Dosis,
+            fecha: Fecha, fertilizante: Fertilizante, aplicacion: Aplicacion, dosis: Dosis, 
+            
+            dosisUnidad: dosisUnidad,
+
             cultivoTratado: CultivoTratado, accionesAdicionales: AccionesAdicionales,
             condicionesAmbientales: CondicionesAmbientales, Observaciones: Observaciones, estado: Estado
         });
@@ -210,6 +219,9 @@ export const ListaFertilizantesScreen: React.FC = () => {
                         return (
                             <TouchableOpacity key={item.idManejoFertilizantes} onPress={() => handleRectanglePress(item.idManejoFertilizantes, item.idFinca, item.idParcela, item.fecha,
                                 item.fertilizante, item.aplicacion, item.dosis,
+
+                                item.dosisUnidad,
+
                                 item.cultivoTratado, item.accionesAdicionales,
                                 item.condicionesAmbientales, item.observaciones, item.estado)}>
                                 <CustomRectangle

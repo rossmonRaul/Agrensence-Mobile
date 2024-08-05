@@ -15,7 +15,7 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { FontAwesome } from '@expo/vector-icons';
-
+import { ObtenerTipoAplicacion } from '../../../../servicios/ServicioTipoAplicacion';
 
 
 export const RegistrarFertilizanteScreen: React.FC = () => {
@@ -24,8 +24,11 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
+    const [TipoAplicacion, setTipoAplicacion] = useState<string[]>([]);
+
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
+    const [selectedTipoAplicacion, setSelectedTipoAplicacion] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
     const [showPicker, setShowPicker] = useState(false);
@@ -41,6 +44,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
         cultivotratado: '',
         fertilizante: '',
         dosis: '',
+        dosisUnidad: '',
         accionesadicionales: '',
         condicionalesambientales: '',
         observaciones: '',
@@ -88,6 +92,11 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
             isValid = false;
             return
         }
+        if (!formulario.dosisUnidad) {
+            alert('Ingrese la Unidad de medida de la dosis');
+            isValid = false;
+            return
+        }
         if (!formulario.accionesadicionales) {
             alert('Ingrese las Acciones Adicionales');
             isValid = false;
@@ -130,6 +139,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
             cultivotratado: formulario.cultivotratado,
             fertilizante: formulario.fertilizante,
             dosis: formulario.dosis,
+            dosisunidad: formulario.dosisUnidad,
             accionesadicionales: formulario.accionesadicionales,
             condicionesambientales: formulario.condicionalesambientales,
             observaciones: formulario.observaciones,
@@ -170,6 +180,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                     });
 
                 setFincas(fincasUnicas);
+                
 
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
                     idFinca: item.idFinca,
@@ -178,6 +189,10 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                 }));
 
                 setParcelas(parcelasUnicas);
+                
+                // Obtener tipos de fertilizantes
+                const TipoAplicacionResponse = await ObtenerTipoAplicacion();
+                setTipoAplicacion(TipoAplicacionResponse.map((TipoAplicacion: any) => TipoAplicacion.nombre));
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -202,6 +217,11 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
         setSelectedParcela('Seleccione una Parcela')
         obtenerParcelasPorFinca(fincaId);
+    };
+
+    const handleTipoAplicacionChange = (item: { label: string; value: string }) => {
+        setSelectedTipoAplicacion(item.value);
+        updateFormulario('aplicacion', item.label);
     };
 
     //se formatea la fecha para que tenga el formato de español
@@ -258,7 +278,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.MenuFloor.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListFertilizer.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
@@ -345,7 +365,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         placeholder="Aplicación"
                                         value={formulario.aplicacion}
                                         onChangeText={(text) => updateFormulario('aplicacion', text)}
-                                    />
+                                    />                                   
                                     <Text style={styles.formText} >Cultivo Tratado</Text>
                                     <TextInput
                                         style={styles.input}
@@ -371,6 +391,22 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
+                                    <Text style={styles.formText} >Unidad de medida</Text>
+                                    <DropdownComponent
+                                        placeholder="Seleccionar Unidad de Dosis"
+                                        data={[
+                                            { label: "Kilogramos (kg)", value: "Kilogramos (kg)" },
+                                            { label: "Gramos (g)", value: "Gramos (g)" },
+                                            { label: "Toneladas (t)", value: "Toneladas (t)" },
+                                            { label: "Litros (L)", value: "Litros (L)" },
+                                            { label: "Mililitros (mL)", value: "Mililitros (mL)" },
+                                            { label: "Partes por millón (ppm)", value: "Partes por millón (ppm)" },
+                                            { label: "Porcentaje (%)", value: "Porcentaje (%)" },
+                                            { label: "Unidades internacionales (UI)", value: "Unidades internacionales (UI)" },
+                                            { label: "Equivalentes (eq)", value: "Equivalentes (eq)" }
+                                        ]}
+                                        value={formulario.dosisUnidad}
+                                        onChange={(selectedItem) => updateFormulario('dosisUnidad', selectedItem.value)} iconName={''}                                />
                                     <Text style={styles.formText} >Acciones Adicionales</Text>
                                     <TextInput
                                         style={styles.input}

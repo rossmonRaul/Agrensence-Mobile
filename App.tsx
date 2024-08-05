@@ -28,6 +28,11 @@ import { ListaParcelasScreen } from "./src/screens/parcelas/lista-parcelas/lista
 import { RegistrarParcelaScreen } from "./src/screens/parcelas/registrar-parcela/registrar-parcela";
 import { ModificarParcelaScreen } from "./src/screens/parcelas/modificar-parcela/modificar-parcela";
 import { ListaFertilizantesScreen } from "./src/screens/suelos/manejo-fertilizantes/lista-manejo-fertilizantes/lista-manejo-fertilizantes";
+//TipoAplicacion
+import { ListaTipoAplicacionScreen } from "./src/screens/suelos/tipo-aplicacion/lista-tipo-aplicacion/lista-tipo-aplicacion";
+import { RegistrarTipoAplicacionScreen } from "./src/screens/suelos/tipo-aplicacion/registrar-tipo-aplicacion/registrar-tipo-aplicacion";
+import { ModificarTipoAplicacionScreen } from "./src/screens/suelos/tipo-aplicacion/modificar-tipo-aplicacion/modificar-tipo-aplicacion";
+
 import { RegistrarFertilizanteScreen } from "./src/screens/suelos/manejo-fertilizantes/registrar-manejo-fertilizantes/registrar-manejo-fertilizantes";
 import { ModificarFertilizanteScreen } from "./src/screens/suelos/manejo-fertilizantes/modificar-manejo-fertilizante/modificar-manejo-fertilizantes";
 import { ListaCalidadSueloScreen } from "./src/screens/suelos/calidad-suelo/lista-calidad-suelo/lista-calidad-suelo";

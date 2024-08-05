@@ -24,6 +24,7 @@ interface RouteParams {
     cultivoTratado: string;
     fertilizante: string;
     dosis: string;
+    dosisUnidad: string;
     accionesAdicionales: string;
     condicionesAmbientales: string;
     Observaciones: string;
@@ -38,7 +39,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
     const [date, setDate] = useState(new Date())
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
     const { idmanejoFertilizantes, idFinca, idParcela, fecha, aplicacion, cultivoTratado,
-        fertilizante, dosis, accionesAdicionales, condicionesAmbientales,
+        fertilizante, dosis, dosisUnidad, accionesAdicionales, condicionesAmbientales,
         Observaciones, estado } = route.params as RouteParams;
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
@@ -57,6 +58,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
         cultivotratado: cultivoTratado,
         fertilizante: fertilizante,
         dosis: dosis,
+        dosisUnidad: dosisUnidad,
         accionesadicionales: accionesAdicionales,
         condicionesAmbientales: condicionesAmbientales,
         observaciones: Observaciones,
@@ -105,6 +107,11 @@ export const ModificarFertilizanteScreen: React.FC = () => {
             isValid = false;
             return
         }
+        if (!formulario.dosisUnidad) {
+            alert('Ingrese la unidad de la dosis');
+            isValid = false;
+            return
+        }
         if (!formulario.accionesadicionales) {
             alert('Ingrese las Acciones Adicionales');
             isValid = false;
@@ -148,6 +155,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
             cultivotratado: formulario.cultivotratado,
             fertilizante: formulario.fertilizante,
             dosis: formulario.dosis,
+            dosisUnidad: formulario.dosisUnidad,
             accionesadicionales: formulario.accionesadicionales,
             condicionesAmbientales: formulario.condicionesAmbientales,
             observaciones: formulario.observaciones,
@@ -469,6 +477,23 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
+                                    <Text style={styles.formText} >Unidad de medida</Text>
+                                    <DropdownComponent
+                                        placeholder="Seleccionar Unidad de Dosis"
+                                        data={[
+                                            { label: "Kilogramos (kg)", value: "Kilogramos (kg)" },
+                                            { label: "Gramos (g)", value: "Gramos (g)" },
+                                            { label: "Toneladas (t)", value: "Toneladas (t)" },
+                                            { label: "Litros (L)", value: "Litros (L)" },
+                                            { label: "Mililitros (mL)", value: "Mililitros (mL)" },
+                                            { label: "Partes por millón (ppm)", value: "Partes por millón (ppm)" },
+                                            { label: "Porcentaje (%)", value: "Porcentaje (%)" },
+                                            { label: "Unidades internacionales (UI)", value: "Unidades internacionales (UI)" },
+                                            { label: "Equivalentes (eq)", value: "Equivalentes (eq)" }
+                                        ]}
+                                        value={formulario.dosisUnidad}
+                                        onChange={(selectedItem) => updateFormulario('dosisUnidad', selectedItem.value)} iconName={''} >
+                                    </DropdownComponent>
                                     <Text style={styles.formText} >Acciones Adicionales</Text>
                                     <TextInput
                                         style={styles.input}
