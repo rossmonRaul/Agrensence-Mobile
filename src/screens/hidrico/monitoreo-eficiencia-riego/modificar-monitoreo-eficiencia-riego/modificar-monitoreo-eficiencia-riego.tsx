@@ -30,9 +30,15 @@ interface RouteParams {
     volumenAguaUtilizado: number,
     estadoTuberiasYAccesorios: boolean,
     uniformidadRiego: boolean,
-    estadoAspersores: boolean,
+   // estadoAspersores: boolean,
     estadoCanalesRiego: boolean,
     nivelFreatico: number,
+    uniformidadalerta: string,
+    uniformidaddetalles: string,
+    fugasalerta: string,
+    fugasdetalles: string,
+    canalesalerta: string,
+    canalesdetalles: string,
     estado: string
 }
 
@@ -48,9 +54,15 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
         volumenAguaUtilizado,
         estadoTuberiasYAccesorios,
         uniformidadRiego,
-        estadoAspersores,
+        //estadoAspersores,
         estadoCanalesRiego,
         nivelFreatico,
+        uniformidadalerta,
+        uniformidaddetalles,
+        fugasalerta,
+        fugasdetalles,
+        canalesalerta,
+        canalesdetalles,
         estado
     } = route.params as RouteParams;
 
@@ -66,7 +78,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
     const [estadoTuberiasModificar, setEstadoTuberias] = useState(estadoTuberiasYAccesorios || false);
     const [uniformidadRiegoModificar, setUniformidadRiego] = useState(uniformidadRiego || false);
-    const [estadoAspersoresModificar, setEstadoAspersores] = useState(estadoAspersores || false);
+   // const [estadoAspersoresModificar, setEstadoAspersores] = useState(estadoAspersores || false);
     const [estadoCanalesRiegoModificar, setEstadoCanalesRiego] = useState(estadoCanalesRiego || false);
 
 
@@ -85,8 +97,11 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
 
-    const handleCheckBoxChange = (value, setState) => {
-        setState(value);
+    const handleCheckBoxChange = (isChecked, setStateFunction, clearFields) => {
+        setStateFunction(isChecked); // Actualiza el estado del checkbox
+        if (!isChecked) {
+            clearFields(); // Limpiar campos si el checkbox se desmarca
+        }
     };
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -96,9 +111,15 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
         consumoAgua: volumenAguaUtilizado || '',
         estadoTuberias: estadoTuberiasYAccesorios || '',
         uniformidadRiego: uniformidadRiego || '',
-        estadoAspersores: estadoAspersores || '',
+        //estadoAspersores: estadoAspersores || '',
         estadoCanalesRiego: estadoCanalesRiego || '',
         nivelFreatico: nivelFreatico || '',
+        uniformidadalerta: uniformidadalerta|| '',
+        uniformidaddetalles: uniformidaddetalles || '',
+        fugasalerta: fugasalerta || '',
+        fugasdetalles: fugasdetalles || '',
+        canalesalerta: canalesalerta || '',
+        canalesdetalles: canalesdetalles|| '',
     });
 
     //  Esta es una función para actualizar el estado del formulario
@@ -123,9 +144,17 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             volumenAguaUtilizado: formulario.consumoAgua,
             estadoTuberiasYAccesorios: estadoTuberiasModificar,
             uniformidadRiego: uniformidadRiegoModificar,
-            estadoAspersores: estadoAspersoresModificar,
+           // estadoAspersores: estadoAspersoresModificar,
             estadoCanalesRiego: estadoCanalesRiegoModificar,
             nivelFreatico: formulario.nivelFreatico,
+            uniformidadalerta: formulario.uniformidadalerta,
+            uniformidaddetalles: formulario.uniformidaddetalles,
+            fugasalerta: formulario.fugasalerta,
+            fugasdetalles: formulario.fugasdetalles,
+            canalesalerta: formulario.canalesalerta,
+            canalesdetalles: formulario.canalesdetalles,
+            
+            
         };
 
         //  Se ejecuta el servicio de insertar el monitoreo de eficiencia de riego
@@ -367,57 +396,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
-                                    <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Fugas en el Sistema de Riego</Text>
-                                        <CheckBox
-                                            checked={estadoTuberiasModificar}
-                                            checkedIcon='check-square-o'
-                                            uncheckedIcon='square-o'
-                                            checkedColor='#578458'
-                                            uncheckedColor='#578458'
-                                            onPress={() => handleCheckBoxChange(!estadoTuberiasModificar, setEstadoTuberias)}
-                                            containerStyle={styles.checkbox}
-                                        />
-                                    </View>
-
-                                    <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Uniformidad de Riego</Text>
-                                        <CheckBox
-                                            checked={uniformidadRiegoModificar}
-                                            checkedIcon='check-square-o'
-                                            uncheckedIcon='square-o'
-                                            checkedColor='#578458'
-                                            uncheckedColor='#578458'
-                                            onPress={() => handleCheckBoxChange(!uniformidadRiegoModificar, setUniformidadRiego)}
-                                            containerStyle={styles.checkbox}
-                                        />
-                                    </View>
-
-                                    <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Obstruccion en Aspersores</Text>
-                                        <CheckBox
-                                            checked={estadoAspersoresModificar}
-                                            checkedIcon='check-square-o'
-                                            uncheckedIcon='square-o'
-                                            checkedColor='#578458'
-                                            uncheckedColor='#578458'
-                                            onPress={() => handleCheckBoxChange(!estadoAspersoresModificar, setEstadoAspersores)}
-                                            containerStyle={styles.checkbox}
-                                        />
-                                    </View>
-
-                                    <View style={styles.checkboxContainer}>
-                                        <Text style={styles.formText}>Obstrucción en Canales de Riego</Text>
-                                        <CheckBox
-                                            checked={estadoCanalesRiegoModificar}
-                                            checkedIcon='check-square-o'
-                                            uncheckedIcon='square-o'
-                                            checkedColor='#578458'
-                                            uncheckedColor='#578458'
-                                            onPress={() => handleCheckBoxChange(!estadoCanalesRiegoModificar, setEstadoCanalesRiego)}
-                                            containerStyle={styles.checkbox}
-                                        />
-                                    </View>
+                                   
                                     <Text style={styles.formText} >Nivel freático</Text>
                                     <TextInput
                                         maxLength={50}
@@ -430,6 +409,142 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
+                                        <View style={styles.checkboxContainer}>
+                                          <Text style={styles.formText}>Fugas en el Sistema de Riego</Text>
+                                            <CheckBox
+                                              checked={estadoTuberiasModificar}
+                                                checkedIcon='check-square-o'
+                                                 uncheckedIcon='square-o'
+                                                    checkedColor='#578458'
+                                                     uncheckedColor='#578458'
+                                                     onPress={() => handleCheckBoxChange(
+                                                       !estadoTuberiasModificar,
+                                                       setEstadoTuberias, // Asegúrate de usar la función correcta
+                                                       () => {
+                                                        updateFormulario('fugasalerta', ''); // Limpiar campo
+                                                         updateFormulario('fugasdetalles', ''); // Limpiar campo
+                                                        }
+                                                     )}
+                                                  containerStyle={styles.checkbox}
+                                           />
+                                     </View>
+
+                                        {estadoTuberiasModificar && (
+                                           <>
+                                              <Text style={styles.formText}>Rango de Alerta de fugas en el sistema de riego:</Text>
+                                                  <DropdownComponent
+                                                   placeholder="Seleccione"
+                                                    data={[
+                                                    { label: "Bajo", value: "Bajo" },
+                                                    { label: "Medio", value: "Medio" },
+                                                    { label: "Alto", value: "Alto" },
+                                                    ]}
+                                                   value={formulario.fugasalerta}
+                                                    iconName=""
+                                                     onChange={(selectedItem) => updateFormulario('fugasalerta', selectedItem.value)}
+                                                 />
+                                            <Text style={styles.formText}>Detalles de fugas en el sistema de riego:</Text>
+                                               <TextInput
+                                                 style={styles.input}
+                                                 placeholder="Detalles"
+                                                  value={formulario.fugasdetalles}
+                                                  onChangeText={(text) => updateFormulario('fugasdetalles', text)}
+                                                   maxLength={200}
+                                                />
+                                            </>
+                                        )}
+
+                                    <View style={styles.checkboxContainer}>
+                                      <Text style={styles.formText}>Uniformidad de Riego</Text>
+                                       <CheckBox
+                                       checked={uniformidadRiegoModificar}
+                                        checkedIcon='check-square-o'
+                                        uncheckedIcon='square-o'
+                                        checkedColor='#578458'
+                                        uncheckedColor='#578458'
+                                         onPress={() => handleCheckBoxChange(
+                                        !uniformidadRiegoModificar,
+                                           setUniformidadRiego, // Asegúrate de usar la función correcta
+                                        () => {
+                                      updateFormulario('uniformidadalerta', ''); // Limpiar campo
+                                      updateFormulario('uniformidaddetalles', ''); // Limpiar campo
+                                      }
+                                    )}
+                                       containerStyle={styles.checkbox}
+                                     />
+                                  </View>
+
+                                {uniformidadRiegoModificar && (
+                                  <>
+                                  <Text style={styles.formText}>Rango de Alerta de Uniformidad de riego:</Text>
+                                  <DropdownComponent
+                                  placeholder="Seleccione"
+                                   data={[
+                                     { label: "Bajo", value: "Bajo" },
+                                     { label: "Medio", value: "Medio" },
+                                     { label: "Alto", value: "Alto" },
+                                    ]}
+                                   value={formulario.uniformidadalerta}
+                                   iconName=""
+                                    onChange={(selectedItem) => updateFormulario('uniformidadalerta', selectedItem.value)}
+                                   />
+                                  <Text style={styles.formText}>Detalles de Uniformidad de riego:</Text>
+                                 <TextInput
+                                   style={styles.input}
+                                    placeholder="Detalles"
+                                     value={formulario.uniformidaddetalles}
+                                     onChangeText={(text) => updateFormulario('uniformidaddetalles', text)}
+                                      maxLength={200}
+                                    />
+                                    </>
+                                  )}
+
+                                   <View style={styles.checkboxContainer}>
+                                     <Text style={styles.formText}>Obstrucción Canales de Riego</Text>
+                                         <CheckBox
+                                         checked={estadoCanalesRiegoModificar}
+                                         checkedIcon='check-square-o'
+                                         uncheckedIcon='square-o'
+                                         checkedColor='#578458'
+                                         uncheckedColor='#578458'
+                                        onPress={() => handleCheckBoxChange(
+                                          !estadoCanalesRiegoModificar,
+                                         setEstadoCanalesRiego, // Asegúrate de usar la función correcta
+                                         () => {
+                                            updateFormulario('canalesalerta', ''); // Limpiar campo
+                                            updateFormulario('canalesdetalles', ''); // Limpiar campo
+                                           }
+                                         )}
+                                          containerStyle={styles.checkbox}
+                                           />
+                                         </View>
+
+                                    {estadoCanalesRiegoModificar && (
+                                      <>
+                                      <Text style={styles.formText}>Rango de Alerta de Obstrucción en Canales de Riego:</Text>
+                                      <DropdownComponent
+                                       placeholder="Seleccione"
+                                         data={[
+                                          { label: "Bajo", value: "Bajo" },
+                                            { label: "Medio", value: "Medio" },
+                                             { label: "Alto", value: "Alto" },
+                                         ]}
+                                           value={formulario.canalesalerta}
+                                           iconName=""
+                                              onChange={(selectedItem) => updateFormulario('canalesalerta', selectedItem.value)}
+                                            />
+                                            <Text style={styles.formText}>Detalles de Obstrucción en Canales de Riego:</Text>
+                                            <TextInput
+                                             style={styles.input}
+                                              placeholder="Detalles"
+                                               value={formulario.canalesdetalles}
+                                                onChangeText={(text) => updateFormulario('canalesdetalles', text)}
+                                                    maxLength={200}
+                                               />
+       
+                                              </>
+                                  )}
+                                    
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={async () => {

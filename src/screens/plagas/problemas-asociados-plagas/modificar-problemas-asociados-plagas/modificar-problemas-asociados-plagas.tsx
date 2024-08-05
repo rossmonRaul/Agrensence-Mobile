@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View,Button, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,19 +21,28 @@ import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';;
 import { ModificarRegistroSeguimientoPlagasYEnfermedades, CambiarEstadoRegistroSeguimientoPlagasYEnfermedades } from '../../../../servicios/ServicioPlagas&Enfermedades';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {DesactivarDocumentoProblemasDePlagas, InsertarDocumentacionProblemasDePlagas, ObtenerDocumentacionProblemasDePlagas } from '../../../../servicios/ServicioPlagas&Enfermedades';
+import * as DocumentPicker from "expo-document-picker";
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import { Buffer } from 'buffer';
+import * as base64js from 'base64-js';
+
 
 interface RouteParams {
-    idRegistroSeguimientoPlagasYEnfermedades: string,
-    idFinca: string,
-    idParcela: string,
-    fecha: string,
-    cultivo: string,
-    plagaEnfermedad: string,
-    incidencia: string,
-    metodologiaEstimacion: string,
-    problema: string,
-    accionTomada: string,
-    estado: string
+    idRegistroSeguimientoPlagasYEnfermedades: string;
+    idFinca: string;
+    idParcela: string;
+    fecha: string;
+    cultivo: string;
+    plagaEnfermedad: string;
+    incidencia: string;
+    metodologiaEstimacion: string;
+    problema: string;
+    accionTomada: string;
+    valor: string;
+    estado: string;
 }
 
 export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
@@ -52,6 +61,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
         metodologiaEstimacion,
         problema,
         accionTomada,
+        valor,
         estado
     } = route.params as RouteParams;
 
@@ -62,21 +72,29 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
     const [fincaDataOriginal, setFincaDataOriginal] = useState<DropdownData[]>([]);
     const [parcelaDataOriginal, setParcelaDataOriginal] = useState<DropdownData[]>([]);
     const [handleEmpresaCalled, setHandleEmpresaCalled] = useState(false);
-
-
+    const [showPicker, setShowPicker] = useState(false);
+    const [date, setDate] = useState(new Date())
+    const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
+    const [addFiles, setAddFiles] = useState<any[]>([]);
+    const [deleteFiles, setDeleteFiles] = useState<{ idDocumento?: number }[]>([]);
+ 
+    const [loading, setLoading] = useState(false);
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
-
     const [showFecha, setShowFecha] = useState(false);
-
     const [dateFecha, setDateFecha] = useState(new Date())
-
+    const [isFirstFormVisible, setFirstFormVisible] = useState(true);
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
+    const [formattedDate, setFormattedDate] = useState('');
+    const [isThirdFormVisible, setThirdFormVisible] = useState(false);
+    const [value, setValue] = useState('');
+ 
 
-
+      
+        
     const handleCheckBoxChange = (value, setState) => {
         setState(value);
     };
@@ -93,18 +111,68 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
         incidencia: incidencia || '',
         metodologiaEstimacion: metodologiaEstimacion || '',
         accionTomada: accionTomada || '',
+        valor: valor,
     });
+    const [formDataDocument] = useState({
+        idRegistroSeguimientoPlagasYEnfermedades: '',
+        Documento: '',
+        NombreDocumento: '',
+        usuarioCreacionModificacion: ''
 
+    });
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
+
+
         setFormulario(prevState => ({
             ...prevState,
             [key]: value
         }));
     };
+    
 
-    // Se defina una función para manejar el modificar cuando le da al boton de guardar
+   
+    const handleTextChange = (text) => {
+        // Elimina caracteres no numéricos excepto puntos
+        let numericText = text.replace(/[^0-9.]/g, '');
+    
+        // Verifica la cantidad de puntos en el texto
+        const pointCount = (numericText.match(/\./g) || []).length;
+    
+        // Si hay más de un punto, no actualiza el estado
+        if (pointCount > 1) {
+          return;
+        }
+    
+        // Si el texto está vacío, simplemente actualiza el valor como una cadena vacía
+        if (numericText === '') {
+          setFormulario(prevState => ({ ...prevState, valor: '' }));
+          return;
+        }
+    
+        // Convierte el texto a número
+        let numericValue = parseFloat(numericText);
+    
+        // Verifica si el valor convertido es un número válido
+        if (isNaN(numericValue)) {
+          setFormulario(prevState => ({ ...prevState, valor: '' }));
+          return;
+        }
+    
+        // Limita el rango entre 0 y 100
+        numericValue = Math.max(0, Math.min(100, numericValue));
+    
+        // Actualiza el formulario con el valor procesado
+        setFormulario(prevState => ({ ...prevState, valor: numericValue.toString() }));
+      };
     const handleModify = async () => {
+        if (selectedFiles.length<1) {
+            alert('Se debe insertar minimo una imagen');
+            return;
+        }
+        try {
+            setLoading(true)
+            setThirdFormVisible(false)
 
         if (formulario.metodologiaEstimacion.trim() === '') {
             alert('El campo Metodología de estimación es requerido.');
@@ -137,32 +205,77 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
             incidencia: formulario.incidencia,
             metodologiaEstimacion: formulario.metodologiaEstimacion,
             accionTomada: formulario.accionTomada,
+            valor: formulario.valor,
         };
         //  Se ejecuta el servicio de modificar el registro problemas asociados a plagas y enfermedades
         const responseInsert = await ModificarRegistroSeguimientoPlagasYEnfermedades(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
+        let errorEnviandoArchivos = false; // Variable para rastrear si hubo un error al enviar archivos
+
+        //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico el registro problemas asociados a plagas y enfermedades!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.MenuPests.screenName as never);
+
+            formDataDocument.idRegistroSeguimientoPlagasYEnfermedades = idRegistroSeguimientoPlagasYEnfermedades
+            formDataDocument.usuarioCreacionModificacion = userData.identificacion
+            for (const file of addFiles) {
+                try {
+
+                    formDataDocument.NombreDocumento = file.name;
+                    formDataDocument.Documento = file.base64;
+
+                    const resultadoDocumento = await InsertarDocumentacionProblemasDePlagas(formDataDocument);
+                    
+                    if (resultadoDocumento.indicador !== 1) {
+                        errorEnviandoArchivos = true; // Marcar que hubo un error
+                    }
+                } catch (error) {
+                    console.error('Error al leer el archivo:', error);
+                }
+            }
+
+
+            for (let documento of deleteFiles) {
+
+                const resultadoDocumento = await DesactivarDocumentoProblemasDePlagas({ idDocumento: documento.idDocumento })
+
+                if (resultadoDocumento.indicador !== 1) {
+                    errorEnviandoArchivos = true; // Marcar que hubo un error
+                }
+
+            }
+
+            if (errorEnviandoArchivos) {
+                alert('Error al insertar uno o varios documentos');
+            } else {
+                Alert.alert('Se Modifico correctamente', '', [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            navigation.navigate(ScreenProps.MenuPests.screenName as never);
+                        },
                     },
-                },
-            ]);
+                ]);
+            }
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            alert(responseInsert.mensaje)
         }
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        setLoading(false)
+        setThirdFormVisible(true)
+    }
     };
 
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
+        
 
-            try {
+           try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-
+                
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))
@@ -173,22 +286,66 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                     });
 
                 setFincas(fincasUnicas);
+                  
 
+                
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
                     idFinca: item.idFinca,
                     idParcela: item.idParcela,
                     nombre: item.nombreParcela,
                 }));
 
-                setParcelas(parcelasUnicas);
+                setParcelas(parcelasUnicas)
+
+                setLoading(true); // Establecer loading a true antes de empezar
+                setFirstFormVisible(false)
+                setSecondFormVisible(false)
+                setThirdFormVisible(false)
+                // Obtener documentos en formato base64
+                const documentos = await ObtenerDocumentacionProblemasDePlagas({ idRegistroSeguimientoPlagasYEnfermedades });
+
+                const archivos: { base64: string; idDocumento: number; name: string; }[] = [];
+
+                // Convertir cada documento base64 a archivo
+                for (const doc of documentos) {
+                    // Crear un objeto que incluya el archivo, su ID asociado, nombre y URI
+                    archivos.push({
+                        base64: doc.documento,
+                        idDocumento: doc.idDocumento,
+                        name: doc.nombreDocumento
+                    });
+                }
+
+                setSelectedFiles(archivos);
+
+                setFormattedDate(formatDateToISO(fecha))
 
             } catch (error) {
                 console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false); // Establecer loading a false cuando termina
+                setFirstFormVisible(true)
             }
         };
 
         obtenerDatosIniciales();
+
+
     }, []);
+    const formatDateToISO = (fecha) => {
+        // Divide la fecha en día, mes y año
+        const [day, month, year] = fecha.split('/');
+
+        // Asegura que el día y el mes tengan dos dígitos
+        const dayFormatted = day.padStart(2, '0');
+        const monthFormatted = month.padStart(2, '0');
+
+        // Retorna la fecha en formato 'yyyy-mm-dd'
+        return `${year}-${monthFormatted}-${dayFormatted}`;
+    };
+
+
+
     useEffect(() => {
         // Buscar la finca correspondiente, esto se hace para cargar las parcelas que se necesitan en dropdown porque
         // problemas asociados a plagas y enfermedades tiene una finca asignada
@@ -219,6 +376,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
     }, [idParcela, parcelas]);
 
     const validateFirstForm = () => {
+      
         let isValid = true;
 
         if (formulario.fecha.trim() === '') {
@@ -255,17 +413,41 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
         return isValid;
     };
 
+
+
+    const validateSecondForm = () => {
+        let isValid = true;
+
+        if (formulario.metodologiaEstimacion.trim() === '') {
+            alert('El campo Metodología de estimación es requerido.');
+            return;
+        }
+
+        if (formulario.accionTomada.trim() === '') {
+            alert('El campo Acción tomada es requerido.');
+            return;
+        }
+        if (!formulario.idFinca || formulario.idFinca === null) {
+            alert('Ingrese la Finca');
+            return;
+        }
+        if (!formulario.idParcela || formulario.idParcela === null) {
+            alert('Ingrese la Parcela');
+            return;
+        }
+        return isValid
+    }
+    //funcion para desactivar o activar el estado
     const handleChangeAccess = async () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idRegistroSeguimientoPlagasYEnfermedades: idRegistroSeguimientoPlagasYEnfermedades,
         };
 
-
         //  Se muestra una alerta con opción de aceptar o cancelar
         Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del registro problemas asociados a plagas y enfermedades?',
+            'Confirmar eliminación',
+            '¿Estás seguro de que deseas eliminar el registro de salud de la planta?',
             [
                 {
                     text: 'Cancelar',
@@ -274,19 +456,19 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                 {
                     text: 'Aceptar',
                     onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
+                        //  Se ejecuta el servicio para cambiar el estado 
                         const responseInsert = await CambiarEstadoRegistroSeguimientoPlagasYEnfermedades(formData);
-                        // Se ejecuta el cambio de estado
+                        //Se valida si los datos recibidos de la api son correctos
                         if (responseInsert.indicador === 1) {
                             Alert.alert(
-                                '¡Se actualizó el estado del registro problemas asociados a plagas y enfermedades!',
+                                '¡Se eliminó el registro de problemas asociados a plagas y enfermedades!',
                                 '',
                                 [
                                     {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.MenuPests.screenName
+                                                ScreenProps.ListPestsDiseases.screenName
                                             );
                                         },
                                     },
@@ -301,6 +483,8 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
             { cancelable: false }
         );
     };
+
+
 
     const handleValueEmpresa = (idEmpresa: number) => {
         setEmpresa(idEmpresa);
@@ -388,6 +572,97 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
 
     useFetchDropdownData(obtenerFincaProps);
     useFetchDropdownData(obtenerParcelaProps);
+   
+    const handleDocumentSelection = async () => {
+        try {
+            const docRes = await DocumentPicker.getDocumentAsync({
+                type: ['image/*', 'video/*'] // Permite seleccionar archivos de imagen o video'
+            });
+
+            const assets = docRes.assets;
+            if (!assets) return;
+
+            const acceptedFiles = assets.map(file => ({
+                name: file.name,
+                uri: file.uri,
+                type: file.mimeType || 'application/octet-stream', // Establecer un valor predeterminado si mimeType es undefined
+                size: file.size || 0, // Establecer un valor predeterminado si size es undefined
+            }));
+
+            // Validar que no se exceda el límite de 5 archivos
+            if (selectedFiles.length + acceptedFiles.length > 3) {
+                alert('No se puede ingresar más de 3 archivos');
+                return;
+            }
+
+            // Validar cada archivo para verificar el tamaño
+            const validFiles = acceptedFiles.filter(file => {
+                // Verificar tamaño (mayor de 5 MB)
+                if (file.size > 5 * 1024 * 1024) { // 5 MB en bytes
+                    alert(`El archivo es mayor de 5 MB`);
+                    return false;
+                }
+                return true;
+            });
+
+            // Convertir los archivos seleccionados a base64
+            const base64Files = await Promise.all(validFiles.map(async (file) => {
+                const response = await fetch(file.uri);
+                const blob = await response.blob();
+
+                // Usar FileReader para leer el blob
+                const reader = new FileReader();
+
+                return new Promise<{ base64: string; name: string; }>((resolve, reject) => {
+                    reader.onloadend = () => {
+                        // Asegúrate de que reader.result sea de tipo `string`
+                        if (typeof reader.result === 'string') {
+                            resolve({
+                                base64: reader.result,
+                                name: file.name
+                            });
+                        } else {
+                            reject(new Error('Error al convertir el archivo a base64'));
+                        }
+                    };
+                    reader.onerror = reject;
+
+                    // Iniciar la lectura del blob
+                    reader.readAsDataURL(blob);
+                });
+            }));
+
+            // Actualiza el estado con los archivos convertidos a base64
+            setSelectedFiles([...selectedFiles, ...base64Files]);
+            setAddFiles([...addFiles, ...base64Files]);
+
+        } catch (error) {
+            console.error('Error al manejar la selección de documentos:', error);
+        }
+    };
+
+
+
+    const handleRemoveFile = (indexToRemove: number, idDocumentoToRemove: number) => {
+        const newFiles = selectedFiles.filter((_, index) => index !== indexToRemove);
+        setSelectedFiles(newFiles);
+
+        // Obtener el nombre del archivo correspondiente en files
+        const fileNameToDelete = selectedFiles[indexToRemove].name;
+
+        // Buscar el archivo correspondiente en addFiles y eliminarlo
+        const addNewFiles = addFiles.filter(file => file.name !== fileNameToDelete);
+
+        setAddFiles(addNewFiles);
+
+        // Usa idDocumentoToRemove según sea necesario
+        if (idDocumentoToRemove !== undefined) {
+
+            setDeleteFiles(prevDeleteFiles => [...prevDeleteFiles, { idDocumento: idDocumentoToRemove }]);
+        }
+
+    };
+
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView
@@ -409,7 +684,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                         </View>
 
                         <View style={styles.formContainer}>
-                            {!isSecondFormVisible ? (
+                        {isFirstFormVisible && (
                                 <>
                                     <Text style={styles.formText} >Fecha</Text>
                                     {!showFecha && (
@@ -502,23 +777,44 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         maxLength={50}
 
                                     />
-                                    <Text style={styles.formText} >Incidencia</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Incidencia"
+                                   <Text style={styles.formText} >Valoracion</Text>
+                                    <DropdownComponent
+                                        placeholder="Seleccione..."
+                                        data={[
+                                            { label: "Incidencia", value: "Incidencia" },
+                                            { label: "Severidad", value: "Severidad" },
+                                           
+                                        ]}
                                         value={formulario.incidencia}
-                                        onChangeText={(text) => updateFormulario('incidencia', text)}
-                                        maxLength={50}
+                                        iconName=""
+                                        onChange={(selectedItem) => {
+
+                                            // Actualizar el formulario con la selección de la categoría
+                                            updateFormulario('incidencia', selectedItem.value);
+                                        }}
                                     />
-
-
-                                    <TouchableOpacity
+                                           <View style={styles.container}>
+                                              <Text style={styles.formText}>Valor(%):</Text>
+                                                <TextInput
+                                                  maxLength={5}
+                                                  keyboardType='numeric'
+                                                  style={styles.input}
+                                                  placeholder="Valor"
+                                                  value={formulario.valor === '' ? '' : `${formulario.valor}%`} // Muestra el porcentaje o vacío
+                                                  onChangeText={handleTextChange}
+                                                    />
+                                            </View>
+      
+                                           
+                                <TouchableOpacity
                                         style={styles.button}
                                         onPress={async () => {
+
                                             const isValid = validateFirstForm();
 
                                             if (isValid) {
                                                 setSecondFormVisible(true);
+                                                setFirstFormVisible(false)
                                             }
 
                                         }}
@@ -526,8 +822,9 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         <Text style={styles.buttonText}>Siguiente</Text>
                                     </TouchableOpacity>
                                 </>
-
-                            ) : (<>
+                            
+                        )}
+                            {isSecondFormVisible && (<>
                                 <Text style={styles.formText} >Metodología de estimación</Text>
                                 <TextInput
                                     style={styles.input}
@@ -572,54 +869,105 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         updateFormulario('idParcela', selectedItem.value);
                                     }}
                                 />
-                                <TouchableOpacity
-                                    style={styles.backButton}
-                                    onPress={() => {
-                                        setSecondFormVisible(false);
-                                    }}
-                                >
-                                    <View style={styles.buttonContent}>
-                                        <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
-                                        <Text style={styles.buttonTextBack}> Atrás</Text>
+                                  <View style={styles.buttonContainer}>
+                                        <TouchableOpacity
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(false);
+                                                setFirstFormVisible(true)
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.button, { width: 150 }]}
+                                            onPress={() => {
+                                                const isValid = validateSecondForm();
+
+                                                if (isValid) {
+                                                    setThirdFormVisible(true);
+                                                    setSecondFormVisible(false)
+                                                }
+
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Text style={styles.buttonText}>Siguiente </Text>
+                                                <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyle} />
+                                            </View>
+                                        </TouchableOpacity>
                                     </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => {
-                                        handleModify();
-                                    }}
-                                >
-                                    <View style={styles.buttonContent}>
-                                        <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Guardar cambios</Text>
+                            </>
+                            )}
+                     {isThirdFormVisible && (<>
+
+                      <Text style={styles.formText} >Documentos</Text>
+
+                           {/* Área de suelta de archivos */}
+                           <TouchableOpacity
+                            style={[styles.button, { backgroundColor: 'lightgray', marginTop: 10 }]}
+                            onPress={handleDocumentSelection}
+                            >
+                           <Text style={styles.buttonTextBack}>Seleccionar Archivos</Text>
+                           </TouchableOpacity>
+                          {/* Mostrar archivos seleccionados */}
+                           <View style={styles.fileList}>
+                              {selectedFiles.map((file, index) => (
+                                   <View key={index} style={styles.fileItem}>
+
+                                       <Text style={styles.fileName}>
+                                      {file.name.length > 30 ? `${file.name.substring(0, 30)}...` : file.name}
+                                       </Text>
+
+                                     <Button title="X" onPress={() => handleRemoveFile(index, file.idDocumento)} />
+                                 </View>
+
+                                ))}
+                          </View>
+
+                          <View style={styles.buttonContainer}>
+                                        <TouchableOpacity
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(true);
+                                                setThirdFormVisible(false)
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.button, { width: 150 }]}
+                                            onPress={() => {
+                                                handleModify();
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                                <Text style={styles.buttonText}> Guardar</Text>
+                                            </View>
+                                        </TouchableOpacity>
+
                                     </View>
-                                </TouchableOpacity>
-                                {estado === 'Activo'
-                                    ? <TouchableOpacity
+
+                                    <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
                                             handleChangeAccess();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
-                                            <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Desactivar</Text>
+                                            <Ionicons name="trash-bin" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}> Eliminar</Text>
                                         </View>
                                     </TouchableOpacity>
-                                    :
-                                    <TouchableOpacity
-                                        style={styles.button}
-                                        onPress={() => {
-                                            handleChangeAccess();
-                                        }}
-                                    >
-                                        <View style={styles.buttonContent}>
-                                            <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Activar</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                }
-                            </>
+
+                                 </>
                             )}
 
                         </View>

@@ -37,11 +37,12 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
         'Volumen de agua utilizado': 'volumenAguaUtilizado',
+         'Nivel freático': 'nivelFreatico',
         'Fugas': 'estadoTuberiasYAccesorios',
         'Uniformidad del riego': 'uniformidadRiego',
-        'Obstrucciones en Aspersores': 'estadoAspersores',
+      //  'Obstrucciones en Aspersores': 'estadoAspersores',
         'Obstrucciones en Canales': 'estadoCanalesRiego',
-        'Nivel freático': 'nivelFreatico',
+       
         'Estado': 'estado'
     };
 
@@ -57,10 +58,16 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 volumenAguaUtilizado: originalDataItem.volumenAguaUtilizado,
                 estadoTuberiasYAccesorios: originalDataItem.estadoTuberiasYAccesorios,
                 uniformidadRiego: originalDataItem.uniformidadRiego,
-                estadoAspersores: originalDataItem.estadoAspersores,
+                //estadoAspersores: originalDataItem.estadoAspersores,
                 estadoCanalesRiego: originalDataItem.estadoCanalesRiego,
                 nivelFreatico: originalDataItem.nivelFreatico,
                 idParcela: idParcela,
+                uniformidadalerta: originalDataItem.uniformidadalerta,
+                uniformidaddetalles: originalDataItem.uniformidaddetalles,
+                fugasalerta: originalDataItem.fugasalerta,
+                fugasdetalles: originalDataItem.fugasdetalles,
+                canalesalerta: originalDataItem.canalesalerta,
+                canalesdetalles: originalDataItem.canalesdetalles,
                 estado: estado
             });
         } else {
@@ -108,7 +115,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                     estado: item.estado === 0 ? 'Inactivo' : 'Activo',
                     estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No Tiene Fugas' : 'Tiene Fugas',
                     uniformidadRiego: item.uniformidadRiego === false ? 'No Tiene Uniformidad' : 'Tiene Uniformidad',
-                    estadoAspersores: item.estadoAspersores === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
+                    //estadoAspersores: item.estadoAspersores === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
                     estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
                 }));
                 setOriginalApiData(rotacionCultivosResponse);
@@ -233,8 +240,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {eficienciaRiego.map((item, index) => (
                         <TouchableOpacity key={item.idMonitoreoEficienciaRiego} onPress={() => handleRectanglePress(
-                            item.idMonitoreoEficienciaRiego, item.idFinca, item.idParcela, item.estado
-                        )}>
+                            item.idMonitoreoEficienciaRiego, item.idFinca, item.idParcela, item.estado )}>
                             <CustomRectangle
                                 key={item.idFinca}
                                 data={processData([item], keyMapping)?.data || []} />

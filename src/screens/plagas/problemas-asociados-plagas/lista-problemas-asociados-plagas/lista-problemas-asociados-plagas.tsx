@@ -40,11 +40,12 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
         'Incidencia': 'incidencia',
         'Metodología de estimación': 'metodologiaEstimacion',
         'Acción tomada': 'accionTomada',
-        'Estado': 'estado'
+        'Estado': 'estado',
+        
     };
 
     const handleRectanglePress = (idRegistroSeguimientoPlagasYEnfermedades: string, idFinca: string, idParcela: string, fecha: string,
-        cultivo: string, plagaEnfermedad: string, incidencia: string, metodologiaEstimacion: string, problema: string, accionTomada: string, estado: string) => {
+        cultivo: string, plagaEnfermedad: string, incidencia: string, metodologiaEstimacion: string, problema: string, accionTomada: string,valor: string, estado: string) => {
         // Encuentra el elemento correspondiente en los datos originales utilizando el ID único
 
         // Si se encuentra el elemento correspondiente, puedes acceder a sus propiedades directamente
@@ -59,6 +60,7 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
             metodologiaEstimacion: metodologiaEstimacion,
             problema: problema,
             accionTomada: accionTomada,
+            valor: valor,
             estado: estado
         });
 
@@ -203,7 +205,7 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
                     {problemasAsociadosPlagas.map((item, index) => (
                         <TouchableOpacity key={item.idRegistroSeguimientoPlagasYEnfermedades} onPress={() => handleRectanglePress(
                             item.idRegistroSeguimientoPlagasYEnfermedades, item.idFinca, item.idParcela, item.fecha, item.cultivo, item.plagaEnfermedad, item.incidencia,
-                            item.metodologiaEstimacion, item.problema, item.accionTomada, item.estado
+                            item.metodologiaEstimacion, item.problema, item.accionTomada, item.valor, item.estado
                         )}>
                             <CustomRectangle
                                 key={item.idFinca}
