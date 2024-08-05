@@ -119,6 +119,11 @@ export const ScreenProps = {
     NitrogenContentList: { screenName: 'ListaContenidoNitrogenoScreen'},
     InsertNitrogenContent: { screenName: 'RegistrarContenidoNitrogenoScreen' },
     ModifyNitrogenContent: { screenName: 'ModificarContenidoNitrogenoScreen' },
+
+    ListCatalogoActividades: { screenName: 'ListaCatalogoActividadesPTScreen' },
+    RegisterCatalogoActividad: { screenName: 'RegistrarCatalogoActividadPTScreen' },
+    ModifyCatalogoActividad: { screenName: 'ModificarCatalogoActividadPTScreen' },
+
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -151,6 +156,7 @@ export const Company_Props = [
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
     { id: 57, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
     { id: 58, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
+    { id: 59, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de actividades de preparación de terreno', screen: ScreenProps.ListCatalogoActividades.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },

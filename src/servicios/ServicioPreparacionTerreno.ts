@@ -6,12 +6,21 @@ export const ObtenerDatosPreparacionTerreno = async () => {
     return await ProcesarDatosApi('GET', url, '');
 }
 
+export const ObtenerDatosPreparacionTerrenoActividad = async () => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosPreparacionTerrenoActividad`;
+    return await ProcesarDatosApi('GET', url, '');
+}
+
+export const ObtenerDatosPreparacionTerrenoMaquinaria = async () => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosPreparacionTerrenoMaquinaria`;
+    return await ProcesarDatosApi('GET', url, '');
+}
+
 export const InsertarPreparacionTerrenos = async (data: any) => {
     const url = `${API_URL}/api/v1.0/${controlador}/InsertarPreparacionTerreno`;
     return await ProcesarDatosApi('POST', url, data);
 }
 
-/*Metodos PUT */
 export const ModificarPreparacionTerreno = async (data: any) => {
     const url = `${API_URL}/api/v1.0/${controlador}/ModificarPreparacionTerreno`;
     return await ProcesarDatosApi('PUT', url, data);

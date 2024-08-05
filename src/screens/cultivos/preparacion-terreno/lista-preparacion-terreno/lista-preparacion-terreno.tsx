@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { Ionicons } from '@expo/vector-icons';
-//import { ObtenerFertilizantes } from '../../../../servicios/ServicioFertilizantes';
-import { ObtenerDatosPreparacionTerreno } from '../../../../servicios/ServicioPreparacionTerreno';
+import { ObtenerDatosPreparacionTerreno, ObtenerDatosPreparacionTerrenoActividad, ObtenerDatosPreparacionTerrenoMaquinaria } from '../../../../servicios/ServicioPreparacionTerreno';
 import { processData } from '../../../../utils/processData';
 import { CustomRectangle } from '../../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../../constants';
 import { useAuth } from '../../../../hooks/useAuth';
@@ -17,12 +16,16 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { RelacionFincaParcela, UserDataInterface } from '../../../../interfaces/userDataInterface';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { LandPreparationDataInterface } from '../../../../interfaces/preparacionTerreno';
-import { ObtenerUsuariosAsignadosPorIdentificacion, ObtenerUsuariosPorRol3 } from '../../../../servicios/ServicioUsuario';
+import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 
+type RootStackParamList = {
+    ListLandPreparation: { reload: boolean };
+};
 
 export const ListaPreparacionTerrenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
+    const route = useRoute<RouteProp<RootStackParamList, 'ListLandPreparation'>>();
 
     const [apiData, setApiData] = useState<LandPreparationDataInterface[]>([]);
     const [preparacionTerrenoFiltradosData, setPreparacionTerrenoFiltrados] = useState<any[]>([]);
@@ -33,139 +36,148 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
+    const [actividades, setActividades] = useState<{ idActividad: number; nombre: string }[]>([]);
+    const [maquinarias, setMaquinarias] = useState<{ idMaquinaria: number; nombre: string }[]>([]);
 
-            try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+    const obtenerDatosIniciales = async () => {
+        const formData = { identificacion: userData.identificacion };
 
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
+        try {
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idFinca)))
+                .map(idFinca => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                    const nombreFinca = relacion ? relacion.nombreFinca : '';
+                    return { idFinca, nombreFinca };
+                });
 
+            setFincas(fincasUnicas);
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
+            const parcelas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idParcela)))
+                .map(idParcela => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    const idFinca = relacion ? relacion.idFinca : -1;
+                    const nombreParcela = relacion ? relacion.nombreParcela : '';
+                    return { idFinca, idParcela, nombreParcela };
+                });
 
-                setParcelas(parcelas);
-                //se obtienen los fertilizantes para despues poder filtrarlos
-                const preparacionTerreno = await ObtenerDatosPreparacionTerreno();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = preparacionTerreno.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
+            setParcelas(parcelas);
 
-                setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+            const preparacionTerreno = await ObtenerDatosPreparacionTerreno();
+            const filteredData = preparacionTerreno.filter(item => item.estado === 1).map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
 
-        obtenerDatosIniciales();
-    }, []);
+            setApiData(filteredData);
 
+            // Obtener actividades y maquinarias
+            const actividadesResponse = await ObtenerDatosPreparacionTerrenoActividad();
+            setActividades(actividadesResponse);
 
-    //funcion para poder filtrar las parcelas por finca
+            const maquinariasResponse = await ObtenerDatosPreparacionTerrenoMaquinaria();
+            setMaquinarias(maquinariasResponse);
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            obtenerDatosIniciales();
+
+            // Limpiar selectores y lista de registros
+            setSelectedFinca(null);
+            setSelectedParcela(null);
+            setParcelasFiltradas([]);
+            setPreparacionTerrenoFiltrados([]);
+
+            return () => {
+            };
+        }, [route.params?.reload])
+    );
+
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-
             const resultado = parcelas.filter(item => item.idFinca === fincaId);
-
             setParcelasFiltradas(resultado);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
         }
     };
-    //se filtra para los fertilizantes por finca
+
     const obtenerPreparacionTerrenoPorFinca = async (fincaId: number) => {
         try {
-
-            const preparacionTerrenoFiltrado = apiData.filter(item => item.idFinca === fincaId)
-            setPreparacionTerrenoFiltrados(preparacionTerrenoFiltrado)
+            const preparacionTerrenoFiltrado = apiData.filter(item => item.idFinca === fincaId);
+            setPreparacionTerrenoFiltrados(preparacionTerrenoFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
-    //se filtra los feritilizantes por finca y parcela seleccionados en el dropdown
+
     const obtenerPreparacionTerrenoPorFincaYParcela = async (fincaId: number, parcelaId: number) => {
         try {
-
-            const fertilizanteFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
-
-            setPreparacionTerrenoFiltrados(fertilizanteFiltrado);
+            const preparacionTerrenoFiltrado = apiData.filter(item => item.idFinca === fincaId && item.idParcela === parcelaId);
+            setPreparacionTerrenoFiltrados(preparacionTerrenoFiltrado);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
-    //funcion para la accion del dropdown de finca
+
     const handleFincaChange = (item: { label: string; value: string }) => {
         const fincaId = parseInt(item.value, 10);
-        //se selecciona el item de finca
         setSelectedFinca(item.value);
-        //se reinicia la seleccion de parcela
-        setSelectedParcela('Seleccione una Parcela')
-        //se obtienen las parcelas de la finca seleccionada
+        setSelectedParcela('Seleccione una Parcela');
         obtenerParcelasPorFinca(fincaId);
-        ///se obtienen los fertilizantes de la finca seleccionada
         obtenerPreparacionTerrenoPorFinca(fincaId);
     };
 
-    //funcion para la accion del dropdown parcela
     const handleParcelaChange = (item: { label: string; value: string }) => {
         const parcelaId = parseInt(item.value, 10);
-
-        //se necesita el fincaId para poder hacer el filtrado
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
-        //se asigna el valor de la parcela en selecteParcela
-        setSelectedParcela(item.value)
-        //si finca Id es null no se puede seleciona ni traer el y mostrar los fertilizantes 
+        setSelectedParcela(item.value);
         if (fincaId !== null) {
-
             obtenerPreparacionTerrenoPorFincaYParcela(fincaId, parcelaId);
         } else {
             console.warn('Selected Finca is null. Cannot fetch preparacion Terreno.');
         }
     };
 
-
-    //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
         'Fecha': 'fecha',
         'Actividad': 'actividad',
         'Maquinaria': 'maquinaria',
+        'Identificación': 'identificacion',
+        'Horas Trabajadas': 'horasTrabajadas',
+        'Pago por Hora': 'pagoPorHora',
+        'Pago Total': 'totalPago',
         'Observaciones': 'observaciones',
-        'Estado': 'estado',
     };
 
-
-
-    //funcion para que enviarlo a modificar la el manejo de fertilizantes
     const handleRectanglePress = (idPreparacionTerreno: string, idFinca: string, idParcela: string, fecha: string,
-        actividad: string, maquinaria: string, observaciones: string, estado: string) => {
+        actividad: string, maquinaria: string, observaciones: string, identificacion: string, horasTrabajadas: string, pagoPorHora: string, estado: string) => {
+        const actividadSeleccionada = actividades.find(act => act.nombre === actividad);
+        const maquinariaSeleccionada = maquinarias.find(maq => maq.nombre === maquinaria);
+
         navigation.navigate(ScreenProps.ModifyLandPreparation.screenName, {
-            idPreparacionTerreno: idPreparacionTerreno, idFinca: idFinca, idParcela: idParcela,
-            fecha: fecha, actividad: actividad, maquinaria: maquinaria, observaciones: observaciones, estado: estado
+            idPreparacionTerreno: idPreparacionTerreno,
+            idFinca: idFinca,
+            idParcela: idParcela,
+            fecha: fecha,
+            idActividad: actividadSeleccionada?.idActividad || null,
+            idMaquinaria: maquinariaSeleccionada?.idMaquinaria || null,
+            observaciones: observaciones,
+            identificacion: identificacion,
+            horasTrabajadas: horasTrabajadas,
+            pagoPorHora: pagoPorHora,
+            estado: estado
         });
     };
-
-
 
     return (
         <View style={styles.container} >
@@ -179,7 +191,6 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.dropDownContainer}>
-                    {/* Dropdown para Fincas */}
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -188,7 +199,6 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                         onChange={handleFincaChange}
                     />
 
-                    {/* Dropdown para Parcelas */}
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
@@ -199,10 +209,9 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {preparacionTerrenoFiltradosData.map((item, index) => {
-
                         return (
                             <TouchableOpacity key={item.idPreparacionTerreno} onPress={() => handleRectanglePress(item.idPreparacionTerreno, item.idFinca, item.idParcela, item.fecha,
-                                item.actividad, item.maquinaria, item.observaciones, item.estado)}>
+                                item.actividad, item.maquinaria, item.observaciones, item.identificacion, item.horasTrabajadas, item.pagoPorHora, item.estado)}>
                                 <CustomRectangle
                                     key={item.idPreparacionTerreno}
                                     data={processData([item], keyMapping)?.data || []} />

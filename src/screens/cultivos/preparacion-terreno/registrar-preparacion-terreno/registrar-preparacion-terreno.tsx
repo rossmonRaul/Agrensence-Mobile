@@ -8,16 +8,11 @@ import { ScreenProps } from '../../../../constants';
 import { useAuth } from '../../../../hooks/useAuth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
-//import { InsertarManejoFertilizantes } from '../../../../servicios/ServicioFertilizantes';
-import { InsertarPreparacionTerrenos } from '../../../../servicios/ServicioPreparacionTerreno';
+import { InsertarPreparacionTerrenos, ObtenerDatosPreparacionTerrenoActividad, ObtenerDatosPreparacionTerrenoMaquinaria } from '../../../../servicios/ServicioPreparacionTerreno';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
-import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
-import { FontAwesome } from '@expo/vector-icons';
-
-
 
 export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -30,106 +25,111 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
     const [showPicker, setShowPicker] = useState(false);
-    const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(new Date());
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
-    //  Se define un estado para almacenar los datos del formulario
+    const [actividades, setActividades] = useState<{ idActividad: number; nombre: string }[]>([]);
+    const [maquinarias, setMaquinarias] = useState<{ idMaquinaria: number; nombre: string }[]>([]);
+
     const [formulario, setFormulario] = useState({
         idFinca: selectedFinca,
         idParcela: selectedParcela,
         fecha: '',
-        actividad: '',
-        maquinaria: '',
+        idActividad: '',
+        idMaquinaria: '',
         observaciones: '',
+        identificacion: '',
+        horasTrabajadas: '',
+        pagoPorHora: '',
+        totalPago: '',
     });
 
-
-    //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
             ...prevState,
             [key]: value
         }));
     };
+
     const validateFirstForm = () => {
         let isValid = true;
 
-        if (!formulario.fecha && !formulario.actividad && !formulario.maquinaria) {
+        if (!formulario.fecha && !formulario.idActividad && !formulario.idMaquinaria) {
             alert('Por favor rellene el formulario');
             isValid = false;
-            return
+            return;
         }
         if (!formulario.fecha) {
             alert('Ingrese una fecha');
             isValid = false;
-            return
+            return;
         }
-        if (!formulario.actividad) {
+        if (!formulario.idActividad) {
             alert('Ingrese una actividad');
             isValid = false;
-            return
+            return;
         }
-        if (!formulario.maquinaria) {
+        if (!formulario.idMaquinaria) {
             alert('Ingrese alguna maquinaria');
             isValid = false;
-            return
+            return;
         }
 
-        return isValid
-    }
-    // Se defina una función para manejar el registro del identificacion
-    const handleRegister = async () => {
+        return isValid;
+    };
 
+    const handleRegister = async () => {
         if (!formulario.observaciones) {
             alert('Por favor rellene el formulario');
-            return
+            return;
         }
 
         if (!formulario.observaciones) {
             alert('Ingrese las Observaciones');
-            return
+            return;
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             alert('Ingrese la Finca');
-            return
+            return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             alert('Ingrese la Parcela');
-            return
+            return;
         }
-        //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
+
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
             fecha: formatDate(),
-            actividad: formulario.actividad,
-            maquinaria: formulario.maquinaria,
+            idActividad: formulario.idActividad,
+            idMaquinaria: formulario.idMaquinaria,
             observaciones: formulario.observaciones,
+            identificacion: formulario.identificacion,
+            horasTrabajadas: formulario.horasTrabajadas,
+            pagoPorHora: formulario.pagoPorHora,
+            totalPago: parseFloat(formulario.horasTrabajadas) * parseFloat(formulario.pagoPorHora),
             usuarioCreacionModificacion: userData.identificacion,
-
         };
 
-        //  Se ejecuta el servicio de isertar el manejo de fertilizante
         const responseInsert = await InsertarPreparacionTerrenos(formData);
 
-        //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se creo la preparación de terreno correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminCrops.screenName as never);
+                        navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
                     },
                 },
             ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            alert('!Oops! Parece que algo salió mal');
         }
     };
+
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
 
             try {
@@ -140,7 +140,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                     .map(item => item!.idFinca)))
                     .map(idFinca => {
                         const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                        const nombreFinca = relacion ? relacion.nombreFinca : '';
                         return { idFinca, nombreFinca };
                     });
 
@@ -154,6 +154,12 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
 
                 setParcelas(parcelasUnicas);
 
+                const actividadesResponse = await ObtenerDatosPreparacionTerrenoActividad();
+                setActividades(actividadesResponse);
+
+                const maquinariasResponse = await ObtenerDatosPreparacionTerrenoMaquinaria();
+                setMaquinarias(maquinariasResponse);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -161,25 +167,23 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
 
         obtenerDatosIniciales();
     }, []);
+
     const obtenerParcelasPorFinca = async (fincaId: number) => {
         try {
-
             const parcelasFiltradas = parcelas.filter(item => item.idFinca === fincaId);
-
             setParcelasFiltradas(parcelasFiltradas);
         } catch (error) {
             console.error('Error fetching parcelas:', error);
         }
     };
+
     const handleFincaChange = (item: { label: string; value: string }) => {
         const fincaId = parseInt(item.value, 10);
         setSelectedFinca(item.value);
-
-        setSelectedParcela('Seleccione una Parcela')
+        setSelectedParcela('Seleccione una Parcela');
         obtenerParcelasPorFinca(fincaId);
     };
 
-    //se formatea la fecha para que tenga el formato de español
     const formatSpanishDate = (date) => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -188,8 +192,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
         return `${day}/${month}/${year}`;
     };
 
-    //se formatea la fecha para que tenga el formato para enviarle los datos a la base de datos
-    const formatDate = () => { // Aquí se crea un objeto Date a partir de la cadena dateString
+    const formatDate = () => {
         const day = date.getDate().toString().padStart(2, '0');
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const year = date.getFullYear().toString();
@@ -199,14 +202,14 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
 
     const toggleDatePicker = () => {
         setShowPicker(!showPicker);
-    }
-    //se captura el evento de datetimepicker
+    };
+
     const onChange = ({ type }, selectedDate) => {
-        if (type === "set" && selectedDate instanceof Date) {
+        if (type === 'set' && selectedDate instanceof Date) {
             const formattedDate = formatSpanishDate(selectedDate);
             setDate(selectedDate);
             updateFormulario('fecha', formattedDate);
-            if (Platform.OS === "android") {
+            if (Platform.OS === 'android') {
                 toggleDatePicker();
             }
         } else {
@@ -214,45 +217,40 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
         }
     };
 
-    //en el caso de ser ios poder capturar la fecha
     const confirmIOSDate = () => {
         toggleDatePicker();
         updateFormulario('fecha', formatSpanishDate(date));
-        setDate(date)
-    }
+        setDate(date);
+    };
+
+    const handleNumericInput = (text: string, field: string) => {
+        const numericValue = text.replace(/[^0-9.,]/g, ''); // Permitir solo números, comas y puntos
+        updateFormulario(field, numericValue);
+    };
 
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-
             >
                 <ImageBackground
                     source={require('../../../../assets/images/siembros_imagen.jpg')}
                     style={styles.upperContainer}
-                >
-                </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#ffff'} />
+                ></ImageBackground>
+                <BackButtonComponent screenName={ScreenProps.ListLandPreparation.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-
                         <View>
-                            <Text style={styles.createAccountText} >Preparación de Terrenos</Text>
+                            <Text style={styles.createAccountText}>Preparación de Terrenos</Text>
                         </View>
 
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
-
                                     <Text style={styles.formText}>Fecha</Text>
-
-
                                     {!showPicker && (
-                                        <Pressable
-                                            onPress={toggleDatePicker}
-
-                                        >
+                                        <Pressable onPress={toggleDatePicker}>
                                             <TextInput
                                                 style={styles.input}
                                                 placeholder="00/00/00"
@@ -262,13 +260,11 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                                 onPressIn={toggleDatePicker}
                                             />
                                         </Pressable>
-
                                     )}
-
                                     {showPicker && (
                                         <DateTimePicker
                                             mode="date"
-                                            display='spinner'
+                                            display="spinner"
                                             value={date}
                                             onChange={onChange}
                                             style={styles.dateTimePicker}
@@ -277,75 +273,112 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         />
                                     )}
                                     {showPicker && Platform.OS === 'ios' && (
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                justifyContent: "space-around"
-                                            }}
-                                        >
-                                            <TouchableOpacity style={[
-                                                styles.buttonPicker,
-                                                styles.pickerButton,
-                                                { backgroundColor: "#11182711" },
-                                            ]}
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.buttonPicker,
+                                                    styles.pickerButton,
+                                                    { backgroundColor: '#11182711' },
+                                                ]}
                                                 onPress={toggleDatePicker}
                                             >
-
-                                                <Text style={[
-                                                    styles.buttonTextPicker,
-                                                    { color: "#075985" }
-                                                ]}>Cancelar</Text>
-
+                                                <Text style={[styles.buttonTextPicker, { color: '#075985' }]}>Cancelar</Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity style={[
-                                                styles.buttonPicker,
-                                                styles.pickerButton,
-                                                { backgroundColor: "#11182711" },
-                                            ]}
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.buttonPicker,
+                                                    styles.pickerButton,
+                                                    { backgroundColor: '#11182711' },
+                                                ]}
                                                 onPress={confirmIOSDate}
                                             >
-
-                                                <Text style={[
-                                                    styles.buttonTextPicker,
-                                                    { color: "#075985" }
-                                                ]}>Confirmar</Text>
-
+                                                <Text style={[styles.buttonTextPicker, { color: '#075985' }]}>Confirmar</Text>
                                             </TouchableOpacity>
-
                                         </View>
                                     )}
-                                    <Text style={styles.formText} >Actividad </Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Actividad "
-                                        value={formulario.actividad}
-                                        onChangeText={(text) => updateFormulario('actividad', text)}
+                                    <Text style={styles.formText}>Actividad </Text>
+                                    <DropdownComponent
+                                        iconName="list"
+                                        placeholder="Seleccione una Actividad"
+                                        data={actividades.map(act => ({ label: act.nombre, value: String(act.idActividad) }))}
+                                        value={formulario.idActividad}
+                                        onChange={(selectedItem) => {
+                                            updateFormulario('idActividad', selectedItem.value);
+                                        }}
                                     />
-                                    <Text style={styles.formText} >Maquinaria</Text>
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="maquinaria"
-                                        value={formulario.maquinaria}
-                                        onChangeText={(text) => updateFormulario('maquinaria', text)}
+                                    <Text style={styles.formText}>Maquinaria</Text>
+                                    <DropdownComponent
+                                        iconName="gears"
+                                        placeholder="Seleccione una Maquinaria"
+                                        data={maquinarias.map(maq => ({ label: maq.nombre, value: String(maq.idMaquinaria) }))}
+                                        value={formulario.idMaquinaria}
+                                        onChange={(selectedItem) => {
+                                            updateFormulario('idMaquinaria', selectedItem.value);
+                                        }}
                                     />
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={async () => {
                                             const isValid = validateFirstForm();
-
                                             if (isValid) {
                                                 setSecondFormVisible(true);
                                             }
-
                                         }}
                                     >
                                         <Text style={styles.buttonText}>Siguiente</Text>
                                     </TouchableOpacity>
                                 </>
-
                             ) : (
                                 <>
-                                    <Text style={styles.formText} >Observaciones</Text>
+                                    <Text style={styles.formText}>Identificación</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Identificación"
+                                        value={formulario.identificacion}
+                                        onChangeText={(text) => updateFormulario('identificacion', text)}
+                                    />
+
+                                    <Text style={styles.formText}>Horas Trabajadas</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Horas Trabajadas"
+                                        value={formulario.horasTrabajadas}
+                                        onChangeText={(text) => handleNumericInput(text, 'horasTrabajadas')}
+                                        keyboardType="numeric"
+                                    />
+
+                                    <Text style={styles.formText}>Pago por Hora</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Pago por Hora"
+                                        value={formulario.pagoPorHora}
+                                        onChangeText={(text) => handleNumericInput(text, 'pagoPorHora')}
+                                        keyboardType="numeric"
+                                    />
+
+                                    <Text style={styles.formText}>Finca</Text>
+                                    <DropdownComponent
+                                        placeholder="Seleccione una Finca"
+                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        value={selectedFinca}
+                                        iconName="tree"
+                                        onChange={(selectedItem) => {
+                                            handleFincaChange(selectedItem);
+                                            updateFormulario('idFinca', selectedItem.value);
+                                        }}
+                                    />
+                                    <Text style={styles.formText}>Parcela</Text>
+                                    <DropdownComponent
+                                        placeholder="Seleccione una Parcela"
+                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
+                                        value={selectedParcela}
+                                        iconName="pagelines"
+                                        onChange={(selectedItem) => {
+                                            setSelectedParcela(selectedItem.value);
+                                            updateFormulario('idParcela', selectedItem.value);
+                                        }}
+                                    />
+                                    <Text style={styles.formText}>Observaciones</Text>
                                     <TextInput
                                         style={styles.inputMultiline}
                                         placeholder="Observaciones"
@@ -354,51 +387,9 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-
-                                    <Text style={styles.formText} >Finca</Text>
-                                    {/* Dropdown para Fincas */}
-                                    <DropdownComponent
-                                        placeholder="Seleccione una Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
-                                        value={selectedFinca}
-                                        iconName="tree"
-                                        onChange={(selectedItem) => {
-                                            // Manejar el cambio en la selección de la finca
-                                            handleFincaChange(selectedItem);
-
-                                            // Actualizar el formulario con la selección de la finca
-                                            updateFormulario('idFinca', selectedItem.value);
-                                        }}
-                                    />
-                                    <Text style={styles.formText} >Parcela</Text>
-                                    {/* Dropdown para Parcelas */}
-                                    <DropdownComponent
-                                        placeholder="Seleccione una Parcela"
-                                        data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
-                                        value={selectedParcela}
-                                        iconName="pagelines"
-                                        onChange={(selectedItem) => {
-                                            // Manejar el cambio en la selección de la parcela
-                                            setSelectedParcela(selectedItem.value);
-
-                                            // Actualizar el formulario con la selección de la parcela
-                                            updateFormulario('idParcela', selectedItem.value);
-                                        }}
-                                    />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={styles.backButton}
-                                            onPress={() => {
-                                                setSecondFormVisible(false);
-                                            }}
-                                        >
-                                            <View style={styles.buttonContent}>
-                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
-                                                <Text style={styles.buttonTextBack}> Atrás</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={[styles.button, { width: '100%' }]}
                                             onPress={() => {
                                                 handleRegister();
                                             }}
@@ -411,7 +402,6 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                     </View>
                                 </>
                             )}
-
                         </View>
                     </ScrollView>
                 </View>
@@ -419,4 +409,4 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
             <BottomNavBar />
         </View>
     );
-}
+};

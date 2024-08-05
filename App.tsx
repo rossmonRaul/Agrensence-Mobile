@@ -126,6 +126,10 @@ import { ListaContenidoNitrogenoScreen } from './src/screens/clima/contenido-nit
 import { InsertarContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/registro-contenido-nitrogeno/insertar-contenido-nitrogeno';
 import { ModificarContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/modificar-contenido-nitrogeno/modificar-contenido-nitrogeno';
 
+import { ListaCatalogoActividadesPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/lista-catalogo-actividadesPT/lista-catalogo-actividadesPT';
+import { InsertarCatalogoActividadPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/registar-catalogo-actividadesPT/registar-catalogo-actividadesPT';
+import { ModificarCatalogoActividadPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/modificar-catalogo-actividadesPT/modificar-catalogo-actividadesPT';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -339,6 +343,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.NitrogenContentList.screenName} component={ListaContenidoNitrogenoScreen} />
             <Stack.Screen name={ScreenProps.InsertNitrogenContent.screenName} component={InsertarContenidoNitrogenoScreen}/>
             <Stack.Screen name={ScreenProps.ModifyNitrogenContent.screenName} component={ModificarContenidoNitrogenoScreen}/>
+
+            <Stack.Screen name={ScreenProps.ListCatalogoActividades.screenName} component={ListaCatalogoActividadesPTScreen}/>
+            <Stack.Screen name={ScreenProps.RegisterCatalogoActividad.screenName} component={InsertarCatalogoActividadPTScreen}/>
+            <Stack.Screen name={ScreenProps.ModifyCatalogoActividad.screenName} component={ModificarCatalogoActividadPTScreen}/>
 
           </Stack.Navigator>
         </NavigationContainer>
