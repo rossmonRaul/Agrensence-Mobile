@@ -130,6 +130,10 @@ import { ListaCatalogoActividadesPTScreen } from './src/screens/cultivos/catalog
 import { InsertarCatalogoActividadPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/registar-catalogo-actividadesPT/registar-catalogo-actividadesPT';
 import { ModificarCatalogoActividadPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/modificar-catalogo-actividadesPT/modificar-catalogo-actividadesPT';
 
+import { ListaMedidasCultivosScreen } from './src/screens/medidas-cultivos/lista-medidas-cultivos/lista-medidas-cultivos'
+import { RegistrarMedidasCultivosScreen } from './src/screens/medidas-cultivos/registrar-medidas-cultivos/registrar-medidas-cultivos';
+import { ModificarMedidasCultivosScreen } from './src/screens/medidas-cultivos/modificar-medidas-cultivos/modificar-medidas-cultivos';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -347,6 +351,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ListCatalogoActividades.screenName} component={ListaCatalogoActividadesPTScreen}/>
             <Stack.Screen name={ScreenProps.RegisterCatalogoActividad.screenName} component={InsertarCatalogoActividadPTScreen}/>
             <Stack.Screen name={ScreenProps.ModifyCatalogoActividad.screenName} component={ModificarCatalogoActividadPTScreen}/>
+
+            <Stack.Screen name={ScreenProps.CropMeasurementsList.screenName} component={ListaMedidasCultivosScreen} />
+            <Stack.Screen name={ScreenProps.InsertCropMeasurements.screenName} component={RegistrarMedidasCultivosScreen}/>
+            <Stack.Screen name={ScreenProps.ModifyCropMeasurements.screenName} component={ModificarMedidasCultivosScreen}/>
 
           </Stack.Navigator>
         </NavigationContainer>

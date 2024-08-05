@@ -30,7 +30,7 @@ export const MenuScreen: React.FC = () => {
     const renderRows = () => {
         let filteredCompanyProps = Company_Props;
         if (userRole === 1) {
-            filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 104);
+            filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 105);
         }
 
         if (userRole === 2) {

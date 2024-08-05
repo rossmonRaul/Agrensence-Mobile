@@ -124,6 +124,10 @@ export const ScreenProps = {
     RegisterCatalogoActividad: { screenName: 'RegistrarCatalogoActividadPTScreen' },
     ModifyCatalogoActividad: { screenName: 'ModificarCatalogoActividadPTScreen' },
 
+    CropMeasurementsList: { screenName: 'ListaMedidasCultivosScreen'},
+    InsertCropMeasurements: { screenName: 'RegistrarMedidasCultivosScreen' },
+    ModifyCropMeasurements: { screenName: 'ModificarMedidasCultivosScreen' },
+
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -161,7 +165,7 @@ export const Company_Props = [
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
     { id: 104, iconImage: require('./assets/images/icons/grafico-de-barras.png'), text: 'Mediciones de Sensor', screen: ScreenProps.ListMeasureSensor.screenName, datoValidacion: '0' },
-
+    { id: 105, iconImage: require('./assets/images/icons/medida-cultivo.png'), text: 'Mediciones de Cultivos', screen: ScreenProps.CropMeasurementsList.screenName, datoValidacion: '0' },
 ]
 
 export const Admin_cultivation = [

@@ -15,7 +15,7 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
-import { CambiarEstadoProductividadCultivo, EditarProductividadCultivo } from '../../../../servicios/ServicioCultivos';
+import { CambiarEstadoProductividadCultivo, EditarProductividadCultivo,ObtenerMedidasCultivos } from '../../../../servicios/ServicioCultivos';
 interface RouteParams {
     idFinca: string;
     idParcela: string;
@@ -23,7 +23,9 @@ interface RouteParams {
     cultivo: string;
     temporada: string;
     area: number;
+    idMedidaArea:string;
     produccion: number;
+    idMedidasCultivos:string;
     productividad: number;
     estado: string;
 }
@@ -35,21 +37,30 @@ export const ModificarProductividadScreen: React.FC = () => {
 
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
     const [temporadas, setTemporadas] = useState<{ nombre: string }[] | []>([]);
+    const [medidasCultivos, setMedidasCultivos] = useState<{ idMedidasCultivos: number; medida?: string }[] | []>([]);
+    const [medidaArea, setMedidaArea] = useState<{ idMedidaArea:number, medidaArea: string }[] | []>([]);
     // Se agregan las temporadas deseadas al cargar el componente
     useEffect(() => {
         setTemporadas([
             { nombre: 'Lluviosa' },
             { nombre: 'Seca' }
         ]);
+        setMedidaArea([
+            { idMedidaArea:1, medidaArea: 'Hectárea' },
+            { idMedidaArea:2, medidaArea: 'Manzana' },
+            { idMedidaArea:3, medidaArea: 'M2' }
+        ]);
     }, []);
-    const { idManejoProductividadCultivo, idFinca, idParcela, cultivo, temporada, area,
-        produccion, productividad, estado } = route.params as RouteParams;
+    const { idManejoProductividadCultivo, idFinca, idParcela, cultivo, temporada, area,idMedidaArea,
+        produccion, idMedidasCultivos, productividad, estado } = route.params as RouteParams;
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<ParcelaInterface[]>([]);
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
     const [selectedTemporada, setSelectedTemporada] = useState<string | null>(null);
+    const [selectedMedidasCultivos, setSelectedMedidasCultivos] = useState<string | null>(null);
+    const [selectedMedidaArea, setSelectedMedidaArea] = useState<string | null>(null);
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -59,7 +70,9 @@ export const ModificarProductividadScreen: React.FC = () => {
         cultivo: cultivo,
         temporada: temporada,
         area: area,
+        idMedidaArea:idMedidaArea,
         produccion: produccion,
+        idMedidasCultivos:idMedidasCultivos,
         productividad: productividad
     });
 
@@ -73,6 +86,8 @@ export const ModificarProductividadScreen: React.FC = () => {
     };
     //funcion para validar que todo este completo en la primera parte del formulario
     const validateFirstForm = () => {
+        console.log('MC:',selectedMedidasCultivos);
+        console.log('MA:',selectedMedidaArea);
         let isValid = true;
 
         if (!formulario.cultivo && !formulario.temporada && !formulario.area &&
@@ -100,6 +115,12 @@ export const ModificarProductividadScreen: React.FC = () => {
             return;
         }
 
+        if (!formulario.idMedidaArea || formulario.idMedidaArea === null) {
+            alert('Seleccione una medida de área');
+            isValid = false;
+            return
+        }
+
         if (!formulario.produccion) {
             alert('Ingrese la producción');
             isValid = false;
@@ -112,7 +133,11 @@ export const ModificarProductividadScreen: React.FC = () => {
             return;
         }
 
-
+        if (!formulario.idMedidasCultivos || formulario.idMedidasCultivos === null) {
+            alert('Seleccione una medicion para el cultivo');
+            isValid = false;
+            return
+        }
 
         if (!formulario.productividad) {
             alert('Ingrese la productividad');
@@ -151,7 +176,9 @@ export const ModificarProductividadScreen: React.FC = () => {
             Cultivo: formulario.cultivo,
             Temporada: selectedTemporada,
             Area: formulario.area,
+            IdMedidaArea:formulario.idMedidaArea,
             Produccion: formulario.produccion,
+            IdMedidasCultivos:formulario.idMedidasCultivos,
             Productividad: formulario.productividad,
             IdManejoProductividadCultivo: idManejoProductividadCultivo,
             Usuario: userData.identificacion
@@ -178,8 +205,15 @@ export const ModificarProductividadScreen: React.FC = () => {
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
+            const medidasCultivosResponse = await ObtenerMedidasCultivos();
+            setMedidasCultivos(medidasCultivosResponse);
             const formData = { identificacion: userData.identificacion };
+            console.log('formulario:', formulario);
             try {
+                // const medidaCultivoInicial = medidasCultivos.find(medidasCultivo => medidasCultivo.idMedidasCultivos === parseInt(idMedidasCultivos));
+                // const medidaAreaInicial = medidaArea.find(medidaArea => medidaArea.idMedidaArea === parseInt(idMedidaArea));
+                // setSelectedMedidasCultivos(medidaCultivoInicial?.medida || null)
+                // setSelectedMedidaArea(medidaAreaInicial?.medidaArea || null)
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
@@ -200,7 +234,18 @@ export const ModificarProductividadScreen: React.FC = () => {
                 }));
 
                 setParcelas(parcelasUnicas)
+                
+                console.log('AAAAAAAA');
+                console.log('medidasCultivos',medidasCultivos);
+                console.log('medidaArea', medidaArea);
+                console.log('idMedidasCultivos:',idMedidasCultivos);
+                console.log('idMedidaArea', idMedidaArea);
+               // console.log('medidaCultivoInicial', medidaCultivoInicial);
+                //console.log('medidaAreaInicial', medidaAreaInicial);
+                console.log('AAAAAAAA');
+                
 
+                
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -210,6 +255,14 @@ export const ModificarProductividadScreen: React.FC = () => {
 
 
     }, []);
+    useEffect(() => {
+        if (medidasCultivos.length > 0 && medidaArea.length > 0) {
+            const medidaCultivoInicial = medidasCultivos.find(medidasCultivo => medidasCultivo.idMedidasCultivos === parseInt(idMedidasCultivos));
+            const medidaAreaInicial = medidaArea.find(medidaArea => medidaArea.idMedidaArea === parseInt(idMedidaArea));
+            setSelectedMedidasCultivos(medidaCultivoInicial?.medida || null);
+            setSelectedMedidaArea(medidaAreaInicial?.medidaArea || null);
+        }
+    }, [medidasCultivos, medidaArea, idMedidasCultivos, idMedidaArea]);
 
     useEffect(() => {
         // Buscar la finca correspondiente, esto se hace para cargar las parcelas que se necesitan en dropdown porque
@@ -341,7 +394,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         value={formulario.cultivo}
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
-                                    <Text style={styles.formText} >Área (ha)</Text>
+                                    <Text style={styles.formText} >Área</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Área"
@@ -349,13 +402,44 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('area', text)}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Producción (ton)</Text>
+                                    <Text style={styles.formText} >Unidad de medida de Área</Text>
+                                    {/* Dropdown para Temporadas */}
+                                    <DropdownComponent
+                                        placeholder={selectedMedidaArea ? selectedMedidaArea : "Seleccione una medida de Área"}
+                                        data={medidaArea.map(objArea => ({ label: objArea.medidaArea, value: String(objArea.idMedidaArea) }))}
+                                        value={selectedMedidaArea}
+                                        iconName="question-circle-o"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la finca
+                                            setSelectedMedidaArea(selectedItem.value);
+
+                                            // Actualizar el formulario con la selección de la finca
+                                            updateFormulario('idMedidaArea', selectedItem.value);
+                                        }}
+                                    />
+                                    <Text style={styles.formText} >Producción</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Producción"
                                         value={formulario.produccion.toString()}
                                         onChangeText={(text) => updateFormulario('produccion', text)}
                                         keyboardType="numeric"
+                                    />
+
+                                    <Text style={styles.formText} >Medida Producción</Text>
+                                    {/* Dropdown para Fincas */}
+                                    <DropdownComponent
+                                        placeholder={selectedMedidasCultivos ? selectedMedidasCultivos : "Seleccione una medida Producción"}
+                                        data={medidasCultivos.map(medidaCultivo => ({ label: medidaCultivo.medida, value: String(medidaCultivo.idMedidasCultivos) }))}
+                                        value={selectedMedidasCultivos}  
+                                        iconName="question-circle-o"
+                                        onChange={(selectedItem) => {
+                                            // Manejar el cambio en la selección de la finca
+                                            setSelectedMedidasCultivos(selectedItem.value);
+
+                                            // Actualizar el formulario con la selección de la finca
+                                            updateFormulario('idMedidasCultivos', selectedItem.value);
+                                        }}
                                     />
                                     <Text style={styles.formText} >Productividad</Text>
                                     <TextInput

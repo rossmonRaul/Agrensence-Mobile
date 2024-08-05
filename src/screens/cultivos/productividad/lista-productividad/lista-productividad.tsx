@@ -64,6 +64,7 @@ export const ListaProductividadScreen: React.FC = () => {
                 setParcelas(parcelas);
                 //se obtienen los fertilizantes para despues poder filtrarlos
                 const cultivos = await ObtenerProductividadCultivos();
+                console.log('data:', cultivos);
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = cultivos.map((item) => ({
                     ...item,
@@ -115,6 +116,7 @@ export const ListaProductividadScreen: React.FC = () => {
     };
     //funcion para la accion del dropdown de finca
     const handleFincaChange = (item: { label: string; value: string }) => {
+        
         const fincaId = parseInt(item.value, 10);
         //se selecciona el item de finca
         setSelectedFinca(item.value);
@@ -151,8 +153,10 @@ export const ListaProductividadScreen: React.FC = () => {
         'Finca': 'finca',
         'Parcela': 'parcela',
         'Temporada': 'temporada',
-        'Área (ha)': 'area',
-        'Producción (ton)': 'produccion',
+        'Área': 'area',
+        'Medida del Área': 'medidaArea',
+        'Producción': 'produccion',
+        'Medición del Cultivo': 'medidaCultivo',
         'Productividad': 'productividad',
         'Estado': 'estado',
     };
@@ -161,11 +165,11 @@ export const ListaProductividadScreen: React.FC = () => {
 
     //funcion para que enviarlo a modificar la productividad
     const handleRectanglePress = (idManejoProductividadCultivo: string, idFinca: string, idParcela: string, cultivo: string,
-        temporada: string, area: number, produccion: number,
+        temporada: string, area: number, idMedidaArea:string ,produccion: number, idMedidasCultivos:string,
         productividad: number, Estado: string) => {
         navigation.navigate(ScreenProps.ModifyProductivity.screenName, {
             idManejoProductividadCultivo: idManejoProductividadCultivo, idFinca: idFinca, idParcela: idParcela,
-            cultivo: cultivo, temporada: temporada, area: area, produccion: produccion,
+            cultivo: cultivo, temporada: temporada, area: area,idMedidaArea:idMedidaArea, produccion: produccion,idMedidasCultivos:idMedidasCultivos,
             productividad: productividad, estado: Estado
         });
     };
@@ -207,7 +211,7 @@ export const ListaProductividadScreen: React.FC = () => {
 
                         return (
                             <TouchableOpacity key={item.idManejoProductividadCultivo} onPress={() => handleRectanglePress(item.idManejoProductividadCultivo, item.idFinca, item.idParcela, item.cultivo,
-                                item.temporada, item.area, item.produccion,
+                                item.temporada, item.area,item.idMedidaArea, item.produccion, item.idMedidasCultivos,
                                 item.productividad, item.estado)}>
                                 <CustomRectangle
                                     key={item.idManejoProductividadCultivo}
