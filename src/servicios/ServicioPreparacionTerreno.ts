@@ -1,6 +1,7 @@
 import { ProcesarDatosApi } from "./ApiFetch";
 const controlador = "PreparacionTerreno";
 import { API_URL } from "../constants";
+
 export const ObtenerDatosPreparacionTerreno = async () => {
     const url = `${API_URL}/api/v1.0/${controlador}/ObtenerDatosPreparacionTerreno`;
     return await ProcesarDatosApi('GET', url, '');

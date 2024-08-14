@@ -129,6 +129,9 @@ export const ScreenProps = {
     InsertCropMeasurements: { screenName: 'RegistrarMedidasCultivosScreen' },
     ModifyCropMeasurements: { screenName: 'ModificarMedidasCultivosScreen' },
 
+    ListAlertasCatalogo: { screenName: 'ListaAlertasCatalogoScreen' },
+    RegisterAlertaCatalogo: { screenName: 'RegistrarAlertasCatalogoScreen' },
+    ModifyAlertaCatalogo: { screenName: 'ModificarAlertasCatalogoScreen' },
 };
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
@@ -162,6 +165,7 @@ export const Company_Props = [
     { id: 57, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
     { id: 58, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
     { id: 59, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de actividades de preparación de terreno', screen: ScreenProps.ListCatalogoActividades.screenName, datoValidacion: '1' },
+    { id: 60, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de Alertas', screen: ScreenProps.ListAlertasCatalogo.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
@@ -203,6 +207,7 @@ export const Admin_Agricultura_Precision = [
     { id: 4, iconImage: require('./assets/images/icons/contenidodeagua.png'), text: 'Contenido de Agua', screen: ScreenProps.WaterContentList.screenName },
     { id: 5, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Cobertura Vegetal', screen: ScreenProps.VegetationcoverList.screenName },
     { id: 6, iconImage: require('./assets/images/icons/nitrogen.png'), text: 'Contenido Nitrógeno', screen: ScreenProps.NitrogenContentList.screenName },
+    { id: 7, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de Alertas', screen: ScreenProps.ListAlertasCatalogo.screenName },
 ]
 
 

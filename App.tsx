@@ -137,6 +137,10 @@ import { ListaMedidasCultivosScreen } from './src/screens/medidas-cultivos/lista
 import { RegistrarMedidasCultivosScreen } from './src/screens/medidas-cultivos/registrar-medidas-cultivos/registrar-medidas-cultivos';
 import { ModificarMedidasCultivosScreen } from './src/screens/medidas-cultivos/modificar-medidas-cultivos/modificar-medidas-cultivos';
 
+import { ListaAlertasCatalogoScreen } from './src/screens/cultivos/alertas-catalogo/lista-alertas-catalogo/lista-alertas-catalogo';
+import { RegistrarAlertaCatalogoScreen } from './src/screens/cultivos/alertas-catalogo/registrar-alertas-catalogo/registrar-alertas-catalogo';
+import { ModificarAlertaCatalogoScreen } from './src/screens/cultivos/alertas-catalogo/modificar-alertas-catalogo/modificar-alertas-catalogo';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -368,6 +372,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.InsertCropMeasurements.screenName} component={RegistrarMedidasCultivosScreen}/>
             <Stack.Screen name={ScreenProps.ModifyCropMeasurements.screenName} component={ModificarMedidasCultivosScreen}/>
 
+            <Stack.Screen name={ScreenProps.ListAlertasCatalogo.screenName} component={ListaAlertasCatalogoScreen} />
+            <Stack.Screen name={ScreenProps.RegisterAlertaCatalogo.screenName} component={RegistrarAlertaCatalogoScreen} />
+            <Stack.Screen name={ScreenProps.ModifyAlertaCatalogo.screenName} component={ModificarAlertaCatalogoScreen} />
+            
           </Stack.Navigator>
         </NavigationContainer>
       </UserContextProvider>
