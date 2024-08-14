@@ -4,6 +4,7 @@ export const ScreenProps = {
     Login: { screenName: 'Login' },
     Register: { screenName: 'Register' },
     Menu: { screenName: 'Menu' },
+    Notifications: { screenName: 'NotificacionesScreen' },
     MenuFloor: { screenName: 'MenuSueloScreen' },
     AdminRegisterUser: { screenName: 'AdminRegisterUser' },
     AssignCompany: { screenName: 'AssignCompany' },
@@ -132,7 +133,7 @@ export const ScreenProps = {
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.18.9';
+export const IP_API = '192.168.18.118';
 
 export const API_URL = `http://${IP_API}:5271`
 
