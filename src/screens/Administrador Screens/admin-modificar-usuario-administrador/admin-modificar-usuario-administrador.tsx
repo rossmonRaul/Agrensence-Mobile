@@ -341,6 +341,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
 
                         )}</>)}
                 </View>
+                <View style={styles.containerViewButtons}>
                 {estado === 'Activo' ? (
                     <TouchableOpacity
                         style={styles.buttonDelete}
@@ -366,6 +367,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                         </View>
                     </TouchableOpacity>
                 )}
+                </View>
             </ScrollView>    
             </View>
             <BottomNavBar />

@@ -54,6 +54,9 @@ export const styles = StyleSheet.create({
     buttonContainer: {
         paddingTop: 20,
     },
+    containerViewButtons:{
+        marginBottom:50,
+    },
     buttonContent: {
         flexDirection: 'row',
         alignItems: 'center',

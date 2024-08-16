@@ -252,7 +252,11 @@ export const RegistrarUsuarioScreen: React.FC = () => {
 
                                         }}
                                     >
+                                       
+                                        <View style={styles.buttonContent}>
                                         <Text style={styles.buttonText}>Siguiente</Text>
+                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                            </View>
                                     </TouchableOpacity>
                                 </>
                             ) : (
@@ -275,6 +279,18 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                                             onChange={(item) => (setParcela(item.value as never))}
                                         />
                                     }
+
+                                        <TouchableOpacity
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(false);
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
 
                                     {parcela && <TouchableOpacity
                                         style={styles.button}

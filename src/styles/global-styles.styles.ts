@@ -126,6 +126,11 @@ export const styles = StyleSheet.create({
         height: 20,
         marginRight: 5,
     },
+    iconStyleRight: {
+        width: 20,
+        height: 20,
+        marginLeft: 5,
+    },
     inputSearchStyle: {
         height: 40,
         fontSize: 16,

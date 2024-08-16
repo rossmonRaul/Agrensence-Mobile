@@ -552,7 +552,10 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
                                         }}
                                     >
+                                        <View style={styles.buttonContent}>
                                         <Text style={styles.buttonText}>Siguiente</Text>
+                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                        </View>
                                     </TouchableOpacity>
                                 </>
 
