@@ -137,9 +137,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         };
 
         //  Se ejecuta el servicio de insertar  la entrada o salida
-        //console.log("DATAEnviar",formData );
         const responseInsert = await InsertarRegistroEntradaSalida(formData);
-        //console.log(responseInsert)
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
             Alert.alert('¡Se registro la entrada o salida correctamente!', '', [

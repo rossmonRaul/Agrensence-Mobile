@@ -191,7 +191,6 @@ export const RegistrarProductividadScreen: React.FC = () => {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
                 const medidasCultivosResponse = await ObtenerMedidasCultivos();
                 setMedidasCultivos(medidasCultivosResponse);
-                console.log('medidacultivo: ', medidasCultivos);
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                     .filter(item => item !== undefined)
                     .map(item => item!.idFinca)))

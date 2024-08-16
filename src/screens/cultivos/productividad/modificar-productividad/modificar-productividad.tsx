@@ -86,8 +86,6 @@ export const ModificarProductividadScreen: React.FC = () => {
     };
     //funcion para validar que todo este completo en la primera parte del formulario
     const validateFirstForm = () => {
-        console.log('MC:',selectedMedidasCultivos);
-        console.log('MA:',selectedMedidaArea);
         let isValid = true;
 
         if (!formulario.cultivo && !formulario.temporada && !formulario.area &&
@@ -208,12 +206,8 @@ export const ModificarProductividadScreen: React.FC = () => {
             const medidasCultivosResponse = await ObtenerMedidasCultivos();
             setMedidasCultivos(medidasCultivosResponse);
             const formData = { identificacion: userData.identificacion };
-            console.log('formulario:', formulario);
             try {
-                // const medidaCultivoInicial = medidasCultivos.find(medidasCultivo => medidasCultivo.idMedidasCultivos === parseInt(idMedidasCultivos));
-                // const medidaAreaInicial = medidaArea.find(medidaArea => medidaArea.idMedidaArea === parseInt(idMedidaArea));
-                // setSelectedMedidasCultivos(medidaCultivoInicial?.medida || null)
-                // setSelectedMedidaArea(medidaAreaInicial?.medidaArea || null)
+
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
@@ -235,17 +229,9 @@ export const ModificarProductividadScreen: React.FC = () => {
 
                 setParcelas(parcelasUnicas)
                 
-                console.log('AAAAAAAA');
-                console.log('medidasCultivos',medidasCultivos);
-                console.log('medidaArea', medidaArea);
-                console.log('idMedidasCultivos:',idMedidasCultivos);
-                console.log('idMedidaArea', idMedidaArea);
-               // console.log('medidaCultivoInicial', medidaCultivoInicial);
-                //console.log('medidaAreaInicial', medidaAreaInicial);
-                console.log('AAAAAAAA');
-                
+                const cargaInicialParcelas = parcelasUnicas.filter((parcela: any) => fincasUnicas.some((f: any) => idFinca === parcela.idFinca));
+                setParcelasFiltradas(cargaInicialParcelas);
 
-                
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

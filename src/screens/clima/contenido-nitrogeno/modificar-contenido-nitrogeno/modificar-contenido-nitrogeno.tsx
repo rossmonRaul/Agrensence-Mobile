@@ -207,6 +207,9 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
                     idParcela: formulario.idParcela
                 }
                 
+                const cargaInicialParcelas = parcelasUnicas.filter((parcela: any) => fincasUnicas.some((f: any) => idFinca === parcela.idFinca));
+                setParcelasFiltradas(cargaInicialParcelas);
+
                 const puntosMedicion = await ObtenerPuntoMedicionFincaParcela(fincaParcela);
                 setPuntosMedicion(puntosMedicion);
                 setPuntoMedicion(formulario.idPuntoMedicion);

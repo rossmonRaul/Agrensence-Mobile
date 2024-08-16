@@ -182,6 +182,9 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
 
                 setParcelas(parcelasUnicas);
 
+                const cargaInicialParcelas = parcelasUnicas.filter((parcela: any) => fincasUnicas.some((f: any) => idFinca === parcela.idFinca));
+                setParcelasFiltradas(cargaInicialParcelas);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

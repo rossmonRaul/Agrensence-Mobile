@@ -20,10 +20,10 @@ import { UseFetchDropdownDataProps } from '../../../../hooks/useFetchDropDownDat
 import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
-import { InsertarRegistroCantidadDePlantas,ObtenerPuntoMedicionFincaParcela } from '../../../../servicios/ServicioCantidadDePlantas';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
+import { InsertarCultivo } from '../../../../servicios/ServicioCultivos';
 
-export const InsertarCantidadDePlantasScreen: React.FC = () => {
+export const InsertarCultivoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
 
@@ -31,31 +31,24 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
     const [parcela, setParcela] = useState(null);
-    const [puntoMedicion, setPuntoMedicion] = useState(null);
+    const [cultivo, setCultivo] = useState('');
     const [fincaDataOriginal, setFincaDataOriginal] = useState<DropdownData[]>([]);
     const [parcelaDataOriginal, setParcelaDataOriginal] = useState<DropdownData[]>([]);
     const [handleEmpresaCalled, setHandleEmpresaCalled] = useState(false);
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
-    const [puntosMedicion, setPuntosMedicion] = useState<{ idPuntoMedicion: number;  codigo: string }[] | []>([]);
+
+    const [cultivos, setcultivos] = useState<{ idCultivo: number;  cultivo: string }[] | []>([]);
+
     const [parcelasFiltradas, setParcelasFiltradas] = useState<{ idParcela: number; nombre: string }[] | []>([]);
-
-    const [showFecha, setShowFecha] = useState(false);
-
-    const [isSecondFormVisible, setSecondFormVisible] = useState(false);
-
-    const [dateFecha, setDateFecha] = useState(new Date())
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idFinca: finca,
         idParcela: parcela,
-        idPuntoMedicion:puntoMedicion,
-        identificacionUsuario: userData.identificacion,
-        cultivo: '',
-        cantidadPromedioMetroCuadrado:'',
-        usuarioCreacionModificacion: ''
+        cultivo: cultivo,
+        UsuarioCreacionModificacion: ''
     });
 
 
@@ -71,7 +64,6 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
     const handleValueFinca = (itemValue: any) => {
         setFinca(itemValue.value);
         setParcela(null);
-        setPuntoMedicion(null);
         updateFormulario('idFinca', itemValue.value)
         obtenerParcelasPorFinca(itemValue.value);
         let parcelaSort = parcelaDataOriginal.filter(item => item.id === itemValue.value);
@@ -85,50 +77,23 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
             idFinca: finca,
             idParcela: itemValue.value
         }
-
-        setPuntoMedicion(null);
         updateFormulario('idParcela', itemValue.value)
-        
-        const puntosMedicion = await ObtenerPuntoMedicionFincaParcela(fincaParcela);
-        setPuntosMedicion(puntosMedicion)
-        
-
     }
 
-    const validateFirstForm = () => {
-        let isValid = true;
+    // Se defina una función para manejar el registro cuando le da al boton de guardar
+    const handleRegister = async () => {
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            isValid = false;
             alert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            isValid = false;
             alert('Ingrese la Parcela');
             return;
         }
 
-        if (!formulario.idPuntoMedicion || formulario.idPuntoMedicion === null) {
-            isValid = false;
-            alert('Ingrese el punto de Medición');
-            return;
-        }
-        
-
-        return isValid;
-    };
-
-
-    // Se defina una función para manejar el registro cuando le da al boton de guardar
-    const handleRegister = async () => {
         if (formulario.cultivo.trim() === '') {
             alert('El campo Cultivo es requerido.');
-            return;
-        }
-        
-        if (formulario.cantidadPromedioMetroCuadrado.trim() === '') {
-            alert('El campo de cantidad promedio (m²) requerido.');
             return;
         }
         
@@ -136,27 +101,25 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
         const formData = {
             idFinca: formulario.idFinca,
             idParcela: formulario.idParcela,
-            idPuntoMedicion: formulario.idPuntoMedicion,
-            usuarioCreacionModificacion: userData.identificacion,
+            UsuarioCreacionModificacion: userData.identificacion,
             cultivo: formulario.cultivo,
-            cantidadPromedioMetroCuadrado:formulario.cantidadPromedioMetroCuadrado,
         };
         //  Se ejecuta el servicio de insertar problemas asociados a plagas y enfermedades
-        const responseInsert = await InsertarRegistroCantidadDePlantas(formData);
+        const responseInsert = await InsertarCultivo(formData);
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registró el registro de cantidad de plantas correctamente!', '', [
+            Alert.alert('¡Se registró el cultivo correctamente!', '', [
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.NumberOfPlantsList.screenName as never);
+                        navigation.navigate(ScreenProps.CropsList.screenName as never);
                     },
                 },
             ]);
-        } else {
-            alert('!Oops! Parece que algo salió mal')
-        }
+        } else Alert.alert('¡Oops! Parece que algo salió mal', responseInsert.mensaje, [
+            { text: 'OK' },
+        ]);
     };
 
     useEffect(() => {
@@ -165,26 +128,13 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
             const formData = { identificacion: userData.identificacion };
 
             try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+                const fincasResponse = await ObtenerFincas();
+                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasFiltradas);
 
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
-
-                setFincas(fincasUnicas);
-
-                const parcelasUnicas = datosInicialesObtenidos.map(item => ({
-                    idFinca: item.idFinca,
-                    idParcela: item.idParcela,
-                    nombre: item.nombreParcela,
-                }));
-
-                setParcelas(parcelasUnicas);
+                const parcelasResponse = await ObtenerParcelas();
+                const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
+                setParcelas(parcelasFiltradas);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -211,6 +161,7 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
         setFinca(null);
         setParcela(null);
     }
+
     useEffect(() => {
         if (!handleEmpresaCalled && fincaDataOriginal.length > 0) {
             handleValueEmpresa(userData.idEmpresa);
@@ -255,23 +206,22 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.NumberOfPlantsList.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.CropsList.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Insertar cantidad de plantas</Text>
+                            <Text style={styles.createAccountText} >Insertar cultivo</Text>
                         </View>
 
                         <View style={styles.formContainer}>
-                            {!isSecondFormVisible ? (
                                 <>
 
                                 <Text style={styles.formText} >Finca</Text>
                                   {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
-                                        data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
+                                        data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                                         value={finca}
                                         iconName='tree'
                                         onChange={handleValueFinca}
@@ -287,33 +237,7 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
                                         onChange={handleValueParcela}
                                     />
 
-                                <Text style={styles.formText} >Punto de medición</Text>
-                                    <DropdownComponent
-                                        placeholder="Punto de medición"
-                                        data={puntosMedicion.map(puntoMedicion => ({ label: puntoMedicion.codigo, value: String(puntoMedicion.idPuntoMedicion) }))}
-                                        iconName='map-marker'
-                                        value={puntoMedicion}
-                                        onChange={(item) => (setPuntoMedicion(item.value as never), (updateFormulario('idPuntoMedicion', item.value)))}
-                                    />
-
-                                    <TouchableOpacity
-                                        style={styles.button}
-                                        onPress={async () => {
-                                            const isValid = validateFirstForm();
-
-                                            if (isValid) {
-                                                setSecondFormVisible(true);
-                                            }
-
-                                        }}
-                                    >
-                                        <Text style={styles.buttonText}>Siguiente</Text>
-                                    </TouchableOpacity>
-                                </>
-
-                            ) : (<>
-
-                                <Text style={styles.formText} >Cultivo</Text>
+                                                                <Text style={styles.formText} >Cultivo</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Cultivo"
@@ -321,39 +245,6 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                <Text style={styles.formText} >Cantidad Promedio (m²)</Text>
-                                <TextInput
-                                    maxLength={100}
-                                    keyboardType='numeric'
-                                    style={styles.input}
-                                    placeholder="0.0"
-                                    value={formulario.cantidadPromedioMetroCuadrado}
-                                    onChangeText={(text) => {
-                                        const numericText = text.replace(/[^0-9.]/g, '');
-
-                                        // Verifica la cantidad de puntos en el texto
-                                        const pointCount = (numericText.match(/\./g) || []).length;
-                                    
-                                        // Si hay más de un punto, no actualiza el estado
-                                        if (pointCount > 1) {
-                                          return;
-                                        }// Elimina caracteres no numéricos menos las comas y puntos
-                                        updateFormulario('cantidadPromedioMetroCuadrado', numericText);
-                                    }}
-                                />
-                              
-                                <TouchableOpacity
-                                    style={styles.backButton}
-                                    onPress={() => {
-                                        setSecondFormVisible(false);
-                                    }}
-                                >
-                                    <View style={styles.buttonContent}>
-                                        <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
-                                        <Text style={styles.buttonTextBack}> Atrás</Text>
-                                    </View>
-                                </TouchableOpacity>
-
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={() => {
@@ -366,7 +257,6 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
                                         </View>
                                     </TouchableOpacity>
                             </>
-                            )}
                         </View>
                     </ScrollView>
                 </View>

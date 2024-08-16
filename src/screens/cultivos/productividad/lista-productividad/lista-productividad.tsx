@@ -64,7 +64,6 @@ export const ListaProductividadScreen: React.FC = () => {
                 setParcelas(parcelas);
                 //se obtienen los fertilizantes para despues poder filtrarlos
                 const cultivos = await ObtenerProductividadCultivos();
-                console.log('data:', cultivos);
                 //si es 0 es inactivo sino es activo resetea los datos
                 const filteredData = cultivos.map((item) => ({
                     ...item,

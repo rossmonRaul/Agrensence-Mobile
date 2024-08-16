@@ -168,6 +168,9 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                 }));
 
                 setParcelas(parcelasUnicas)
+                
+                const cargaInicialParcelas = parcelasUnicas.filter((parcela: any) => fincasUnicas.some((f: any) => idFinca === parcela.idFinca));
+                setParcelasFiltradas(cargaInicialParcelas);
 
                 setLoading(true); // Establecer loading a true antes de empezar
                 setFirstFormVisible(false)

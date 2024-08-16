@@ -195,6 +195,10 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                 const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
                 setParcelas(parcelasFiltradas);
                 setSelectedFinca(String(idFinca));
+
+                const cargaInicialParcelas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => idFinca === parcela.idFinca));
+                setParcelasFiltradas(cargaInicialParcelas);
+                
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

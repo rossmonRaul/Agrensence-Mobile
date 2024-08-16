@@ -68,7 +68,7 @@ export const ListaSensoresScreen: React.FC = () => {
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
             try {
-                const fincasResponse = await ObtenerFincas();
+                const fincasResponse = await ObtenerFincas(); 
                 const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
                 setFincas(fincasFiltradas);
                 const parcelasResponse = await ObtenerParcelas();

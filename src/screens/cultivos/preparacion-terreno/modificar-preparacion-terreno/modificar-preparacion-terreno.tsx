@@ -178,6 +178,9 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                 const maquinariasResponse = await ObtenerDatosPreparacionTerrenoMaquinaria();
                 setMaquinarias(maquinariasResponse);
 
+                const cargaInicialParcelas = parcelasUnicas.filter((parcela: any) => fincasUnicas.some((f: any) => idFinca === parcela.idFinca));
+                setParcelasFiltradas(cargaInicialParcelas);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

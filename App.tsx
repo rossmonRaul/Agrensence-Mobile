@@ -134,6 +134,10 @@ import { ListaMedidasCultivosScreen } from './src/screens/medidas-cultivos/lista
 import { RegistrarMedidasCultivosScreen } from './src/screens/medidas-cultivos/registrar-medidas-cultivos/registrar-medidas-cultivos';
 import { ModificarMedidasCultivosScreen } from './src/screens/medidas-cultivos/modificar-medidas-cultivos/modificar-medidas-cultivos';
 
+import { ListaCultivosScreen } from './src/screens/cultivos/cultivos/lista-cultivos/lista-cultivos'
+import { InsertarCultivoScreen } from './src/screens/cultivos/cultivos/registro-cultivo/insertar-cultivo';
+import { ModificarCultivoScreen } from './src/screens/cultivos/cultivos/modificar-cultivo/modificar-cultivo';
+
 const Stack = createNativeStackNavigator();
 const AppNavigator = ({ navigation }) => {
   useEffect(() => {
@@ -355,6 +359,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.CropMeasurementsList.screenName} component={ListaMedidasCultivosScreen} />
             <Stack.Screen name={ScreenProps.InsertCropMeasurements.screenName} component={RegistrarMedidasCultivosScreen}/>
             <Stack.Screen name={ScreenProps.ModifyCropMeasurements.screenName} component={ModificarMedidasCultivosScreen}/>
+
+            <Stack.Screen name={ScreenProps.CropsList.screenName} component={ListaCultivosScreen} />
+            <Stack.Screen name={ScreenProps.InsertCrop.screenName} component={InsertarCultivoScreen}/>
+            <Stack.Screen name={ScreenProps.ModifyCrop.screenName} component={ModificarCultivoScreen}/>
 
           </Stack.Navigator>
         </NavigationContainer>
