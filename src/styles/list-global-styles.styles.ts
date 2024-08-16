@@ -105,4 +105,40 @@ export const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 10,
     },
+
+
+    notificationContainer: {
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 8,
+        marginBottom: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    notificationText: {
+        fontSize: 14,
+        color: '#333',
+    },
+    notificationDescription: {
+        fontSize: 16,
+        color: '#000',
+        fontWeight: 'bold',
+        marginVertical: 5,
+    },
+    highlight: {
+        fontWeight: 'bold',
+        color: '#274c48',
+    },
+
+    closeButton: {
+        position: 'absolute',
+        top: 110,
+        right: 10,
+        zIndex: 1, // Asegura que el botón esté sobre el contenido de la notificación
+        backgroundColor: 'transparent', // Fondo transparente para que solo se vea el icono
+        padding: 1, // Añade algo de espacio alrededor del icono
+    },
 })

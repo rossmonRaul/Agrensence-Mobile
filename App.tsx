@@ -11,6 +11,9 @@ import { IncioSesionScreen } from "./src/screens/inicio-sesion/inicio-sesion";
 import { RegistrarUsuarioScreen } from "./src/screens/registrar-usuario/registrar-usuario";
 import { MenuScreen } from "./src/screens/menu-principal/menu-principal";
 import { MenuSueloScreen } from "./src/screens/suelos/menu-suelos/menu-suelos";
+
+import { NotificacionesScreen } from "./src/screens/notificaciones/lista-notificaciones/lista-notificaciones";
+
 import { ListaUsuarioRol4Screen } from "./src/screens/lista-usuarios-rol4/lista-usuarios-rol4";
 import { ListaEmpresaScreen } from "./src/screens/Administrador Screens/admin-lista-empresas/admin-lista-empresas";
 import { AdminRegistrarUsuarioScreen } from "./src/screens/Administrador Screens/admin-registrar-usuario/admin-registrar-usuario";
@@ -134,6 +137,10 @@ import { ListaMedidasCultivosScreen } from './src/screens/medidas-cultivos/lista
 import { RegistrarMedidasCultivosScreen } from './src/screens/medidas-cultivos/registrar-medidas-cultivos/registrar-medidas-cultivos';
 import { ModificarMedidasCultivosScreen } from './src/screens/medidas-cultivos/modificar-medidas-cultivos/modificar-medidas-cultivos';
 
+import { ListaAlertasCatalogoScreen } from './src/screens/cultivos/alertas-catalogo/lista-alertas-catalogo/lista-alertas-catalogo';
+import { RegistrarAlertaCatalogoScreen } from './src/screens/cultivos/alertas-catalogo/registrar-alertas-catalogo/registrar-alertas-catalogo';
+import { ModificarAlertaCatalogoScreen } from './src/screens/cultivos/alertas-catalogo/modificar-alertas-catalogo/modificar-alertas-catalogo';
+
 import { ListaCultivosScreen } from './src/screens/cultivos/cultivos/lista-cultivos/lista-cultivos'
 import { InsertarCultivoScreen } from './src/screens/cultivos/cultivos/registro-cultivo/insertar-cultivo';
 import { ModificarCultivoScreen } from './src/screens/cultivos/cultivos/modificar-cultivo/modificar-cultivo';
@@ -240,6 +247,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.Register.screenName} component={RegistrarUsuarioScreen} />
             <Stack.Screen name={ScreenProps.Menu.screenName} component={MenuScreen} />
             <Stack.Screen name={ScreenProps.MenuFloor.screenName} component={MenuSueloScreen} />
+
+            <Stack.Screen name={ScreenProps.Notifications.screenName} component={NotificacionesScreen} />
+            
+
             <Stack.Screen name={ScreenProps.AdminRegisterUser.screenName} component={AdminRegistrarUsuarioScreen} />
             <Stack.Screen name={ScreenProps.AssignCompany.screenName} component={AdminAsignarEmpresaScreen} />
             <Stack.Screen name={ScreenProps.AdminUserList.screenName} component={AdminListaUsuarioScreen} />
@@ -259,6 +270,11 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.ListFertilizer.screenName} component={ListaFertilizantesScreen} />
             <Stack.Screen name={ScreenProps.RegisterFertilizer.screenName} component={RegistrarFertilizanteScreen} />
             <Stack.Screen name={ScreenProps.ModifyFertilizer.screenName} component={ModificarFertilizanteScreen} />
+
+            <Stack.Screen name={ScreenProps.ListApplicationType.screenName} component={ListaTipoAplicacionScreen} />
+            <Stack.Screen name={ScreenProps.RegisterApplicationType.screenName} component={RegistrarTipoAplicacionScreen} />
+            <Stack.Screen name={ScreenProps.ModifyApplicationType.screenName} component={ModificarTipoAplicacionScreen} />
+
             <Stack.Screen name={ScreenProps.ListQualityFloorScreen.screenName} component={ListaCalidadSueloScreen} />
             <Stack.Screen name={ScreenProps.RegisterQualityFloorScreen.screenName} component={RegistrarCalidadSueloScreen} />
             <Stack.Screen name={ScreenProps.ModifyQualityFloorScreen.screenName} component={ModificarCalidadSueloScreen} />
@@ -360,6 +376,10 @@ const App: React.FC = () => {
             <Stack.Screen name={ScreenProps.InsertCropMeasurements.screenName} component={RegistrarMedidasCultivosScreen}/>
             <Stack.Screen name={ScreenProps.ModifyCropMeasurements.screenName} component={ModificarMedidasCultivosScreen}/>
 
+            <Stack.Screen name={ScreenProps.ListAlertasCatalogo.screenName} component={ListaAlertasCatalogoScreen} />
+            <Stack.Screen name={ScreenProps.RegisterAlertaCatalogo.screenName} component={RegistrarAlertaCatalogoScreen} />
+            <Stack.Screen name={ScreenProps.ModifyAlertaCatalogo.screenName} component={ModificarAlertaCatalogoScreen} />
+            
             <Stack.Screen name={ScreenProps.CropsList.screenName} component={ListaCultivosScreen} />
             <Stack.Screen name={ScreenProps.InsertCrop.screenName} component={InsertarCultivoScreen}/>
             <Stack.Screen name={ScreenProps.ModifyCrop.screenName} component={ModificarCultivoScreen}/>
