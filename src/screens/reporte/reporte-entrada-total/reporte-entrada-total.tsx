@@ -77,8 +77,8 @@ export const ReporteEntradaTotal:  React.FC = () => {
 
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasResponse = await ObtenerFincas();
-                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+                //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
 
                 // const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
                 //     .filter(item => item !== undefined)
@@ -89,7 +89,7 @@ export const ReporteEntradaTotal:  React.FC = () => {
                 //         return { idFinca, nombreFinca };
                 //     });
 
-                setFincas(fincasFiltradas);
+                setFincas(fincasResponse);
                 //se obtienen la orden de compra para despues poder filtrarlos
 
             } catch (error) {

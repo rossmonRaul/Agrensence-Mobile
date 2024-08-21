@@ -135,10 +135,10 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
             const formData = { identificacion: userData.identificacion };
 
             try {
-                const fincasResponse = await ObtenerFincas();
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
                 const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
                 setFincas(fincasFiltradas);
-                const parcelasResponse = await ObtenerParcelas();
+                const parcelasResponse = await ObtenerParcelas(userData.idEmpresa);
                 const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
                 setParcelas(parcelasFiltradas);
 

@@ -263,10 +263,10 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                 // }));
 
                 // setParcelas(parcelasUnicas);
-                const fincasResponse = await ObtenerFincas();
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
                 const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
                 setFincas(fincasFiltradas);
-                const parcelasResponse = await ObtenerParcelas();
+                const parcelasResponse = await ObtenerParcelas(userData.idEmpresa);
                 const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
                 setParcelas(parcelasFiltradas);
 
@@ -377,7 +377,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
         updateFormulario('idFinca', itemValue.value)
     }
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -385,7 +385,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
     };
 
     const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
-        fetchDataFunction: ObtenerParcelas,
+        fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',

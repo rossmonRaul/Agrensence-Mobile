@@ -56,7 +56,7 @@ export const ListaManoObraScreen: React.FC = () => {
 
         try {
             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-            const fincasResponse = await ObtenerFincas();
+            const fincasResponse = await ObtenerFincas(userData.idEmpresa);
             const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
             setFincas(fincasFiltradas);
 

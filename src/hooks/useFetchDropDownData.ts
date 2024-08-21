@@ -26,24 +26,31 @@ export const useFetchDropdownData = <T>({
     idKey,
 }: UseFetchDropdownDataProps<T>) => {
     useEffect(() => {
-        // Se define una función asíncrona para obtener y formatear los datos
+        let isMounted = true;
+
         const fetchData = async () => {
             try {
                 const data = await fetchDataFunction();
 
-                // Se formatea los datos al formato esperado por el dropdown
-                const formattedData = data.map((item: T) => ({
-                    label: String(item[labelKey]),
-                    value: String(item[valueKey]),
-                    id: String(item[idKey]),
-                }));
-                // Se llama a la función para establecer los datos en el estado
-                setDataFunction(formattedData);
+                // Se formatea los datos solo si el componente sigue montado
+                if (isMounted) {
+                    const formattedData = data.map((item: T) => ({
+                        label: String(item[labelKey]),
+                        value: String(item[valueKey]),
+                        id: String(item[idKey]),
+                    }));
+                    setDataFunction(formattedData);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
 
         fetchData();
-    }, [fetchDataFunction, setDataFunction, labelKey, valueKey]);
+
+        // Cleanup function to mark component as unmounted
+        return () => {
+            isMounted = false;
+        };
+    }, [fetchDataFunction, setDataFunction, labelKey, valueKey, idKey]);
 };

@@ -83,9 +83,9 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
             //     });
 
             // setFincas(fincasUnicas);
-            const fincasResponse = await ObtenerFincas();
-            const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-            setFincas(fincasFiltradas);
+            const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+            //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+            setFincas(fincasResponse);
             //se obtienen la orden de compra para despues poder filtrarlos
             const entradaSalidaResponse = await ObtenerDatosRegistroEntradaSalida();
             //si es 0 es inactivo sino es activo resetea los datos

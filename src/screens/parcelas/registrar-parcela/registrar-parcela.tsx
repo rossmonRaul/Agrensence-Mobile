@@ -46,7 +46,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
 
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
 
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',

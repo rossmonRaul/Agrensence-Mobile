@@ -62,8 +62,8 @@ export const NotificacionesScreen: React.FC = () => {
                 // Filtrar fincas y parcelas según la empresa del usuario logeado
                 const [notificacionesData, fincasData, parcelasData] = await Promise.all([
                     ObtenerNotificaciones(),
-                    ObtenerFincas(),
-                    ObtenerParcelas(),
+                    ObtenerFincas(userData.idEmpresa),
+                    ObtenerParcelas(userData.idEmpresa),
                 ]);
 
                 const fincasFiltradas = fincasData.filter(finca => finca.idEmpresa === userData.idEmpresa);
