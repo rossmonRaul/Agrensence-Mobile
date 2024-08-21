@@ -180,9 +180,9 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
 
                 // setParcelas(parcelasUnicas);
 
-                const fincasResponse = await ObtenerFincas();
-                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-                setFincas(fincasFiltradas);
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+                //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasResponse);
                 // const parcelasResponse = await ObtenerParcelas();
                 // const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
                 // setParcelas(parcelasFiltradas);
@@ -282,7 +282,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         updateFormulario('idFinca', itemValue.value)
     }
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -290,7 +290,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
     };
 
     const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
-        fetchDataFunction: ObtenerParcelas,
+        fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',

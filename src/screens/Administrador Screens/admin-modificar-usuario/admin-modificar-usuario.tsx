@@ -80,7 +80,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
     };
 
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -88,7 +88,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
     };
 
     const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
-        fetchDataFunction: ObtenerParcelas,
+        fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',

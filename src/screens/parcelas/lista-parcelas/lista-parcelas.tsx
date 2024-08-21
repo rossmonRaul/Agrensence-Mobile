@@ -35,7 +35,7 @@ export const ListaParcelasScreen: React.FC = () => {
         setFinca(itemValue.value);
         // Convertir itemValue.value a número
         const fincaId = parseInt(itemValue.value, 10)
-        ObtenerParcelas()
+        ObtenerParcelas(userData.idEmpresa)
             .then((response) => {
 
                 //  Filtrar los datos de la api de acuerdo al id de la
@@ -64,7 +64,7 @@ export const ListaParcelasScreen: React.FC = () => {
     //funcion para que se carguen las fincas en el dropdown
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
 
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -84,11 +84,11 @@ export const ListaParcelasScreen: React.FC = () => {
     const obtenerParcelasPorFincaIds = async () => {
         try {
             const fincaIdsArray = fincaDataSort.map((finca) => parseInt(finca.value, 10));
-            const response = await ObtenerParcelas();
+            const response = await ObtenerParcelas(userData.idEmpresa);
 
-            const fincaSort = response.filter(item => fincaIdsArray.includes(item.idFinca));
+            //const fincaSort = response.filter(item => fincaIdsArray.includes(item.idFinca));
 
-            const filteredData = fincaSort.map((item) => ({
+            const filteredData = response.map((item) => ({
                 ...item,
                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
             }));

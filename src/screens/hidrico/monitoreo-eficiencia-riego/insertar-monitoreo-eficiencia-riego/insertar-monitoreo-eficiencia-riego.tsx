@@ -221,7 +221,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
         updateFormulario('idFinca', itemValue.value)
     }
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -229,7 +229,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     };
 
     const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
-        fetchDataFunction: ObtenerParcelas,
+        fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',

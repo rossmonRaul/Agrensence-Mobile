@@ -72,13 +72,13 @@ export const ListaCultivosScreen: React.FC = () => {
                 // const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
 
-                const fincasResponse = await ObtenerFincas();
-                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-                setFincas(fincasFiltradas);
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+                //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasResponse);
 
-                const parcelasResponse = await ObtenerParcelas();
-                const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
-                setParcelas(parcelasFiltradas);
+                const parcelasResponse = await ObtenerParcelas(userData.idEmpresa);
+                //const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
+                setParcelas(parcelasResponse);
 
 
                 //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos

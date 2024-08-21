@@ -51,7 +51,7 @@ export const ListaFlujoCajaScreen: React.FC = () => {
 
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasResponse = await ObtenerFincas();
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
                 const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
 
                 // const fincasUnicas = Array.from(new Set(datosInicialesObtenidos

@@ -173,9 +173,9 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
 
                 // setParcelas(parcelasUnicas);
                 
-                const fincasResponse = await ObtenerFincas();
-                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-                setFincas(fincasFiltradas);
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+                //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasResponse);
                 setSelectedFinca(String(idFinca));
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -354,7 +354,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
         }
     };
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -362,7 +362,7 @@ export const ModificarEntradasSalidasScreen: React.FC = () => {
     };
 
     const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
-        fetchDataFunction: ObtenerParcelas,
+        fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',

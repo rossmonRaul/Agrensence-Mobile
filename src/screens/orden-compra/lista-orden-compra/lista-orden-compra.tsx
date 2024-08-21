@@ -110,12 +110,12 @@ export const ListaOrdenCompraScreen: React.FC = () => {
                     //     });
     
                     // setParcelas(parcelas);
-                    const fincasResponse = await ObtenerFincas();
-                    const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-                    setFincas(fincasFiltradas);
-                    const parcelasResponse = await ObtenerParcelas();
-                    const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
-                    setParcelas(parcelasFiltradas);
+                    const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+                    //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                    setFincas(fincasResponse);
+                    const parcelasResponse = await ObtenerParcelas(userData.idEmpresa);
+                    //const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
+                    setParcelas(parcelasResponse);
                     //se obtienen la orden de compra para despues poder filtrarlos
                     const ordenCompraResponse = await ObtenerDatosOrdenDeCompra();
                     //si es 0 es inactivo sino es activo resetea los datos

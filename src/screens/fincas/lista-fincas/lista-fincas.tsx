@@ -35,7 +35,7 @@ export const ListaFincasScreen: React.FC = () => {
 
     const fetchData = async () => {
         try {
-            const response = await ObtenerFincas();
+            const response = await ObtenerFincas(userData.idEmpresa);
             // Filtrar los datos de la API de acuerdo al id de la empresa
             const fincaSort = response.filter(item => item.idEmpresa === userData.idEmpresa);
             // Filtrar y formatear los datos originales

@@ -159,9 +159,9 @@ export const InsertarManoObraScreen: React.FC = () => {
             try {
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
-                const fincasResponse = await ObtenerFincas();
-                const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-                setFincas(fincasFiltradas);
+                const fincasResponse = await ObtenerFincas(userData.idEmpresa);
+                //const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
+                setFincas(fincasResponse);
 
                 const parcelasUnicas = datosInicialesObtenidos.map(item => ({
                     idFinca: item.idFinca,
@@ -267,7 +267,7 @@ export const InsertarManoObraScreen: React.FC = () => {
         updateFormulario('idFinca', itemValue.value)
     }
     const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-        fetchDataFunction: ObtenerFincas,
+        fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
@@ -275,7 +275,7 @@ export const InsertarManoObraScreen: React.FC = () => {
     };
 
     const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
-        fetchDataFunction: ObtenerParcelas,
+        fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',
