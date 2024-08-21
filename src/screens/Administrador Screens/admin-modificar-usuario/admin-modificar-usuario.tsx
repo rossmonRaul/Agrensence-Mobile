@@ -133,9 +133,9 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                     {
                                         text: 'OK',
                                         onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.Menu.screenName
-                                            );
+                                            navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                                                datoValidacion: 0,
+                                            });
                                         },
                                     },
                                 ]
@@ -188,7 +188,9 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName);
+                        navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                            datoValidacion: 0,
+                        });
                     },
                 },
             ]);
@@ -220,8 +222,9 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                         text: 'OK',
                         onPress: () => {
                             navigation.navigate(
-                                ScreenProps.Menu.screenName
-                            );
+                                ScreenProps.AdminUserList.screenName, {
+                                datoValidacion: 0,
+                            });
                         },
                     },
                 ]
@@ -243,7 +246,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.AdminUserList.screenName} color={'#ffff'} parametro={'0'}/>
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>

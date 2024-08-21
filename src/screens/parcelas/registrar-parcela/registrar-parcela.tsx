@@ -89,7 +89,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.ListPlot.screenName as never);
                     },
                 },
             ]);
