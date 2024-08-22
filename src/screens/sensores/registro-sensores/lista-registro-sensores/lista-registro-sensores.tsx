@@ -65,44 +65,6 @@ export const ListaSensoresScreen: React.FC = () => {
 
     };
 
-    // useEffect(() => {
-    //     const obtenerDatosIniciales = async () => {
-    //         try {
-    //             const fincasResponse = await ObtenerFincas(); 
-    //             const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
-    //             setFincas(fincasFiltradas);
-    //             const parcelasResponse = await ObtenerParcelas();
-    //             const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
-    //             setParcelas(parcelasFiltradas);
-    //             //se obtienen los datos de el registro de sensores para despues poder filtrarlos
-    //             const registroSensores = await ObtenerSensores();
-    //             const datosSensoresAutorizados = await ObtenerMedicionesAutorizadasSensor();
-    //             //si es 0 es inactivo sino es activo resetea los datos
-    //             const filteredData = registroSensores.map((item) => ({
-    //                 ...item,
-    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-    //             }));
-    //             const datosConAutorizacion = filteredData.map((dato: any) => {
-    //                 const sensoresAutorizados = datosSensoresAutorizados.filter((sensor: any) => sensor.idSensor === dato.idSensor);
-    //                 const medicionesAutorizadas = sensoresAutorizados.map((sensor: any) => sensor.medicionAutorizadaSensor).join(', ');
-    //                 const idMediciones = sensoresAutorizados.map((sensor: any) => [sensor.idMedicionAutorizadaSensor, sensor.idMedicion]); // Nuevo array de IdMedicion
-    //                 return {
-    //                     ...dato,
-    //                     medicionesAutorizadaSensor: medicionesAutorizadas,
-    //                     idMediciones: idMediciones // Nueva propiedad con array de IdMedicion
-    //                 };
-    //             });
-    //             setOriginalApiData(registroSensores);
-    //             setApiData(datosConAutorizacion);
-    //         } catch (error) {
-    //             console.error('Error fetching data:', error);
-    //         }
-    //     };
-
-    //     obtenerDatosIniciales();
-    // }, []);
-
-
     useFocusEffect(useCallback(() => {
         const obtenerDatosIniciales = async () => {
             try {
@@ -214,16 +176,18 @@ export const ListaSensoresScreen: React.FC = () => {
                         placeholder="Seleccione una Finca"
                         data={fincas.map((finca: any) => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
-                        iconName="map-marker"
+                        iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map((parcela: any) => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
-                        iconName="map-marker"
+                        iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

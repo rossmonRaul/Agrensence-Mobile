@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import useLogin from '../../hooks/useLogin';
 import { ScreenProps } from '../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FontAwesome } from '@expo/vector-icons';
 
 export const IncioSesionScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -30,18 +31,23 @@ export const IncioSesionScreen: React.FC = () => {
           <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
             <View>
               <Text style={styles.loginText} >Inicio de sesión</Text>
-              <Text style={styles.underLoginText}>Inicia sesión con tu cuenta</Text>
             </View>
 
             <View style={styles.formContainer}>
-              <Text style={styles.formText} >Usuario</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                <FontAwesome name="user" size={20} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 5 }}>Usuario</Text>
+              </View>
               <TextInput
                 style={styles.input}
                 placeholder="Identificación o correo"
                 value={username}
                 onChangeText={(text) => setUsername(text)}
               />
-              <Text style={styles.formText} >Contraseña</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                <FontAwesome name="lock" size={20} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 5 }}>Contraseña</Text>
+              </View>
               <TextInput style={styles.input}
                 secureTextEntry={true}
                 placeholder="Contraseña"

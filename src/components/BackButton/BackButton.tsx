@@ -9,13 +9,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 interface BackButtonProps {
     screenName: string;
     color: string;
+    parametro?: string;
 }
 
-export const BackButtonComponent: React.FC<BackButtonProps> = ({ screenName, color }) => {
+export const BackButtonComponent: React.FC<BackButtonProps> = ({ screenName, color, parametro }) => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const handleBackPress = () => {
-        navigation.navigate(screenName);
+        if (parametro) {
+            navigation.navigate(screenName, { datoValidacion: parametro });
+        } else {
+            navigation.navigate(screenName);
+        }
     };
 
     return (

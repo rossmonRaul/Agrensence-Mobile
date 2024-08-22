@@ -22,8 +22,8 @@ interface RouteParams {
     idFinca: string;
     idParcela: string;
     fecha: string;
-    idActividad: string; 
-    idMaquinaria: string; 
+    idActividad: string;
+    idMaquinaria: string;
     observaciones: string;
     identificacion: string;
     horasTrabajadas: string;
@@ -124,12 +124,12 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
             idMaquinaria: formulario.idMaquinaria,
             observaciones: formulario.observaciones,
             identificacion: formulario.identificacion,
-            horasTrabajadas: parseFloat(formulario.horasTrabajadas),  
-            pagoPorHora: parseFloat(formulario.pagoPorHora),          
-            totalPago: parseFloat(formulario.horasTrabajadas) * parseFloat(formulario.pagoPorHora),  
+            horasTrabajadas: parseFloat(formulario.horasTrabajadas),
+            pagoPorHora: parseFloat(formulario.pagoPorHora),
+            totalPago: parseFloat(formulario.horasTrabajadas) * parseFloat(formulario.pagoPorHora),
             usuarioCreacionModificacion: userData.identificacion,
         };
-        
+
 
         const responseInsert = await ModificarPreparacionTerreno(formData);
 
@@ -401,8 +401,8 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
-                                        <Text style={styles.buttonText}>Siguiente</Text>
-                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                            <Text style={styles.buttonText}>Siguiente</Text>
+                                            <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
                                         </View>
                                     </TouchableOpacity>
                                 </>
@@ -464,7 +464,18 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: '100%' }]}
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(false);
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={[styles.button, { width: 150 }]}
                                             onPress={() => {
                                                 handleRegister();
                                             }}

@@ -31,12 +31,19 @@ export const ListaFertilizantesScreen: React.FC = () => {
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
-    useEffect(() => {
+    
+    useFocusEffect(useCallback(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
 
             try {
+
+                setSelectedFinca(null);
+                setSelectedParcela(null);
+                setParcelasFiltradas([]);
+                setfertilizantesFiltrados([]);
+                
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
                 const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
@@ -78,7 +85,8 @@ export const ListaFertilizantesScreen: React.FC = () => {
         };
 
         obtenerDatosIniciales();
-    }, []);
+    }, []));
+
 
 
     //funcion para poder filtrar las parcelas por finca
@@ -202,6 +210,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     {/* Dropdown para Parcelas */}
@@ -211,6 +220,7 @@ export const ListaFertilizantesScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

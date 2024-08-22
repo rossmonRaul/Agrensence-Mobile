@@ -176,7 +176,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.HidricMenu.screenName as never);
+                        navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
                     },
                 },
             ]);
@@ -247,7 +247,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.HidricMenu.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.WatchListWaterScreen.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 

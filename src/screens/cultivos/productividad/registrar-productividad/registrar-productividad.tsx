@@ -174,7 +174,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminCrops.screenName as never);
+                        navigation.navigate(ScreenProps.ListProductivity.screenName as never);
                     },
                 },
             ]);
@@ -261,7 +261,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListProductivity.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 

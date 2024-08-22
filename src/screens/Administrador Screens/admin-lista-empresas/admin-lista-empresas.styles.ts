@@ -4,15 +4,17 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        padding: 60,
         alignItems: 'center'
     },
     textAboveContainer: {
-        alignItems: 'flex-start',
+        alignItems: 'center',
         width: 300,
         paddingTop: 20,
-        paddingLeft: 20,
-        alignSelf: 'flex-end'
+        paddingLeft: 0,           
+        alignSelf: 'center',      
+        flexDirection: 'row',
+        marginBottom: 10,
+        justifyContent: 'center' 
     },
     rowContainer: {
         width: '100%',
@@ -28,6 +30,7 @@ export const styles = StyleSheet.create({
         fontSize: 24,
         color: '#548256',
         alignSelf: 'flex-start',
+        marginLeft: 5
     },
     titleContainer: {
         alignItems: 'flex-start',
@@ -56,5 +59,11 @@ export const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#e0e0e0',
         borderRadius: 8,
+    },
+    listcontainer: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+        padding: 60,
+        alignItems: 'center'
     },
 })

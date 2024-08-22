@@ -32,9 +32,9 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
-       // Estados para la paginación
-       const [currentPage, setCurrentPage] = useState(1);  // Añadido
-       const itemsPerPage = 3;
+    // Estados para la paginación
+    const [currentPage, setCurrentPage] = useState(1);  // Añadido
+    const itemsPerPage = 3;
 
 
     // Se hace el mapeo según los datos que se ocupen en el formateo
@@ -49,8 +49,8 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
         'Estado': 'estado'
     };
 
-    const handleRectanglePress = (idContenidoDeClorofila: string, idFinca: string, idParcela: string, idPuntoMedicion :string, cultivo: string, fecha: string,
-        valorDeClorofila: string, temperatura: string, humedad: string,  observaciones: string, estado: string) => {
+    const handleRectanglePress = (idContenidoDeClorofila: string, idFinca: string, idParcela: string, idPuntoMedicion: string, cultivo: string, fecha: string,
+        valorDeClorofila: string, temperatura: string, humedad: string, observaciones: string, estado: string) => {
         // Encuentra el elemento correspondiente en los datos originales utilizando el ID único
 
         // Si se encuentra el elemento correspondiente, puedes acceder a sus propiedades directamente
@@ -58,7 +58,7 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
             idContenidoDeClorofila: idContenidoDeClorofila,
             idFinca: idFinca,
             idParcela: idParcela,
-            idPuntoMedicion:idPuntoMedicion ,
+            idPuntoMedicion: idPuntoMedicion,
             cultivo: cultivo,
             fecha: fecha,
             valorDeClorofila: valorDeClorofila,
@@ -70,60 +70,6 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
 
     };
 
-    // useEffect(() => {
-    //     const obtenerDatosIniciales = async () => {
-    //         // Lógica para obtener datos desde la API
-    //         const formData = { identificacion: userData.identificacion };
-
-    //         try {
-    //             setSelectedFinca(null);
-    //             setContenidoClorofila([]);
-
-    //             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-    //             const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-    //                 .filter(item => item !== undefined)
-    //                 .map(item => item!.idFinca)))
-    //                 .map(idFinca => {
-    //                     const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-    //                     const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-    //                     return { idFinca, nombreFinca };
-    //                 });
-
-    //             setFincas(fincasUnicas);
-    //             //Se obtienen las parcelas para poder hacer los filtros despues
-
-
-    //             const parcelas = Array.from(new Set(datosInicialesObtenidos
-    //                 .filter(item => item !== undefined)
-    //                 .map(item => item!.idParcela)))
-    //                 .map(idParcela => {
-    //                     const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-    //                     const idFinca = relacion ? relacion.idFinca : -1;
-    //                     const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-    //                     return { idFinca, idParcela, nombreParcela };
-    //                 });
-
-    //             setParcelas(parcelas);
-    //             //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
-    //             const registroContenidoClorofilaResponse = await ObtenerRegistroContenidoDeClorofila();
-    //             //si es 0 es inactivo sino es activo resetea los datos
-    //             const filteredData = registroContenidoClorofilaResponse.map((item) => ({
-    //                 ...item,
-    //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-    //             }));
-    //             setOriginalApiData(registroContenidoClorofilaResponse);
-    //             setCurrentPage(1);
-
-    //             setApiData(filteredData);
-    //         } catch (error) {
-    //             console.error('Error fetching data:', error);
-    //         }
-    //     };
-
-    //     obtenerDatosIniciales();
-    // }, []);
-
-
     const fetchData = async () => {
         const formData = { identificacion: userData.identificacion };
 
@@ -133,53 +79,53 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
             setSelectedParcela(null);
             setContenidoClorofila([]);
 
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idFinca)))
+                .map(idFinca => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                    const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, nombreFinca };
+                });
 
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
+            setFincas(fincasUnicas);
+            //Se obtienen las parcelas para poder hacer los filtros despues
 
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
+            const parcelas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idParcela)))
+                .map(idParcela => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    const idFinca = relacion ? relacion.idFinca : -1;
+                    const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, idParcela, nombreParcela };
+                });
 
-                setParcelas(parcelas);
-                //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
-                const registroContenidoClorofilaResponse = await ObtenerRegistroContenidoDeClorofila();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = registroContenidoClorofilaResponse.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
-                setOriginalApiData(registroContenidoClorofilaResponse);
-                setCurrentPage(1);
+            setParcelas(parcelas);
+            //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
+            const registroContenidoClorofilaResponse = await ObtenerRegistroContenidoDeClorofila();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = registroContenidoClorofilaResponse.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
+            setOriginalApiData(registroContenidoClorofilaResponse);
+            setCurrentPage(1);
 
-                setApiData(filteredData);
+            setApiData(filteredData);
 
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-      };
-    
-      useFocusEffect(
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useFocusEffect(
         useCallback(() => {
-          fetchData();
+            fetchData();
         }, [])
-      );
+    );
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -217,7 +163,7 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
         const fincaId = selectedFinca !== null ? parseInt(selectedFinca, 10) : null;
         //se asigna el valor de la parcela en selecteParcela
         setSelectedParcela(item.value)
-        
+
         //si finca Id es null no se puede seleciona ni traer el y mostrar el registro condiciones meteorologica
         if (fincaId !== null) {
 
@@ -247,7 +193,7 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
         const totalPages = Math.ceil(contenidoClorofila.length / itemsPerPage);
         let startPage = 1;
         let endPage = Math.min(totalPages, 3); // Máximo de 3 páginas visibles
-    
+
         // Calcula el rango de páginas visibles
         if (currentPage > 1 && currentPage + 1 <= totalPages) {
             startPage = currentPage - 1;
@@ -256,14 +202,14 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
             startPage = currentPage - 2;
             endPage = currentPage;
         }
-    
+
         const pageNumbers: number[] = [];
         for (let i = startPage; i <= endPage; i++) {
-            if (i > 0 && i <= totalPages) { 
+            if (i > 0 && i <= totalPages) {
                 pageNumbers.push(i);
             }
         }
-    
+
         //apartado para que no aparezca la paginación cuando todo quepa en una sola página
         if (totalPages <= 1) return null;
         return (
@@ -322,6 +268,7 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     {/* Dropdown para Parcelas */}
@@ -331,30 +278,31 @@ export const ListaContenidoClorofilaScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                             {!currentItems ? (
-                    <>
-                        <Text>No se encontraron datos</Text>
-                    </>
+                    {!currentItems ? (
+                        <>
+                            <Text>No se encontraron datos</Text>
+                        </>
                     ) : (
-                    <>
-                        {currentItems.map((item, index) => (
-                            
-                            <TouchableOpacity key={item.idContenidoDeClorofila} onPress={() => handleRectanglePress(
-                                item.idContenidoDeClorofila, item.idFinca, item.idParcela,item.idPuntoMedicion, item.cultivo, item.fecha, item.valorDeClorofila, item.temperatura,
-                                item.humedad, item.observaciones, item.estado
-                            )}>
-                                <CustomRectangle
-                                key={item.idContenidoDeClorofila}
-                                data={processData([item], keyMapping)?.data || []} />
+                        <>
+                            {currentItems.map((item, index) => (
+
+                                <TouchableOpacity key={item.idContenidoDeClorofila} onPress={() => handleRectanglePress(
+                                    item.idContenidoDeClorofila, item.idFinca, item.idParcela, item.idPuntoMedicion, item.cultivo, item.fecha, item.valorDeClorofila, item.temperatura,
+                                    item.humedad, item.observaciones, item.estado
+                                )}>
+                                    <CustomRectangle
+                                        key={item.idContenidoDeClorofila}
+                                        data={processData([item], keyMapping)?.data || []} />
                                 </TouchableOpacity>
-                            
-                        ))}
-                    </>
+
+                            ))}
+                        </>
                     )}
-                       
+
                 </ScrollView>
                 {renderPagination()}
             </View>

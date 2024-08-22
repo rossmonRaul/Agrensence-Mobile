@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from './admin-lista-empresas.styles'
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ObtenerEmpresas } from '../../../servicios/ServicioEmpresa';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
+import { FontAwesome } from '@expo/vector-icons';
 
 export const ListaEmpresaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -32,8 +33,7 @@ export const ListaEmpresaScreen: React.FC = () => {
         navigation.navigate(ScreenProps.AdminModifyCompany.screenName, { idEmpresa: idEmpresa, nombre: nombre, estado: estado });
     };
 
-    useEffect(() => {
-        //  Se obtienen las empresas y luego se filtra el estado por activo o inactivo
+    useFocusEffect(useCallback(() => {
         ObtenerEmpresas()
             .then((response) => {
                 const filteredData = response.map((item) => ({
@@ -46,8 +46,8 @@ export const ListaEmpresaScreen: React.FC = () => {
             .catch((error) => {
                 console.error('Error fetching data:', error);
             });
-    }, []);
-
+    }, []));
+    
     const handleSearch = (query: string) => {
         const lowercaseQuery = query.toLowerCase();
 
@@ -62,10 +62,12 @@ export const ListaEmpresaScreen: React.FC = () => {
 
     return (
         <View style={styles.container} >
+            <View style={styles.listcontainer}>
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
             <AddButtonComponent screenName={ScreenProps.AdminRegisterCompany.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Lista de empresas</Text>
+                <FontAwesome name="building-o" size={20} color="black" />
+                <Text style={styles.textAbove} >Empresas</Text>
             </View>
 
             <View style={styles.searchContainer}>
@@ -89,6 +91,7 @@ export const ListaEmpresaScreen: React.FC = () => {
                     </TouchableOpacity>
                 ))}
             </ScrollView>
+            </View>
             <BottomNavBar />
 
         </View>

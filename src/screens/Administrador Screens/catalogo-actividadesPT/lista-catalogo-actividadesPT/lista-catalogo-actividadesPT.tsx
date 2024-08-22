@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
+import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from '../../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
@@ -28,6 +28,7 @@ export const ListaCatalogoActividadesPTScreen: React.FC = () => {
     const { userData } = useAuth();
     const route = useRoute<RouteProp<RootStackParamList, 'ListCatalogoActividades'>>();
 
+    const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     const [apiData, setApiData] = useState<ActividadInterface[]>([]);
     const [actividadesFiltradasData, setActividadesFiltradas] = useState<ActividadInterface[]>([]);
 
@@ -39,6 +40,7 @@ export const ListaCatalogoActividadesPTScreen: React.FC = () => {
                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
             }));
             setApiData(filteredData);
+            setOriginalApiData(filteredData);
             setActividadesFiltradas(filteredData);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -67,10 +69,20 @@ export const ListaCatalogoActividadesPTScreen: React.FC = () => {
         'Estado': 'estado'
     };
 
+    const handleSearch = (query: string) => {
+        const lowercaseQuery = query.toLowerCase();
+
+        const filteredData = originalApiData.filter((item) => {
+            return (
+                item.nombre.toLowerCase().includes(lowercaseQuery)
+            );
+        });
+        setApiData(filteredData);
+    };
+
     return (
         <View style={styles.container} >
             <View style={styles.listcontainer}>
-                {/* <BackButtonComponent screenName={ScreenProps.AdminCrops.screenName} color={'#274c48'} /> */}
                 <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.RegisterCatalogoActividad.screenName} color={'#274c48'} />
 
@@ -78,8 +90,19 @@ export const ListaCatalogoActividadesPTScreen: React.FC = () => {
                     <Text style={styles.textAbove} >Catalogo de Actividades de Preparación de Terreno</Text>
                 </View>
 
+                <View style={styles.searchContainer}>
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Buscar información"
+                    onChangeText={(text) => handleSearch(text)}
+                />
+                <TouchableOpacity style={styles.searchIconContainer}>
+                    <Ionicons name="search" size={20} color="#333" />
+                </TouchableOpacity>
+            </View>
+
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                    {actividadesFiltradasData.map((item) => {
+                    {apiData.map((item) => {
                         const estadoTexto = item.estado === 1 ? 'Inactivo' : 'Activo';
                         return (
                             <TouchableOpacity key={item.idActividad} onPress={() => handleRectanglePress(item)}>

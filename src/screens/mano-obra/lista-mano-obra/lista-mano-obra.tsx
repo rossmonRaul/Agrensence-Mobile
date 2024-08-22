@@ -118,6 +118,7 @@ export const ListaManoObraScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

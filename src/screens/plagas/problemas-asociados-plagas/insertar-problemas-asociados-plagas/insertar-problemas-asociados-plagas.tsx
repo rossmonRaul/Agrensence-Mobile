@@ -221,7 +221,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                         {
                             text: 'OK',
                             onPress: () => {
-                                navigation.navigate(ScreenProps.MenuPests.screenName as never);
+                                navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
                             },
                         },
                     ]);

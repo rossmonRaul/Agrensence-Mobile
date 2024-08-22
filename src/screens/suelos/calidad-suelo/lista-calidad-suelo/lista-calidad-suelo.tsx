@@ -38,8 +38,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
         setCalidadSuelo(medicionesSuelofiltradas)
     }, [apiData, parcelas]);
 
-
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
@@ -70,7 +69,7 @@ export const ListaCalidadSueloScreen: React.FC = () => {
         };
 
         obtenerDatosIniciales();
-    }, [userData.identificacion]);
+    }, [userData.identificacion]));
 
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo

@@ -326,8 +326,8 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
-                                        <Text style={styles.buttonText}>Siguiente</Text>
-                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                            <Text style={styles.buttonText}>Siguiente</Text>
+                                            <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
                                         </View>
                                     </TouchableOpacity>
                                 </>
@@ -392,16 +392,29 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                     />
                                     <View style={styles.buttonContainer}>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: '100%' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
-                                                handleRegister();
+                                                setSecondFormVisible(false);
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
-                                                <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
                                             </View>
                                         </TouchableOpacity>
+                                        <View style={styles.buttonContainer}>
+                                            <TouchableOpacity
+                                                style={[styles.button, { width: 150 }]}
+                                                onPress={() => {
+                                                    handleRegister();
+                                                }}
+                                            >
+                                                <View style={styles.buttonContent}>
+                                                    <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                                    <Text style={styles.buttonText}> Guardar</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </>
                             )}

@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { styles } from './Dropdown.styles'
+import { styles } from './Dropdown.styles';
 import { FontAwesome } from '@expo/vector-icons';
 
-//Este es un componente llamado DropdownComponent para pasarle algunos datos como por ejemplo el de la interfaz
 interface DropdownComponentProps {
     placeholder: string;
     data: { label: string; value: string }[];
@@ -13,8 +12,10 @@ interface DropdownComponentProps {
     selectedTextColor?: string;
     iconColor?: string;
     height?: number;
+    customWidth?: number;
     onChange: (item: { label: string; value: string }) => void;
 }
+
 const DropdownComponent: React.FC<DropdownComponentProps> = ({
     placeholder,
     data,
@@ -23,14 +24,15 @@ const DropdownComponent: React.FC<DropdownComponentProps> = ({
     selectedTextColor = 'black',
     iconColor = 'black',
     height = 50,
+    customWidth,
     onChange,
 }) => {
     const placeholderFontFamily = selectedTextColor !== 'black' ? 'CatamaranBold' : 'CatamaranMedium';
 
     return (
-        <View style={styles.dropdownView} >
+        <View style={styles.dropdownView}>
             <Dropdown
-                style={[styles.dropdown, { height: height }]}
+                style={[styles.dropdown, { height: height, width: customWidth }]} 
                 placeholderStyle={[styles.placeholderStyle, { color: selectedTextColor, fontFamily: placeholderFontFamily }]}
                 placeholder={placeholder}
                 selectedTextStyle={[styles.selectedTextStyle, { color: selectedTextColor, fontFamily: placeholderFontFamily }]}

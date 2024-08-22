@@ -340,7 +340,7 @@ export const ReporteEntradaTotal:  React.FC = () => {
     return (
         <View style={styles.container}>
         <View style={styles.listcontainer}>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+            <BackButtonComponent screenName={ScreenProps.AdminReports.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
                 <Text style={styles.textAbove} >Reporte Ingresos</Text>
             </View>
@@ -353,6 +353,7 @@ export const ReporteEntradaTotal:  React.FC = () => {
                     value={selectedFinca}
                     iconName="tree"
                     onChange={handleFincaChange}
+                    customWidth={375}
                 />
 
                 <View style={styles.datePickerContainer}>

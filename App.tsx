@@ -129,9 +129,9 @@ import { ListaContenidoNitrogenoScreen } from './src/screens/clima/contenido-nit
 import { InsertarContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/registro-contenido-nitrogeno/insertar-contenido-nitrogeno';
 import { ModificarContenidoNitrogenoScreen } from './src/screens/clima/contenido-nitrogeno/modificar-contenido-nitrogeno/modificar-contenido-nitrogeno';
 
-import { ListaCatalogoActividadesPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/lista-catalogo-actividadesPT/lista-catalogo-actividadesPT';
-import { InsertarCatalogoActividadPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/registar-catalogo-actividadesPT/registar-catalogo-actividadesPT';
-import { ModificarCatalogoActividadPTScreen } from './src/screens/cultivos/catalogo-actividadesPT/modificar-catalogo-actividadesPT/modificar-catalogo-actividadesPT';
+import { ListaCatalogoActividadesPTScreen } from './src/screens/Administrador Screens/catalogo-actividadesPT/lista-catalogo-actividadesPT/lista-catalogo-actividadesPT';
+import { InsertarCatalogoActividadPTScreen } from './src/screens/Administrador Screens/catalogo-actividadesPT/registar-catalogo-actividadesPT/registar-catalogo-actividadesPT';
+import { ModificarCatalogoActividadPTScreen } from './src/screens/Administrador Screens/catalogo-actividadesPT/modificar-catalogo-actividadesPT/modificar-catalogo-actividadesPT';
 
 import { ListaMedidasCultivosScreen } from './src/screens/medidas-cultivos/lista-medidas-cultivos/lista-medidas-cultivos'
 import { RegistrarMedidasCultivosScreen } from './src/screens/medidas-cultivos/registrar-medidas-cultivos/registrar-medidas-cultivos';

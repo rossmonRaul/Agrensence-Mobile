@@ -62,55 +62,62 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
 
     };
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
+    const obtenerDatosIniciales = async () => {
+        // Lógica para obtener datos desde la API
+        const formData = { identificacion: userData.identificacion };
 
-            try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+        try {
 
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
+            setSelectedFinca(null)
+            setSelectedParcela(null)
+            setEficienciaRiego([])
 
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idFinca)))
+                .map(idFinca => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                    const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, nombreFinca };
+                });
 
-                setParcelas(parcelas);
-                //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
-                const registroCondicionesMeteorologicaResponse = await ObtenerRegistroCondicionesMeteorologica();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = registroCondicionesMeteorologicaResponse.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
-                setOriginalApiData(registroCondicionesMeteorologicaResponse);
-                setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        obtenerDatosIniciales();
-    }, []);
+            setFincas(fincasUnicas);
+            //Se obtienen las parcelas para poder hacer los filtros despues
 
 
+            const parcelas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idParcela)))
+                .map(idParcela => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    const idFinca = relacion ? relacion.idFinca : -1;
+                    const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, idParcela, nombreParcela };
+                });
+
+            setParcelas(parcelas);
+            //se obtienen los datos de el registro condiciones meteorologicas para despues poder filtrarlos
+            const registroCondicionesMeteorologicaResponse = await ObtenerRegistroCondicionesMeteorologica();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = registroCondicionesMeteorologicaResponse.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
+            setOriginalApiData(registroCondicionesMeteorologicaResponse);
+            setApiData(filteredData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+
+    useFocusEffect(
+        useCallback(() => {
+            obtenerDatosIniciales();
+        }, [])
+    );
 
     //funcion para poder filtrar las parcelas por finca
     const obtenerParcelasPorFinca = async (fincaId: number) => {
@@ -186,6 +193,7 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     {/* Dropdown para Parcelas */}
@@ -195,6 +203,7 @@ export const ListaCondicionesMeteorologicasClimaticasScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

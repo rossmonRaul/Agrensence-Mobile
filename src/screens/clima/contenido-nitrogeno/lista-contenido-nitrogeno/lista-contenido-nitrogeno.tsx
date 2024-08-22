@@ -176,6 +176,7 @@ export const ListaContenidoNitrogenoScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     <DropdownComponent
@@ -184,6 +185,7 @@ export const ListaContenidoNitrogenoScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

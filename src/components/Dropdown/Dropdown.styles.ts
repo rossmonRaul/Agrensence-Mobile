@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 8,
         paddingHorizontal: 8,
+        width: 375,
     },
     label: {
         position: 'absolute',
@@ -32,6 +33,7 @@ export const styles = StyleSheet.create({
     },
     dropdownView: {
         paddingBottom: 10,
+        
     },
     icon: {
         marginRight: 5,

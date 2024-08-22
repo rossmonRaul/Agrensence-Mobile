@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from './admin-lista-mediciones-sensor.styles'
+
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -31,25 +32,24 @@ export const ListaMedicionesSensorScreen: React.FC = () => {
         'Estado': 'estado',
     };
 
-    const handleRectanglePress = (idMedicion: string,  estado: string) => {
-        navigation.navigate(ScreenProps.ModifyMeasureSensor.screenName, { idMedicion: idMedicion,  estado: estado });
+    const handleRectanglePress = (idMedicion: string, estado: string) => {
+        navigation.navigate(ScreenProps.ModifyMeasureSensor.screenName, { idMedicion: idMedicion, estado: estado });
     };
 
-    useEffect(() => {
-        //  Se obtienen las mediciones y luego se filtra el estado por activo o inactivo
+    useFocusEffect(useCallback(() => {
         ObtenerMedicionesSensor()
-            .then((response) => {
-                const filteredData = response.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
-                setOriginalApiData(filteredData);
-                setApiData(filteredData);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    }, []);
+        .then((response) => {
+            const filteredData = response.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
+            setOriginalApiData(filteredData);
+            setApiData(filteredData);
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+    }, []));
 
     const handleSearch = (query: string) => {
         const lowercaseQuery = query.toLowerCase();
@@ -65,33 +65,35 @@ export const ListaMedicionesSensorScreen: React.FC = () => {
 
     return (
         <View style={styles.container} >
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
-            <AddButtonComponent screenName={ScreenProps.RegisterMeasureSensor.screenName} color={'#274c48'} />
-            <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Lista de Mediciones</Text>
-            </View>
+            <View style={styles.listcontainer}>
+                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+                <AddButtonComponent screenName={ScreenProps.RegisterMeasureSensor.screenName} color={'#274c48'} />
+                <View style={styles.textAboveContainer}>
+                    <Text style={styles.textAbove} >Lista de Mediciones</Text>
+                </View>
 
-            <View style={styles.searchContainer}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="Buscar información"
-                    onChangeText={(text) => handleSearch(text)}
-                />
-                <TouchableOpacity style={styles.searchIconContainer}>
-                    <Ionicons name="search" size={20} color="#333" />
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                {apiData.map((item, index) => (
-                    <TouchableOpacity key={item.idMedicion} onPress={() => handleRectanglePress(item.idMedicion, item.estado)}>
-                        <CustomRectangle
-                            key={item.idMedicion}
-                            data={processData([item], keyMapping)?.data || []}
-                        />
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Buscar información"
+                        onChangeText={(text) => handleSearch(text)}
+                    />
+                    <TouchableOpacity style={styles.searchIconContainer}>
+                        <Ionicons name="search" size={20} color="#333" />
                     </TouchableOpacity>
-                ))}
-            </ScrollView>
+                </View>
+
+                <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
+                    {apiData.map((item, index) => (
+                        <TouchableOpacity key={item.idMedicion} onPress={() => handleRectanglePress(item.idMedicion, item.estado)}>
+                            <CustomRectangle
+                                key={item.idMedicion}
+                                data={processData([item], keyMapping)?.data || []}
+                            />
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
             <BottomNavBar />
 
         </View>

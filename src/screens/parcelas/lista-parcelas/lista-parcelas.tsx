@@ -135,7 +135,7 @@ export const ListaParcelasScreen: React.FC = () => {
                         value={finca}
                         iconName='tree'
                         onChange={handleValueFinca}
-
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
