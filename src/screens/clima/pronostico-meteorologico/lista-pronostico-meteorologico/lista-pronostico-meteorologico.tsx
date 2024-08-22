@@ -114,7 +114,7 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
         {/* <Text style={styles.textAbove} >Pronostico Meteorologico</Text> */}
       </View>
       <Text style={styles.title}>Pronóstico Meteorológico</Text>
-      <View style={styles.searchContainer}>
+      <View style={styles.dropDownContainer}>
         {/* Dropdown para Fincas */}
         <DropdownComponent
 
@@ -122,7 +122,7 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
           data={fincas.map(finca => ({ label: finca.nombre, value: finca.ubicacion }))}
           value={selectedFinca}
           iconName="tree"
-
+          customWidth={375}
           onChange={handleFincaChange}
         />
       </View>

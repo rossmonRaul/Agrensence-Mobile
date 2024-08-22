@@ -93,20 +93,20 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                 ...item,
                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
             }));
-            
+
             setApiData(filteredData);
 
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-      };
-    
-      useFocusEffect(
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useFocusEffect(
         useCallback(() => {
-          fetchData();
+            fetchData();
         }, [])
-      );
-      
+    );
+
     // useEffect(() => {
     //     const obtenerDatosIniciales = async () => {
     //         // Lógica para obtener datos desde la API
@@ -131,7 +131,7 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
     //                 ...item,
     //                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
     //             }));
-                
+
     //             setApiData(filteredData);
     //         } catch (error) {
     //             console.error('Error fetching data:', error);
@@ -158,7 +158,7 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
         try {
 
             const entradaSalidaFiltrado = apiData.filter(item => item.idFinca === fincaId);
-            
+
             let listaIds = '';
             setEntradasSalidas(entradaSalidaFiltrado);
             entradaSalidaFiltrado.forEach((item, index) => {
@@ -176,12 +176,12 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
     };
 
 
-     const handleExportFile = async () => {
-        
-       try {
+    const handleExportFile = async () => {
+
+        try {
             // Solicitar permiso de escritura en el almacenamiento
             const { status } = await MediaLibrary.requestPermissionsAsync();
-            const formData2 = { ListaIdsExportar: idRegistrosExportar};
+            const formData2 = { ListaIdsExportar: idRegistrosExportar };
             const datosListaProductos: Item[] = await ObtenerDetallesRegistroEntradaSalidaExportar(formData2);
             if (status !== 'granted') {
                 Alert.alert('Permisos insuficientes', 'Se requieren permisos para acceder al almacenamiento.');
@@ -227,6 +227,7 @@ export const ListaEntradasSalidasScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
                 </View>
                 <TouchableOpacity style={styles.filterButton} onPress={handleExportFile}>

@@ -34,7 +34,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
     const { userData } = useAuth();
-    const { identificacion,nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela } = route.params as RouteParams;
+    const { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela} = route.params as RouteParams;
     const [isFormVisible, setFormVisible] = useState(false);
 
     /*  Se definen los estados para controlar la visibilidad 
@@ -133,9 +133,9 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                                     {
                                         text: 'OK',
                                         onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.Menu.screenName
-                                            );
+                                            navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                                                datoValidacion: 1,
+                                            });
                                         },
                                     },
                                 ]
@@ -190,9 +190,9 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                     {
                         text: 'OK',
                         onPress: () => {
-                            navigation.navigate(
-                                ScreenProps.Menu.screenName
-                            );
+                            navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                                datoValidacion: 1,
+                            });
                         },
                     },
                 ]
@@ -215,7 +215,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
             >
             </ImageBackground>
             
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.AdminUserList.screenName} color={'#ffff'} parametro={'1'} />
 
             <View style={styles.lowerContainer}>
             <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

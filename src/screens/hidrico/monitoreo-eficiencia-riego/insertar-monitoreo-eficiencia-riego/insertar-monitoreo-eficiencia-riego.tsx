@@ -143,7 +143,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.HidricMenu.screenName as never);
+                        navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
                     },
                 },
             ]);

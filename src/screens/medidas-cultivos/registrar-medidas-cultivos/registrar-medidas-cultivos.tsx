@@ -56,7 +56,7 @@ export const RegistrarMedidasCultivosScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.CropMeasurementsList.screenName as never);
                     },
                 },
             ]);

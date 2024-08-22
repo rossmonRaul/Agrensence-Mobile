@@ -75,7 +75,7 @@ export const ListaPuntoMedicionScreen: React.FC = () => {
     return (
         <View style={styles.container}>
             <View style={styles.listcontainer}>
-                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.AdminSensors.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertMeasurementPoint.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
                     <Text style={styles.textAbove} >Lista puntos medición</Text>

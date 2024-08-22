@@ -65,7 +65,7 @@ export const ListaSensoresScreen: React.FC = () => {
 
     };
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         const obtenerDatosIniciales = async () => {
             try {
                 const fincasResponse = await ObtenerFincas(userData.idEmpresa); 
@@ -100,8 +100,7 @@ export const ListaSensoresScreen: React.FC = () => {
         };
 
         obtenerDatosIniciales();
-    }, []);
-
+    }, []));
 
 
     //funcion para poder filtrar las parcelas por finca
@@ -177,16 +176,18 @@ export const ListaSensoresScreen: React.FC = () => {
                         placeholder="Seleccione una Finca"
                         data={fincas.map((finca: any) => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
-                        iconName="map-marker"
+                        iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map((parcela: any) => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
-                        iconName="map-marker"
+                        iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>

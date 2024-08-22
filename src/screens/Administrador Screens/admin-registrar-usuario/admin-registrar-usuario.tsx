@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View,ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from './admin-registrar-usuario.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -132,7 +132,9 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                            datoValidacion: 0,
+                        });
                     },
                 },
             ]);
@@ -141,104 +143,115 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
         }
     };
 
+    const CustomDropdownWrapper = ({ children }) => {
+        return (
+            <View style={{ width: 440 }}>
+                {children}
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height' }
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
-
             >
-            <ImageBackground
-                source={require('../../../assets/images/siembros_imagen.jpg')}
-                style={styles.upperContainer}
-            >
-            </ImageBackground>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
-            <View style={styles.lowerContainer}>
-            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-
-                <View>
-                    <Text style={styles.createAccountText} >Crea una cuenta</Text>
+                <ImageBackground
+                    source={require('../../../assets/images/siembros_imagen.jpg')}
+                    style={styles.upperContainer}
+                >
+                </ImageBackground>
+                <BackButtonComponent screenName={ScreenProps.AdminUserList.screenName} color={'#ffff'} parametro={'0'}/>
+                <View style={styles.lowerContainer}>
+                    <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
+    
+                        <View>
+                            <Text style={styles.createAccountText} >Crea una cuenta</Text>
+                        </View>
+    
+                        <View style={styles.formContainer}>
+                            {!isSecondFormVisible ? (
+                                <>
+                                    <Text style={styles.formText} >Identificación</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Identificación"
+                                        value={formulario.identificacion}
+                                        onChangeText={(text) => updateFormulario('identificacion', text)}
+                                    />
+                                    <Text style={styles.formText} >Nombre</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Nombre Completo"
+                                        value={formulario.nombre}
+                                        onChangeText={(text) => updateFormulario('nombre', text)}
+                                    />
+                                    <Text style={styles.formText} >Correo electrónico</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="correo@ejemplo.com"
+                                        value={formulario.correo}
+                                        onChangeText={(text) => updateFormulario('correo', text)}
+                                    />
+                                    <Text style={styles.formText} >Contraseña</Text>
+                                    <TextInput style={styles.input}
+                                        secureTextEntry={true}
+                                        value={formulario.contrasena}
+                                        placeholder="Contraseña"
+                                        onChangeText={(text) => updateFormulario('contrasena', text)}
+                                    />
+                                    <Text style={styles.formText} >Confirmar contraseña</Text>
+                                    <TextInput style={styles.input}
+                                        secureTextEntry={true}
+                                        value={formulario.confirmarContrasena}
+                                        placeholder="Confirmar contraseña"
+                                        onChangeText={(text) => updateFormulario('confirmarContrasena', text)}
+                                    />
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={async () => {
+                                            const isValid = validateFirstForm();
+    
+                                            if (isValid) {
+                                                setSecondFormVisible(true);
+                                            }
+                                        }}
+                                    >
+                                        <Text style={styles.buttonText}>Siguiente</Text>
+                                    </TouchableOpacity>
+                                </>
+                            ) : (
+                                <>
+                                    <DropdownComponent
+                                        placeholder="Empresa"
+                                        data={empresaData}
+                                        iconName="building-o"
+                                        value={empresa}
+                                        onChange={(item) => {
+                                            setEmpresa(item.value as never);
+                                            updateFormulario('empresa', item.value);
+                                        }}
+                                        customWidth={440} 
+                                    />
+                                    {empresa && (
+                                        <TouchableOpacity
+                                            style={styles.button}
+                                            onPress={() => {
+                                                handleRegister();
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                                <Text style={styles.buttonText}>Guardar registro</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )}
+                                </>
+                            )}
+                        </View>
+                    </ScrollView>
                 </View>
-
-                <View style={styles.formContainer}>
-                    {!isSecondFormVisible ? (
-                        <>
-                            <Text style={styles.formText} >Identificación</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Identificación"
-                                value={formulario.identificacion}
-                                onChangeText={(text) => updateFormulario('identificacion', text)}
-                            />
-                            <Text style={styles.formText} >Nombre</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Nombre Completo"
-                                value={formulario.nombre}
-                                onChangeText={(text) => updateFormulario('nombre', text)}
-                            />
-                            <Text style={styles.formText} >Correo electrónico</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="correo@ejemplo.com"
-                                value={formulario.correo}
-                                // Se puede utilizar el para el correo .toLowerCase()
-                                onChangeText={(text) => updateFormulario('correo', text)}
-                            />
-                            <Text style={styles.formText} >Contraseña</Text>
-                            <TextInput style={styles.input}
-                                secureTextEntry={true}
-                                value={formulario.contrasena}
-                                placeholder="Contraseña"
-                                onChangeText={(text) => updateFormulario('contrasena', text)}
-                            />
-                            <Text style={styles.formText} >Confirmar contraseña</Text>
-                            <TextInput style={styles.input}
-                                secureTextEntry={true}
-                                value={formulario.confirmarContrasena}
-                                placeholder="Confirmar contraseña"
-                                onChangeText={(text) => updateFormulario('confirmarContrasena', text)}
-                            />
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={async () => {
-                                    const isValid = validateFirstForm();
-
-                                    if (isValid) {
-                                        setSecondFormVisible(true);
-                                    }
-
-                                }}
-                            >
-                                <Text style={styles.buttonText}>Siguiente</Text>
-                            </TouchableOpacity>
-                        </>
-                    ) : (
-                        <>
-                            <DropdownComponent
-                                placeholder="Empresa"
-                                data={empresaData}
-                                iconName="building-o"
-                                value={empresa}
-                                onChange={(item) => (setEmpresa(item.value as never), updateFormulario('empresa', item.value))}
-                            />
-                            {empresa && <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => {
-                                    handleRegister();
-                                }}
-                            >
-                                <View style={styles.buttonContent}>
-                                    <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                    <Text style={styles.buttonText}>Guardar registro</Text>
-                                </View>
-                            </TouchableOpacity>}
-                        </>
-                    )}
-                </View>
-                </ScrollView>
-            </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
         </View>

@@ -37,12 +37,12 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
     // Se hace el mapeo según los datos que se ocupen en el formateo
     const keyMapping = {
         'Volumen de agua utilizado': 'volumenAguaUtilizado',
-         'Nivel freático': 'nivelFreatico',
+        'Nivel freático': 'nivelFreatico',
         'Fugas': 'estadoTuberiasYAccesorios',
         'Uniformidad del riego': 'uniformidadRiego',
-      //  'Obstrucciones en Aspersores': 'estadoAspersores',
+        //  'Obstrucciones en Aspersores': 'estadoAspersores',
         'Obstrucciones en Canales': 'estadoCanalesRiego',
-       
+
         'Estado': 'estado'
     };
 
@@ -76,58 +76,65 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
+    const obtenerDatosIniciales = async () => {
+        // Lógica para obtener datos desde la API
+        const formData = { identificacion: userData.identificacion };
 
-            try {
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+        try {
 
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
+            setSelectedFinca(null)
+            setSelectedParcela(null)
+            setEficienciaRiego([])
+
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idFinca)))
+                .map(idFinca => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                    const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, nombreFinca };
+                });
+
+            setFincas(fincasUnicas);
+            //Se obtienen las parcelas para poder hacer los filtros despues
 
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
+            const parcelas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idParcela)))
+                .map(idParcela => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    const idFinca = relacion ? relacion.idFinca : -1;
+                    const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, idParcela, nombreParcela };
+                });
 
-                setParcelas(parcelas);
-                //se obtienen el monitoreo eficiencia riego para despues poder filtrarlos
-                const rotacionCultivosResponse = await ObtenerEficienciaRiego();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = rotacionCultivosResponse.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                    estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No Tiene Fugas' : 'Tiene Fugas',
-                    uniformidadRiego: item.uniformidadRiego === false ? 'No Tiene Uniformidad' : 'Tiene Uniformidad',
-                    //estadoAspersores: item.estadoAspersores === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
-                    estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
-                }));
-                setOriginalApiData(rotacionCultivosResponse);
-                setApiData(filteredData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+            setParcelas(parcelas);
+            //se obtienen el monitoreo eficiencia riego para despues poder filtrarlos
+            const rotacionCultivosResponse = await ObtenerEficienciaRiego();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = rotacionCultivosResponse.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+                estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No Tiene Fugas' : 'Tiene Fugas',
+                uniformidadRiego: item.uniformidadRiego === false ? 'No Tiene Uniformidad' : 'Tiene Uniformidad',
+                //estadoAspersores: item.estadoAspersores === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
+                estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
+            }));
+            setOriginalApiData(rotacionCultivosResponse);
+            setApiData(filteredData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-        obtenerDatosIniciales();
-    }, []);
 
+    useFocusEffect(
+        useCallback(() => {
+            obtenerDatosIniciales();
+        }, [])
+    );
 
 
     //funcion para poder filtrar las parcelas por finca
@@ -215,6 +222,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     {/* Dropdown para Parcelas */}
@@ -224,6 +232,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 {/* <View style={styles.searchContainer}>
@@ -240,7 +249,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {eficienciaRiego.map((item, index) => (
                         <TouchableOpacity key={item.idMonitoreoEficienciaRiego} onPress={() => handleRectanglePress(
-                            item.idMonitoreoEficienciaRiego, item.idFinca, item.idParcela, item.estado )}>
+                            item.idMonitoreoEficienciaRiego, item.idFinca, item.idParcela, item.estado)}>
                             <CustomRectangle
                                 key={item.idFinca}
                                 data={processData([item], keyMapping)?.data || []} />

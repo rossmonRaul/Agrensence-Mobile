@@ -66,7 +66,7 @@ export const RegistrarFincaScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.ListEstate.screenName as never);
                     },
                 },
             ]);
@@ -87,7 +87,7 @@ export const RegistrarFincaScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.ListEstate.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListEstate.screenName} color={'#ffff'} parametro={'1'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 

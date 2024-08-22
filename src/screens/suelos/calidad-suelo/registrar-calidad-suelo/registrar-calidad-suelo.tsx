@@ -185,7 +185,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.MenuFloor.screenName as never);
+                        navigation.navigate(ScreenProps.ListQualityFloorScreen.screenName as never);
                     },
                 },
             ]);
@@ -256,7 +256,7 @@ export const RegistrarCalidadSueloScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.MenuFloor.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListQualityFloorScreen.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 

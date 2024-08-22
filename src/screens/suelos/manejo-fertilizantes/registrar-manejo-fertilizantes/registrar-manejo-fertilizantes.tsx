@@ -154,7 +154,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.MenuFloor.screenName as never);
+                        navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
                     },
                 },
             ]);

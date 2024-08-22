@@ -67,7 +67,7 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.Menu.screenName
+                                                ScreenProps.CompanyList.screenName
                                             );
                                         },
                                     },
@@ -109,7 +109,7 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                         text: 'OK',
                         onPress: () => {
                             navigation.navigate(
-                                ScreenProps.Menu.screenName as never
+                                ScreenProps.CompanyList.screenName as never
                             );
                         },
                     },
@@ -128,7 +128,7 @@ export const AdminModificarEmpresaScreen: React.FC = () => {
                 style={styles.upperContainer}
             >
             </ImageBackground>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.CompanyList.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
                 <View>
                     <Text style={styles.createAccountText} >Modificar empresa</Text>

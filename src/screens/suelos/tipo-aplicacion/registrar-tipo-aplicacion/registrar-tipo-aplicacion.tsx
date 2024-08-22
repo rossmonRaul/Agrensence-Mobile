@@ -42,7 +42,7 @@ export const RegistrarTipoAplicacionScreen: React.FC = () => {
                     {
                         text: 'OK',
                         onPress: () => {
-                            navigation.navigate(ScreenProps.MenuFloor.screenName as never);
+                            navigation.navigate(ScreenProps.ListApplicationType.screenName as never);
                         },
                     },
                 ]);

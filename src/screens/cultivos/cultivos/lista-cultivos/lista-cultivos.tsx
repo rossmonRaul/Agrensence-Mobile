@@ -240,8 +240,8 @@ export const ListaCultivosScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
-
                     {/* Dropdown para Parcelas */}
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"

@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { CambiarEstadoMedicionSensor, ModificarMedicionesSensor } from '../../../servicios/ServiciosSensor';
 interface RouteParams {
     idMedicion: string;
-    
+
     estado: string;
 }
 
@@ -20,7 +20,7 @@ export const AdminModificarMedicionSensorScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const { userData } = useAuth();
     const route = useRoute();
-    const { idMedicion,  estado } = route.params as RouteParams;
+    const { idMedicion, estado } = route.params as RouteParams;
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idMedicion: idMedicion,
@@ -66,8 +66,9 @@ export const AdminModificarMedicionSensorScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.Menu.screenName
-                                            );
+                                                ScreenProps.ListMeasureSensor.screenName, {
+                                                datoValidacion: 0,
+                                            });
                                         },
                                     },
                                 ]
@@ -81,7 +82,7 @@ export const AdminModificarMedicionSensorScreen: React.FC = () => {
             { cancelable: false }
         );
     };
-    
+
 
     return (
         <View style={styles.container}>
@@ -91,51 +92,51 @@ export const AdminModificarMedicionSensorScreen: React.FC = () => {
 
             >
                 <ImageBackground
-                source={require('../../../assets/images/siembros_imagen.jpg')}
-                style={styles.upperContainer}
-            >
-            </ImageBackground>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
-            <View style={styles.lowerContainer}>
-            <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                <View>
-                    <Text style={styles.createAccountText} >Modificar medicion de sensor</Text>
-                </View>
-                <View style={styles.formContainer}>
-                    
+                    source={require('../../../assets/images/siembros_imagen.jpg')}
+                    style={styles.upperContainer}
+                >
+                </ImageBackground>
+                <BackButtonComponent screenName={ScreenProps.ListMeasureSensor.screenName} color={'#ffff'} parametro={'0'} />
+                <View style={styles.lowerContainer}>
+                    <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
+                        <View>
+                            <Text style={styles.createAccountText} >Modificar medicion de sensor</Text>
+                        </View>
+                        <View style={styles.formContainer}>
 
-                    {estado === 'Activo'
-                        ? <TouchableOpacity
-                            style={styles.buttonDelete}
-                            onPress={() => {
-                                handleChangeAccess();
-                            }}
-                        >
-                            <View style={styles.buttonContent}>
-                                <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
-                                <Text style={styles.buttonText}> Inhabilitar</Text>
-                            </View>
-                        </TouchableOpacity>
-                        :
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => {
-                                handleChangeAccess();
-                            }}
-                        >
-                            <View style={styles.buttonContent}>
-                                <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
-                                <Text style={styles.buttonText}>Habilitar</Text>
-                            </View>
-                        </TouchableOpacity>
-                    }
+
+                            {estado === 'Activo'
+                                ? <TouchableOpacity
+                                    style={styles.buttonDelete}
+                                    onPress={() => {
+                                        handleChangeAccess();
+                                    }}
+                                >
+                                    <View style={styles.buttonContent}>
+                                        <Ionicons name="close-circle" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}> Inhabilitar</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                :
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => {
+                                        handleChangeAccess();
+                                    }}
+                                >
+                                    <View style={styles.buttonContent}>
+                                        <Ionicons name="checkmark" size={20} color="white" style={styles.iconStyle} />
+                                        <Text style={styles.buttonText}>Habilitar</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            }
+                        </View>
+                    </ScrollView>
                 </View>
-                </ScrollView>
-            </View>
 
 
             </KeyboardAvoidingView>
-            
+
             <BottomNavBar />
         </View>
     );

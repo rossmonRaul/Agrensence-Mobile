@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
         width: 300,
         paddingTop: 20,
         paddingLeft: 20,
-        alignSelf: 'flex-end'
+        alignSelf: 'center'
     },
     rowContainer: {
         width: '100%',

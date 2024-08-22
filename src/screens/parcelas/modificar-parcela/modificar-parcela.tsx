@@ -110,7 +110,7 @@ export const ModificarParcelaScreen: React.FC = () => {
                         text: 'OK',
                         onPress: () => {
                             navigation.navigate(
-                                ScreenProps.Menu.screenName as never
+                                ScreenProps.ListPlot.screenName as never
                             );
                         },
                     },

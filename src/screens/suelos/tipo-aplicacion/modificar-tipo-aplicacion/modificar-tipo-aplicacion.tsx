@@ -58,7 +58,7 @@ export const ModificarTipoAplicacionScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.MenuFloor.screenName as never);
+                        navigation.navigate(ScreenProps.ListApplicationType.screenName as never);
                     },
                 },
             ]);
@@ -105,7 +105,7 @@ export const ModificarTipoAplicacionScreen: React.FC = () => {
                                     {
                                         text: 'OK',
                                         onPress: () => {
-                                            navigation.navigate(ScreenProps.MenuFloor.screenName);
+                                            navigation.navigate(ScreenProps.ListApplicationType.screenName);
                                         },
                                     },
                                 ]
@@ -130,7 +130,7 @@ export const ModificarTipoAplicacionScreen: React.FC = () => {
                     source={require('../../../../assets/images/siembros_imagen.jpg')}
                     style={styles.upperContainer}
                 />
-                <BackButtonComponent screenName={ScreenProps.MenuFloor.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.ListApplicationType.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>
@@ -148,7 +148,7 @@ export const ModificarTipoAplicacionScreen: React.FC = () => {
 
                             <View style={styles.buttonContainer}>
                                 <TouchableOpacity
-                                    style={[styles.button, { width: 371 }]}
+                                    style={[styles.button, { width: 440 }]}
                                     onPress={handleRegister}
                                 >
                                     <View style={styles.buttonContent}>

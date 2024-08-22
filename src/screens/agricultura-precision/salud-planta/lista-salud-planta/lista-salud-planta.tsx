@@ -25,14 +25,14 @@ export const ListaSaludPlantaScreen: React.FC = () => {
     const [apiData, setApiData] = useState<riesgoNaturalDataInterface[]>([]);
     const [saludPlantaFiltradosData, setSaludPlantaFiltradosData] = useState<any[]>([]);
     const [saludPlanta, setSaludPlanta] = useState<any[]>([]);
-     // Estados para la paginación
-     const [currentPage, setCurrentPage] = useState(1);  // Añadido
-     const itemsPerPage = 3;
+    // Estados para la paginación
+    const [currentPage, setCurrentPage] = useState(1);  // Añadido
+    const itemsPerPage = 3;
 
 
-const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = saludPlanta.slice(indexOfFirstItem, indexOfLastItem);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = saludPlanta.slice(indexOfFirstItem, indexOfLastItem);
     //para poder hacer el filtro de los datos del api
     useEffect(() => {
         // Obtener los IDs de las parcelas del usuario
@@ -89,41 +89,41 @@ const indexOfLastItem = currentPage * itemsPerPage;
             setSaludPlanta([]);
             const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
-                const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idParcela, nombreParcela };
-                    });
-                setParcelas(parcelasUnicas)
-                const saludPlanta = await ObtenerSaludDeLaPlanta();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = saludPlanta.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
+            const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idParcela)))
+                .map(idParcela => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                    return { idParcela, nombreParcela };
+                });
+            setParcelas(parcelasUnicas)
+            const saludPlanta = await ObtenerSaludDeLaPlanta();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = saludPlanta.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
 
-                setApiData(filteredData);
+            setApiData(filteredData);
 
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-      };
-    
-      useFocusEffect(
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useFocusEffect(
         useCallback(() => {
-          fetchData();
+            fetchData();
         }, [])
-      );
+    );
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
         'Finca': 'nombreFinca',
         'Parcela': 'nombreParcela',
         'Fecha': 'fecha',
-        'Cultivo':'cultivo',
+        'Cultivo': 'cultivo',
         'Color Hojas': 'colorHojas',
         'Tamano y Forma de la Hoja': 'tamanoFormaHoja',
         'Estado de Tallo': 'estadoTallo',
@@ -133,7 +133,7 @@ const indexOfLastItem = currentPage * itemsPerPage;
 
 
     //funcion para enviarlo a modificar residuo
-    const handleRectanglePress = (idSaludDeLaPlanta: string,  idFinca: string, idParcela: string, fecha: string, cultivo: string,
+    const handleRectanglePress = (idSaludDeLaPlanta: string, idFinca: string, idParcela: string, fecha: string, cultivo: string,
         idColorHojas: string, idTamanoFormaHoja: number, idEstadoTallo: string, idEstadoRaiz: string, estado: string) => {
 
         navigation.navigate(ScreenProps.ModifyPlantHealth.screenName, {
@@ -159,7 +159,7 @@ const indexOfLastItem = currentPage * itemsPerPage;
         const totalPages = Math.ceil(saludPlanta.length / itemsPerPage);
         let startPage = 1;
         let endPage = Math.min(totalPages, 3); // Máximo de 3 páginas visibles
-    
+
         // Calcula el rango de páginas visibles
         if (currentPage > 1 && currentPage + 1 <= totalPages) {
             startPage = currentPage - 1;
@@ -168,14 +168,14 @@ const indexOfLastItem = currentPage * itemsPerPage;
             startPage = currentPage - 2;
             endPage = currentPage;
         }
-    
+
         const pageNumbers: number[] = [];
         for (let i = startPage; i <= endPage; i++) {
-            if (i > 0 && i <= totalPages) { 
+            if (i > 0 && i <= totalPages) {
                 pageNumbers.push(i);
             }
         }
-    
+
         //apartado para que no aparezca la paginación cuando todo quepa en una sola página
         if (totalPages <= 1) return null;
         return (
@@ -239,23 +239,23 @@ const indexOfLastItem = currentPage * itemsPerPage;
                     </TouchableOpacity>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
-                {!currentItems ? (
-                    <>
-                        <Text>No se encontraron datos</Text>
-                    </>
+                    {!currentItems ? (
+                        <>
+                            <Text>No se encontraron datos</Text>
+                        </>
                     ) : (
-                    <>
-                        {currentItems.map((item, index) => (
-                            
-                            <TouchableOpacity key={item.idSaludDeLaPlanta} onPress={() => handleRectanglePress(item.idSaludDeLaPlanta, item.idFinca, item.idParcela,
-                                item.fecha, item.cultivo, item.idColorHojas, item.idTamanoFormaHoja, item.idEstadoTallo, item.idEstadoRaiz, item.estado)}>
-                                <CustomRectangle
-                                key={item.idSaludDeLaPlanta}
-                                data={processData([item], keyMapping)?.data || []} />
+                        <>
+                            {currentItems.map((item, index) => (
+
+                                <TouchableOpacity key={item.idSaludDeLaPlanta} onPress={() => handleRectanglePress(item.idSaludDeLaPlanta, item.idFinca, item.idParcela,
+                                    item.fecha, item.cultivo, item.idColorHojas, item.idTamanoFormaHoja, item.idEstadoTallo, item.idEstadoRaiz, item.estado)}>
+                                    <CustomRectangle
+                                        key={item.idSaludDeLaPlanta}
+                                        data={processData([item], keyMapping)?.data || []} />
                                 </TouchableOpacity>
-                            
-                        ))}
-                    </>
+
+                            ))}
+                        </>
                     )}
                 </ScrollView>
                 {renderPagination()}

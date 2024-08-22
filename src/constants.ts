@@ -139,7 +139,7 @@ export const ScreenProps = {
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.18.118';
+export const IP_API = '192.168.0.13';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -164,17 +164,17 @@ export const Company_Props = [
     { id: 52, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
     { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
     { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
-    { id: 60, iconImage: require('./assets/images/icons/cultivo.png'), text: 'Cultivos', screen: ScreenProps.CropsList.screenName },
+    { id: 55, iconImage: require('./assets/images/icons/cultivo.png'), text: 'Cultivos', screen: ScreenProps.CropsList.screenName },
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
     { id: 57, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
     { id: 58, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
-    { id: 59, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de actividades de preparación de terreno', screen: ScreenProps.ListCatalogoActividades.screenName, datoValidacion: '1' },
     { id: 60, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de Alertas', screen: ScreenProps.ListAlertasCatalogo.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
     { id: 104, iconImage: require('./assets/images/icons/grafico-de-barras.png'), text: 'Mediciones de Sensor', screen: ScreenProps.ListMeasureSensor.screenName, datoValidacion: '0' },
     { id: 105, iconImage: require('./assets/images/icons/medida-cultivo.png'), text: 'Mediciones de Cultivos', screen: ScreenProps.CropMeasurementsList.screenName, datoValidacion: '0' },
+    { id: 106, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de actividades de preparación de terreno', screen: ScreenProps.ListCatalogoActividades.screenName, datoValidacion: '0 ' },
 ]
 
 export const Admin_cultivation = [

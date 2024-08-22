@@ -204,7 +204,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                         {
                             text: 'OK',
                             onPress: () => {
-                                navigation.navigate(ScreenProps.AdminWeather.screenName as never);
+                                navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
                             },
                         },
                     ]);
@@ -390,7 +390,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                     style={styles.upperContainer}
                 >
                 </ImageBackground>
-                <BackButtonComponent screenName={ScreenProps.AdminWeather.screenName} color={'#ffff'} />
+                <BackButtonComponent screenName={ScreenProps.RiskNaturalList.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 

@@ -248,7 +248,7 @@ export const ModificarSensoresScreen: React.FC = () => {
                     {
                         text: 'OK',
                         onPress: () => {
-                            navigation.navigate(ScreenProps.AdminSensors.screenName as never);
+                            navigation.navigate(ScreenProps.ListSensors.screenName as never);
                         },
                     },
                 ]);
@@ -307,7 +307,7 @@ export const ModificarSensoresScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.AdminSensors.screenName
+                                                ScreenProps.ListSensors.screenName
                                             );
                                         },
                                     },

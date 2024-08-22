@@ -185,6 +185,7 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     {/* Dropdown para Parcelas */}
@@ -194,6 +195,7 @@ export const ListaRotacionCultivosScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 {/* <View style={styles.searchContainer}>

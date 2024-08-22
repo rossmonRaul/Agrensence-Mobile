@@ -4,7 +4,6 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        padding: 60,
         alignItems: 'center'
     },
     textAboveContainer: {
@@ -56,5 +55,11 @@ export const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#e0e0e0',
         borderRadius: 8,
+    },
+    listcontainer: {
+        flex: 1,
+        backgroundColor: '#gray',
+        padding: 60,
+        alignItems: 'center'
     },
 })

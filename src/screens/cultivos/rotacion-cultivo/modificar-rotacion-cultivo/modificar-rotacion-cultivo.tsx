@@ -147,7 +147,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminCrops.screenName as never);
+                        navigation.navigate(ScreenProps.CropRotationList.screenName as never);
                     },
                 },
             ]);
@@ -380,7 +380,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                         text: 'OK',
                                         onPress: () => {
                                             navigation.navigate(
-                                                ScreenProps.Menu.screenName
+                                                ScreenProps.CropRotationList.screenName
                                             );
                                         },
                                     },
@@ -715,9 +715,9 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
 
                                         }}
                                     >
-                                       <View style={styles.buttonContent}>
-                                        <Text style={styles.buttonText}>Siguiente</Text>
-                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                        <View style={styles.buttonContent}>
+                                            <Text style={styles.buttonText}>Siguiente</Text>
+                                            <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
                                         </View>
                                     </TouchableOpacity>
                                 </>
@@ -752,17 +752,30 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                         updateFormulario('idParcela', selectedItem.value);
                                     }}
                                 />
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => {
-                                        handleModify();
-                                    }}
-                                >
-                                    <View style={styles.buttonContent}>
-                                        <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Guardar cambios</Text>
-                                    </View>
-                                </TouchableOpacity>
+                                <View style={styles.buttonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.backButton}
+                                        onPress={() => {
+                                            setSecondFormVisible(false);
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                            <Text style={styles.buttonTextBack}> Atrás</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.button}
+                                        onPress={() => {
+                                            handleModify();
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
                                 {estado === 'Activo'
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}

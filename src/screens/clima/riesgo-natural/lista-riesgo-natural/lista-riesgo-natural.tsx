@@ -39,12 +39,10 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
     }, [apiData, parcelas]);
 
 
-    useEffect(() => {
         const obtenerDatosIniciales = async () => {
             // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
             try {
-
                 const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
                 const parcelasUnicas = Array.from(new Set(datosInicialesObtenidos
@@ -69,9 +67,12 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
             }
         };
 
-        obtenerDatosIniciales();
-    }, [userData.identificacion]);
 
+    useFocusEffect(
+        useCallback(() => {
+            obtenerDatosIniciales();
+    }, [userData.identificacion])
+    );
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {

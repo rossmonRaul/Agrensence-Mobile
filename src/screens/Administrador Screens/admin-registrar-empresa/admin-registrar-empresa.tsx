@@ -48,7 +48,7 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.CompanyList.screenName as never);
                     },
                 },
             ]);
@@ -64,7 +64,7 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
                 style={styles.upperContainer}
             >
             </ImageBackground>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.CompanyList.screenName} color={'#ffff'} />
 
             <View style={styles.lowerContainer}>
                 <View>

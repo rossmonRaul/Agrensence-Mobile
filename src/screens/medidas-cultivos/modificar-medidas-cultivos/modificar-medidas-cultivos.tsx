@@ -111,7 +111,7 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
                         text: 'OK',
                         onPress: () => {
                             navigation.navigate(
-                                ScreenProps.Menu.screenName as never
+                                ScreenProps.CropMeasurementsList.screenName as never
                             );
                         },
                     },
@@ -163,7 +163,7 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
                             }}
                         >
                             <View style={styles.buttonContent}>
-                            <Ionicons name="trash-bin" size={20} color="white" style={styles.iconStyle} />
+                            <Ionicons name="trash" size={20} color="white" style={styles.iconStyle} />
                             <Text style={styles.buttonText}> Eliminar</Text>
                             </View>
                         </TouchableOpacity>

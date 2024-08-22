@@ -61,7 +61,7 @@ export const AdminRegistrarMedicionScreen: React.FC = () => {
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
+                        navigation.navigate(ScreenProps.ListMeasureSensor.screenName as never);
                     },
                 },
             ]);
@@ -77,7 +77,7 @@ export const AdminRegistrarMedicionScreen: React.FC = () => {
                 style={styles.upperContainer}
             >
             </ImageBackground>
-            <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#ffff'} />
+            <BackButtonComponent screenName={ScreenProps.ListMeasureSensor.screenName} color={'#ffff'} parametro={'0'}/>
 
             <View style={styles.lowerContainer}>
                 <View>

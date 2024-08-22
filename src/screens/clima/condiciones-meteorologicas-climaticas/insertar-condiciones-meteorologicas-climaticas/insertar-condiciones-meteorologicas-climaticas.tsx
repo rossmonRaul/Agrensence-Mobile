@@ -184,7 +184,7 @@ export const InsertarCondicionesMeteorologicasClimaticasScreen: React.FC = () =>
                 {
                     text: 'OK',
                     onPress: () => {
-                        navigation.navigate(ScreenProps.AdminWeather.screenName as never);
+                        navigation.navigate(ScreenProps.ListWeatherClimateConditions.screenName as never);
                     },
                 },
             ]);

@@ -97,53 +97,59 @@ export const ListaSeguimientoAguaScreen: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        const obtenerDatosIniciales = async () => {
-            // Lógica para obtener datos desde la API
-            const formData = { identificacion: userData.identificacion };
-            try {
+    const obtenerDatosIniciales = async () => {
+        // Lógica para obtener datos desde la API
+        const formData = { identificacion: userData.identificacion };
+        try {
+            setSelectedFinca(null);
+            setSelectedParcela(null)
+            setUsoAguaFiltrados([])
+            setApiData([])
 
-                const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
+            const datosInicialesObtenidos: RelacionFincaParcela[] = await ObtenerUsuariosAsignadosPorIdentificacion(formData);
 
-                const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idFinca)))
-                    .map(idFinca => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
-                        const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, nombreFinca };
-                    });
+            const fincasUnicas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idFinca)))
+                .map(idFinca => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idFinca === idFinca);
+                    const nombreFinca = relacion ? relacion.nombreFinca : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, nombreFinca };
+                });
 
-                setFincas(fincasUnicas);
-                //Se obtienen las parcelas para poder hacer los filtros despues
+            setFincas(fincasUnicas);
+            //Se obtienen las parcelas para poder hacer los filtros despues
 
-                const parcelas = Array.from(new Set(datosInicialesObtenidos
-                    .filter(item => item !== undefined)
-                    .map(item => item!.idParcela)))
-                    .map(idParcela => {
-                        const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
-                        const idFinca = relacion ? relacion.idFinca : -1;
-                        const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
-                        return { idFinca, idParcela, nombreParcela };
-                    });
-                setParcelas(parcelas);
-                //se obtienen los fertilizantes para despues poder filtrarlos
-                const fertilizantes = await ObtenerUsoAgua();
-                //si es 0 es inactivo sino es activo resetea los datos
-                const filteredData = fertilizantes.map((item) => ({
-                    ...item,
-                    estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                }));
+            const parcelas = Array.from(new Set(datosInicialesObtenidos
+                .filter(item => item !== undefined)
+                .map(item => item!.idParcela)))
+                .map(idParcela => {
+                    const relacion = datosInicialesObtenidos.find(item => item?.idParcela === idParcela);
+                    const idFinca = relacion ? relacion.idFinca : -1;
+                    const nombreParcela = relacion ? relacion.nombreParcela : ''; // Verificamos si el objeto no es undefined
+                    return { idFinca, idParcela, nombreParcela };
+                });
+            setParcelas(parcelas);
+            //se obtienen los fertilizantes para despues poder filtrarlos
+            const fertilizantes = await ObtenerUsoAgua();
+            //si es 0 es inactivo sino es activo resetea los datos
+            const filteredData = fertilizantes.map((item) => ({
+                ...item,
+                estado: item.estado === 0 ? 'Inactivo' : 'Activo',
+            }));
 
-                setApiData(filteredData);
+            setApiData(filteredData);
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-        obtenerDatosIniciales();
-    }, [userData.identificacion]);
+    useFocusEffect(
+        useCallback(() => {
+            obtenerDatosIniciales();
+        }, [userData.identificacion])
+    );
 
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
@@ -190,6 +196,7 @@ export const ListaSeguimientoAguaScreen: React.FC = () => {
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
+                        customWidth={375}
                     />
 
                     {/* Dropdown para Parcelas */}
@@ -199,6 +206,7 @@ export const ListaSeguimientoAguaScreen: React.FC = () => {
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
+                        customWidth={375}
                     />
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
