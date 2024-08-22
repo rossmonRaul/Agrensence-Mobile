@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ImageBackground, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from './admin-asignar-empresa-usuario.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -49,21 +49,21 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
         idKey: 'idEmpresa',
     };
 
-    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
+    const obtenerFincaProps = useMemo(() => ({
         fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
         idKey: 'idEmpresa',
-    };
+    }), [userData.idEmpresa])
 
-    const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
+    const obtenerParcelaProps = useMemo(() => ({
         fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',
         idKey: 'idFinca',
-    };
+    }), [userData.idEmpresa])
 
     /*  Se utiliza el hook useFetchDropdownData para obtener
         y gestionar los datos de empresas, fincas y parcelas*/

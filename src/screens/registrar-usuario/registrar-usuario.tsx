@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Platform, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import { styles } from '../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
@@ -67,21 +67,21 @@ export const RegistrarUsuarioScreen: React.FC = () => {
         setParcelaDataSort(parcelaSort)
         setParcela(null);
     }
-    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
+    const obtenerFincaProps= useMemo(() => ({
         fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
         idKey: 'idEmpresa',
-    };
+    }), [userData.idEmpresa]);
 
-    const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
+    const obtenerParcelaProps= useMemo(() => ({
         fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',
         idKey: 'idFinca',
-    };
+    }), [userData.idEmpresa]);
 
     /*  Se utiliza el hook useFetchDropdownData para obtener
         y gestionar los datos de fincas y parcelas*/

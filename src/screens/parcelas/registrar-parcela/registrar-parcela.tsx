@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
@@ -44,14 +44,14 @@ export const RegistrarParcelaScreen: React.FC = () => {
         }));
     };
 
-    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
+    const obtenerFincaProps= useMemo(() => ({
 
         fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
         idKey: 'idEmpresa',
-    };
+    }), [userData.idEmpresa]);
 
     useFetchDropdownData(obtenerFincaProps);
 

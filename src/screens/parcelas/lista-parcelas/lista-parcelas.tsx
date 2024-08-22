@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
@@ -62,24 +62,21 @@ export const ListaParcelasScreen: React.FC = () => {
         'Estado': 'estado'
     };
     //funcion para que se carguen las fincas en el dropdown
-    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
-
+    const obtenerFincaProps = useMemo(() => ({
         fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
         idKey: 'idEmpresa',
-    };
+    }), [userData.idEmpresa]);
+    
     //Llamar a la funcion encargada de obtener las fincas
     useFetchDropdownData(obtenerFincaProps);
 
     useEffect(() => {
-        // filtrar los datos de acuerdo al id de la empresa
-        let fincaSort = fincaDataOriginal.filter(item => item.id === userData.idEmpresa.toString());
-
+        const fincaSort = fincaDataOriginal.filter(item => item.id === userData.idEmpresa.toString());
         setFincaDataSort(fincaSort);
-
-    }, [userData.idEmpresa, fincaDataOriginal, setFincaDataSort]);
+    }, [fincaDataOriginal, userData.idEmpresa]);
 
     const obtenerParcelasPorFincaIds = async () => {
         try {

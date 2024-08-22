@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View,Button,  ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { styles } from '../../../../styles/global-styles.styles';
@@ -321,21 +321,21 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
         setParcela(null);
         updateFormulario('idFinca', itemValue.value)
     }
-    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
+    const obtenerFincaProps= useMemo(() => ({
         fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
         idKey: 'idEmpresa',
-    };
+    }), [userData.idEmpresa]);
 
-    const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
+    const obtenerParcelaProps= useMemo(() => ({
         fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',
         idKey: 'idFinca',
-    };
+    }), [userData.idEmpresa]);
 
 
     const confirmIOSDate = (picker) => {

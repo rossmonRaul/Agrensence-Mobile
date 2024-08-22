@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, ScrollView, Pressable, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -380,21 +380,21 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
         setPuntoMedicion(null);
     };
 
-    const obtenerFincaProps: UseFetchDropdownDataProps<FincaInterface> = {
+    const obtenerFincaProps = useMemo(() => ({
         fetchDataFunction: () => ObtenerFincas(userData.idEmpresa),
         setDataFunction: setFincaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idFinca',
         idKey: 'idEmpresa',
-    };
+    }), [userData.idEmpresa]);
 
-    const obtenerParcelaProps: UseFetchDropdownDataProps<ParcelaInterface> = {
+    const obtenerParcelaProps = useMemo(() => ({
         fetchDataFunction: () => ObtenerParcelas(userData.idEmpresa),
         setDataFunction: setParcelaDataOriginal,
         labelKey: 'nombre',
         valueKey: 'idParcela',
         idKey: 'idFinca',
-    };
+    }), [userData.idEmpresa]);
 
     const onChange = (event, selectedDate, picker) => {
         const currentDate = selectedDate || new Date();

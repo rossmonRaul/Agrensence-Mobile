@@ -144,16 +144,18 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
             // Lógica para obtener datos desde la API
             const formData = { identificacion: userData.identificacion };
             try {
-                const fincasResponse = await ObtenerFincas();
+                let idEmpresa=userData.idEmpresa
+                if(idEmpresa){
+                const fincasResponse = await ObtenerFincas(idEmpresa);
                 const fincasFiltradas = fincasResponse.filter((f: any) => f.idEmpresa === userData.idEmpresa);
                 setFincas(fincasFiltradas);
-                const parcelasResponse = await ObtenerParcelas();
+                const parcelasResponse = await ObtenerParcelas(idEmpresa);
                 const parcelasFiltradas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => f.idFinca === parcela.idFinca));
                 setParcelas(parcelasFiltradas);
 
                 const cargaInicialParcelas = parcelasResponse.filter((parcela: any) => fincasFiltradas.some((f: any) => idFinca === parcela.idFinca));
                 setParcelasFiltradas(cargaInicialParcelas);
-
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -301,6 +303,7 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
         updateFormulario('fecha', formatSpanishDate(date));
 
     }
+
 
     return (
         <View style={styles.container}>
