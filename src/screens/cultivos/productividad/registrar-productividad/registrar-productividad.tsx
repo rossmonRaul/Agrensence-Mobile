@@ -406,7 +406,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                             updateFormulario('idParcela', selectedItem.value);
                                         }}
                                     />
-                                    <View style={styles.buttonContainer}>
+                                    
                                         <TouchableOpacity
                                             style={styles.backButton}
                                             onPress={() => {
@@ -419,7 +419,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={styles.button}
                                             onPress={() => {
                                                 handleRegister();
                                             }}
@@ -429,7 +429,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                                 <Text style={styles.buttonText}> Guardar</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
+                                    
                                 </>
                             )}
 

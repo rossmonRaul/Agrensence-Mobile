@@ -752,7 +752,6 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                         updateFormulario('idParcela', selectedItem.value);
                                     }}
                                 />
-                                <View style={styles.buttonContainer}>
                                     <TouchableOpacity
                                         style={styles.backButton}
                                         onPress={() => {
@@ -775,7 +774,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                             <Text style={styles.buttonText}>Guardar cambios</Text>
                                         </View>
                                     </TouchableOpacity>
-                                </View>
+                                
                                 {estado === 'Activo'
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}

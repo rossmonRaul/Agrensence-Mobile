@@ -718,7 +718,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                        ))}
                                     </View>
 
-                                  <View style={styles.buttonContainer}>
+                                  
                               <TouchableOpacity
                                  style={styles.backButton}
                                  onPress={() => {
@@ -732,7 +732,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                   </View>
                             </TouchableOpacity>
                                  <TouchableOpacity
-                                    style={[styles.button, { width: 150 }]}
+                                    style={styles.button}
                                       onPress={() => {
                                        handleRegister();
                                     }}
@@ -742,7 +742,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                          <Text style={styles.buttonText}> Guardar</Text>
                                           </View>
                                   </TouchableOpacity>
-                                 </View>
+                                 
                             </>
                        )}
                             

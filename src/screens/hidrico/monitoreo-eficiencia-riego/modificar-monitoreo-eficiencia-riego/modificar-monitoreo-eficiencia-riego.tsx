@@ -593,6 +593,18 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         updateFormulario('idParcela', selectedItem.value);
                                     }}
                                 />
+
+                                    <TouchableOpacity
+                                        style={styles.backButton}
+                                        onPress={() => {
+                                            setSecondFormVisible(false);
+                                        }}
+                                    >
+                                        <View style={styles.buttonContent}>
+                                            <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                            <Text style={styles.buttonTextBack}> Atrás</Text>
+                                        </View>
+                                    </TouchableOpacity>
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {

@@ -934,7 +934,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                 ))}
                           </View>
 
-                          <View style={styles.buttonContainer}>
+                          
                                         <TouchableOpacity
                                             style={styles.backButton}
                                             onPress={() => {
@@ -948,7 +948,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={styles.button}
                                             onPress={() => {
                                                 handleModify();
                                             }}
@@ -959,7 +959,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
 
-                                    </View>
+                                    
 
                                     <TouchableOpacity
                                         style={styles.buttonDelete}

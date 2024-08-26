@@ -652,7 +652,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                     />
                                 }
                                 {parcela && 
-                                <View style={styles.buttonContainer}>
+                                <View >
                                 <TouchableOpacity
                                     style={styles.backButton}
                                     onPress={() => {
@@ -665,7 +665,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                     </View>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.button, { width: 150 }]}
+                                    style={styles.button}
                                     onPress={() => {
                                         handleRegister();
                                     }}

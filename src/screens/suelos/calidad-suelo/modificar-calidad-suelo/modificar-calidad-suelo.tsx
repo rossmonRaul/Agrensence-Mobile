@@ -600,7 +600,33 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
-                                    {estado === 'Activo'
+                                    
+
+                                    
+                                        <TouchableOpacity
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(true);
+                                                setThirdFormVisible(false)
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.button}
+                                            onPress={() => {
+                                                handleRegister();
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
+                                                <Text style={styles.buttonText}> Guardar</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        {estado === 'Activo'
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
@@ -625,32 +651,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                     }
-
-                                    <View style={styles.buttonContainer}>
-                                        <TouchableOpacity
-                                            style={styles.backButton}
-                                            onPress={() => {
-                                                setSecondFormVisible(true);
-                                                setThirdFormVisible(false)
-                                            }}
-                                        >
-                                            <View style={styles.buttonContent}>
-                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
-                                                <Text style={styles.buttonTextBack}> Atrás</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
-                                            onPress={() => {
-                                                handleRegister();
-                                            }}
-                                        >
-                                            <View style={styles.buttonContent}>
-                                                <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
-                                            </View>
-                                        </TouchableOpacity>
-                                    </View>
+                                    
 
                                 </>
 

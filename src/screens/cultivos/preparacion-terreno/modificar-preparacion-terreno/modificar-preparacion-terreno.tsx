@@ -462,7 +462,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-                                    <View style={styles.buttonContainer}>
+                                   
                                         <TouchableOpacity
                                             style={styles.backButton}
                                             onPress={() => {
@@ -475,7 +475,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={styles.button}
                                             onPress={() => {
                                                 handleRegister();
                                             }}
@@ -485,7 +485,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                                 <Text style={styles.buttonText}> Guardar</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
+                                   
                                     {estado === 'Activo'
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}

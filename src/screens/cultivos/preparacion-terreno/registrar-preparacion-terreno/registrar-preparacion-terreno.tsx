@@ -390,7 +390,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-                                    <View style={styles.buttonContainer}>
+                                    
                                         <TouchableOpacity
                                             style={styles.backButton}
                                             onPress={() => {
@@ -402,9 +402,9 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                                 <Text style={styles.buttonTextBack}> Atrás</Text>
                                             </View>
                                         </TouchableOpacity>
-                                        <View style={styles.buttonContainer}>
+                                        
                                             <TouchableOpacity
-                                                style={[styles.button, { width: 150 }]}
+                                                style={styles.button}
                                                 onPress={() => {
                                                     handleRegister();
                                                 }}
@@ -414,8 +414,8 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                                     <Text style={styles.buttonText}> Guardar</Text>
                                                 </View>
                                             </TouchableOpacity>
-                                        </View>
-                                    </View>
+                                       
+                                    
                                 </>
                             )}
                         </View>

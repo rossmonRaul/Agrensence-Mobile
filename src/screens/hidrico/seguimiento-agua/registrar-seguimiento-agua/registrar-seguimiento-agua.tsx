@@ -419,9 +419,9 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-                                    <View style={styles.buttonContainer}>
+
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150, marginRight: 10, borderColor: 'red', borderWidth: 2, backgroundColor: 'transparent' }]}
+                                            style={styles.backButton}
                                             onPress={() => {
                                                 setSecondFormVisible(false)
                                             }}
@@ -432,7 +432,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={styles.button}
                                             onPress={() => {
                                                 handleRegister();
                                             }}
@@ -442,7 +442,6 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                                 <Text style={styles.buttonText}> Guardar</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
                                 </>
 
 

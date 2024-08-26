@@ -574,7 +574,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                             updateFormulario('idParcela', selectedItem.value);
                                         }}
                                     />
-                                    <View style={styles.buttonContainer}>
+                                   
                                         <TouchableOpacity
                                             style={styles.backButton}
                                             onPress={() => {
@@ -587,7 +587,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={styles.button}
                                             onPress={() => {
                                                 handleRegister();
                                             }}
@@ -597,7 +597,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                                 <Text style={styles.buttonText}> Guardar</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
+                                   
 
                                     {estado === 'Activo'
                                         ? <TouchableOpacity

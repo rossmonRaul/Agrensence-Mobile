@@ -852,7 +852,6 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         ))}
                                     </View>
 
-                                    <View style={styles.buttonContainer}>
                                         <TouchableOpacity
                                             style={styles.backButton}
                                             onPress={() => {
@@ -866,7 +865,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
                                         <TouchableOpacity
-                                            style={[styles.button, { width: 150 }]}
+                                            style={styles.button}
                                             onPress={() => {
                                                 handleRegister();
                                             }}
@@ -877,7 +876,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                             </View>
                                         </TouchableOpacity>
 
-                                    </View>
+                                    
 
                                     <TouchableOpacity
                                         style={styles.buttonDelete}
