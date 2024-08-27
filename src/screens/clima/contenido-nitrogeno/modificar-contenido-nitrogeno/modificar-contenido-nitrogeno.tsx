@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ImageBackground } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -442,7 +442,12 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <BackButtonComponent screenName={ScreenProps.ChlorophyllContentList.screenName} color={'#ffff'} />
+                <ImageBackground
+                    source={require('../../../../assets/images/siembros_imagen.jpg')}
+                    style={styles.upperContainer}
+                >
+                </ImageBackground>
+                <BackButtonComponent screenName={ScreenProps.NitrogenContentList.screenName} color={'#ffff'} />
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>

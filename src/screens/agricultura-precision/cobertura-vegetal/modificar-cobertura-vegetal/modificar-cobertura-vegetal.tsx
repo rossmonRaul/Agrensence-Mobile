@@ -496,7 +496,7 @@ export const ModificarCoberturaVegetalScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                    <Text style={styles.formText} >alturaMaleza</Text>
+                                    <Text style={styles.formText} >Altura Maleza</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -513,7 +513,7 @@ export const ModificarCoberturaVegetalScreen: React.FC = () => {
                                             updateFormulario('alturaMaleza', selectedItem.value);
                                         }}
                                     />
-                                <Text style={styles.formText} >densidadMaleza</Text>
+                                <Text style={styles.formText} >Densidad Maleza</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -531,7 +531,7 @@ export const ModificarCoberturaVegetalScreen: React.FC = () => {
                                         }}
                                     />
 
-                                <Text style={styles.formText} >humedadObservable</Text>
+                                <Text style={styles.formText} >Humedad Observable</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
