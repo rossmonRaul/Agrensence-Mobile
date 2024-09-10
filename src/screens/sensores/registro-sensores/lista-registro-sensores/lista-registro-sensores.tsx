@@ -15,10 +15,12 @@ import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerSensores, ObtenerMedicionesAutorizadasSensor } from '../../../../servicios/ServiciosSensor';
 import { ObtenerFincas } from '../../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaSensoresScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
@@ -172,23 +174,28 @@ export const ListaSensoresScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.dropDownContainer}>
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map((finca: any) => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
-
+                     </View>
+                     <View style={styles.searchContainer}>
+                     <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map((parcela: any) => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {problemasAsociadosPlagas.map((item, index) => (
@@ -204,6 +211,16 @@ export const ListaSensoresScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

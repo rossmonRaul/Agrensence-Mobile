@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Platform, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Platform, ImageBackground, TextInput, TouchableOpacity, Text, Keyboard } from 'react-native';
 import { styles } from '../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../components/Dropdown/Dropwdown';
@@ -16,10 +16,17 @@ import { BackButtonComponent } from '../../components/BackButton/BackButton';
 import { FincaInterface, ParcelaInterface } from '../../interfaces/empresaInterfaces';
 import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
+import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../components/CustomAlert/CustomAlert';
 
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const RegistrarUsuarioScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
@@ -46,7 +53,12 @@ export const RegistrarUsuarioScreen: React.FC = () => {
         idParcela: ''
     });
 
-
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -83,6 +95,60 @@ export const RegistrarUsuarioScreen: React.FC = () => {
         idKey: 'idFinca',
     }), [userData.idEmpresa]);
 
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.Menu.screenName as never)
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+
     /*  Se utiliza el hook useFetchDropdownData para obtener
         y gestionar los datos de fincas y parcelas*/
     useFetchDropdownData(obtenerFincaProps);
@@ -92,29 +158,30 @@ export const RegistrarUsuarioScreen: React.FC = () => {
     // Función para validar la primera parte formulario
     const validateFirstForm = () => {
         let isValid = true;
+        Keyboard.dismiss()
 
         if (!formulario.identificacion && !formulario.nombre && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (isValid && !formulario.identificacion) {
-            alert('Ingrese una identificacion');
+            showInfoAlert('Ingrese una identificacion');
             isValid = false;
             return
         }
         if (isValid && !formulario.nombre) {
-            alert('Ingrese un nombre completo');
+            showInfoAlert('Ingrese un nombre completo');
             isValid = false;
             return
         }
         if (isValid && (!formulario.correo || !isEmail(formulario.correo))) {
-            alert('Ingrese un correo electrónico válido');
+            showInfoAlert('Ingrese un correo electrónico válido');
             isValid = false;
             return
         }
         if (isValid && !formulario.contrasena) {
-            alert('Ingrese una contraseña');
+            showInfoAlert('Ingrese una contraseña');
             isValid = false;
             return
         }
@@ -123,7 +190,7 @@ export const RegistrarUsuarioScreen: React.FC = () => {
         }
 
         if (isValid && formulario.contrasena !== formulario.confirmarContrasena) {
-            alert('Las contraseñas no coinciden');
+            showInfoAlert('Las contraseñas no coinciden');
             isValid = false;
             return
         }
@@ -140,15 +207,15 @@ export const RegistrarUsuarioScreen: React.FC = () => {
 
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
-
+        Keyboard.dismiss();
         //  Se valida que la  finca y parcela estén seleccionadas
 
         if (!finca) {
-            alert('Ingrese una finca');
+            showInfoAlert('Ingrese una finca');
             return
         }
         if (!parcela) {
-            alert('Ingrese una parcela');
+            showInfoAlert('Ingrese una parcela');
             return
         }
 
@@ -168,16 +235,9 @@ export const RegistrarUsuarioScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 0) {
-            Alert.alert('¡Se creo el usuario correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo el usuario correctamente!');
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -261,7 +321,9 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                                 </>
                             ) : (
                                 <>
-                                    {empresa &&
+                                    {empresa &&(
+                                        <>
+                                        <Text style={styles.formText} >Finca</Text>
                                         <DropdownComponent
                                             placeholder="Finca"
                                             data={fincaDataSort}
@@ -269,8 +331,13 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                                             iconName='tree'
                                             onChange={handleValueFinca}
                                         />
+                                        </>
+                                    )
                                     }
                                     {finca &&
+                                    (
+                                        <>
+                                        <Text style={styles.formText} >Parcela</Text>
                                         <DropdownComponent
                                             placeholder="Parcela"
                                             data={parcelaDataSort}
@@ -278,6 +345,8 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                                             value={parcela}
                                             onChange={(item) => (setParcela(item.value as never))}
                                         />
+                                        </>
+                                    )
                                     }
 
                                         <TouchableOpacity
@@ -312,6 +381,24 @@ export const RegistrarUsuarioScreen: React.FC = () => {
                 </View>
                 <BottomNavBar />
             </KeyboardAvoidingView>
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.Menu.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

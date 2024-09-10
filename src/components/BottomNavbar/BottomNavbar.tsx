@@ -76,12 +76,12 @@ const BottomNavBar = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.tab} onPress={navigateToInicio}>
-                <AntDesign name="home" size={20} color="#565656" />
+                <AntDesign name="home" size={22} color="#a5cf60" />
                 <Text style={styles.tabText}>Inicio</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.tab} onPress={navigateToNotificaciones}>
                 <View style={styles.notificationIconContainer}>
-                    <Ionicons name="notifications" size={20} color="#565656" />
+                    <Ionicons name="notifications" size={22} color="#a5cf60" />
                     {notificationCount > 0 && (
                         <View style={styles.notificationBadge}>
                             <Text style={styles.notificationBadgeText}>{notificationCount}</Text>
@@ -91,7 +91,7 @@ const BottomNavBar = () => {
                 <Text style={styles.tabText}>Notificaciones</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.tab} onPress={handleLogOut}>
-                <MaterialIcons name="logout" size={20} color="#565656" />
+                <MaterialIcons name="logout" size={22} color="#a5cf60" />
                 <Text style={styles.tabText}>Cerrar sesión</Text>
             </TouchableOpacity>
         </View>

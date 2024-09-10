@@ -12,6 +12,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../../../constants';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 
 interface NotificacionInterface {
     ubicacionFinca: ReactNode;
@@ -41,7 +42,8 @@ interface ParcelaInterface {
 }
 
 export const NotificacionesScreen: React.FC = () => {
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const [notificaciones, setNotificaciones] = useState<NotificacionInterface[]>([]);
     const [fincas, setFincas] = useState<FincaInterface[]>([]);
@@ -150,6 +152,16 @@ export const NotificacionesScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

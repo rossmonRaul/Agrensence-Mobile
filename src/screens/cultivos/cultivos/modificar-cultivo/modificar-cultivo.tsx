@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -22,7 +22,14 @@ import { ModificarRegistroCantidadDePlantas, ObtenerPuntoMedicionFincaParcela, C
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { CambiarEstadoCultivo, EditarCultivo } from '../../../../servicios/ServicioCultivos';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idCultivo: string,
     idFinca: string,
@@ -33,7 +40,8 @@ interface RouteParams {
 
 export const ModificarCultivoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const route = useRoute();
 
@@ -70,6 +78,72 @@ export const ModificarCultivoScreen: React.FC = () => {
     const handleCheckBoxChange = (value, setState) => {
         setState(value);
     };
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.CropsList.screenName);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idCultivo: idCultivo,
@@ -89,18 +163,18 @@ export const ModificarCultivoScreen: React.FC = () => {
 
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
-
+        Keyboard.dismiss()
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (formulario.cultivo.trim() === '') {
-            alert('El campo Cultivo es requerido.');
+            showInfoAlert('El campo Cultivo es requerido.');
             return;
         }
 
@@ -116,17 +190,20 @@ export const ModificarCultivoScreen: React.FC = () => {
         const responseInsert = await EditarCultivo(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico el registro de cultivo!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.CropsList.screenName as never);
-                    },
-                },
-            ]);
-        } else Alert.alert('¡Oops! Parece que algo salió mal', responseInsert.mensaje, [
-            { text: 'OK' },
-        ]);
+            showSuccessAlert('¡Se modifico el registro de cultivo!')
+            // Alert.alert('¡Se modifico el registro de cultivo!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.CropsList.screenName as never);
+            //         },
+            //     },
+            // ]);
+        } else 
+        showErrorAlert('¡Oops! Parece que algo salió mal');
+        // Alert.alert('¡Oops! Parece que algo salió mal', responseInsert.mensaje, [
+        //     { text: 'OK' },
+        // ]);
     };
 
     useEffect(() => {
@@ -175,50 +252,65 @@ export const ModificarCultivoScreen: React.FC = () => {
 
 
     const handleChangeAccess = async () => {
+        Keyboard.dismiss()
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idCultivo: idCultivo,
         };
-
+        try {
+            const responseInsert = await CambiarEstadoCultivo(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert( '¡Se eliminó el registro de cultivo');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el registro de cultivo?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoCultivo(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se eliminó el registro de cultivo',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.CropsList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el registro de cultivo?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoCultivo(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se eliminó el registro de cultivo',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.CropsList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -362,7 +454,7 @@ export const ModificarCultivoScreen: React.FC = () => {
                                 ? <TouchableOpacity
                                     style={styles.buttonDelete}
                                     onPress={() => {
-                                        handleChangeAccess();
+                                        showConfirmAlert();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>
@@ -374,7 +466,7 @@ export const ModificarCultivoScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
-                                        handleChangeAccess();
+                                        showConfirmAlert();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>
@@ -388,6 +480,41 @@ export const ModificarCultivoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.CropsList.screenName) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el registro de cultivo?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

@@ -1,4 +1,4 @@
-import { useContext, useEffect, } from 'react';
+import { useContext, useEffect, useState, } from 'react';
 import { Alert } from 'react-native';
 import { UserContext } from '../context/UserProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,9 +8,78 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenProps } from '../constants';
 import jwt from 'expo-jwt';
 
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
+  interface AlertProps {
+    message: string;
+    buttons: ButtonAlert[];
+    iconType: 'success' | 'error' | 'warning' | 'info';
+  }
+
 export const useAuth = () => {
     const { userData, setUserData } = useContext(UserContext);
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const [isAlertVisibleAuth, setAlertVisibleAuth] = useState<boolean>(false);
+    const [alertPropsAuth, setAlertPropsAuth] = useState<AlertProps>({
+      message: '',
+      buttons: [],
+      iconType: 'success',
+    });
+  
+
+    const showSuccessAlert = (message: string) => {
+        setAlertPropsAuth({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+              },
+            },
+          ],
+        });
+        setAlertVisibleAuth(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertPropsAuth({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                // Lógica para manejar el cierre de la alerta
+              },
+            },
+          ],
+        });
+        setAlertVisibleAuth(true);
+      };
+    
+      const showInfoAlert = (message: string) => {
+        setAlertPropsAuth({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                // Lógica para manejar el cierre de la alerta
+              },
+            },
+          ],
+        });
+        setAlertVisibleAuth(true);
+      };
+    
+      const hideAlertAuth = () => {
+        setAlertVisibleAuth(false);
+      };
+
 
     // Verifica si el usuario está logueado al cargar la aplicación
     useEffect(() => {
@@ -37,7 +106,7 @@ export const useAuth = () => {
                         if (currentDate.getTime() > expirationDate.getTime()) {
                             // El token ha expirado
                             // Muestra un mensaje de alerta informativo al usuario
-                            Alert.alert('¡Atención!', 'Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
+                            showInfoAlert('Atención, tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
 
                             // Elimina los datos del usuario
                             await AsyncStorage.clear();
@@ -60,7 +129,7 @@ export const useAuth = () => {
             } catch (error: any) {
                 if (error.message === "Token has expired") {
                     // Muestra un mensaje de alerta al usuario
-                    Alert.alert('¡Atención!', 'Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
+                    showInfoAlert('Atención, tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
 
                     // Elimina los datos del usuario
                     await AsyncStorage.clear();
@@ -76,5 +145,20 @@ export const useAuth = () => {
         checkAuth();
     }, [navigation, setUserData]);
 
-    return { userData, setUserData };
+
+    return {
+      userData,
+      setUserData,
+      isAlertVisibleAuth,
+      alertPropsAuth,
+      hideAlertAuth,
+      // showSuccessAlert,
+      // showErrorAlert,
+      // showInfoAlert,
+    };
+
+    //return { userData, setUserData };
+    
 };
+
+export default useAuth;

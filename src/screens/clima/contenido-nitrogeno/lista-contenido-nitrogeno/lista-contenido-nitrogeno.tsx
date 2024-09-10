@@ -14,14 +14,15 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerRegistroContenidoNitrogeno } from '../../../../servicios/ServiciosContenidoNitrogeno';
-
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 type RootStackParamList = {
     ListaContenidoNitrogenoScreen: { reload: boolean };
 };
 
 export const ListaContenidoNitrogenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const route = useRoute<RouteProp<RootStackParamList, 'ListaContenidoNitrogenoScreen'>>();
 
     const [apiData, setApiData] = useState<any[]>([]);
@@ -170,23 +171,29 @@ export const ListaContenidoNitrogenoScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.dropDownContainer}>
+                <View style={styles.searchContainer}>
+                <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
 
+                     <View style={styles.searchContainer}>
+                     <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {eficienciaRiego.map((item, index) => (
@@ -202,6 +209,17 @@ export const ListaContenidoNitrogenoScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

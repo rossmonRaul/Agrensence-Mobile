@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { Button, View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -14,10 +14,17 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import * as DocumentPicker from "expo-document-picker";
 import { InsertarDocumentacionRiesgoNatural, InsertarRiesgoNatural } from '../../../../servicios/ServicioRiesgoNatural';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
+interface ButtonAlert {
+    text: string;
+    onPress: () => void;
+  }
 export const RegistrarRiesgosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
@@ -56,6 +63,70 @@ export const RegistrarRiesgosScreen: React.FC = () => {
 
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -72,33 +143,33 @@ export const RegistrarRiesgosScreen: React.FC = () => {
         if (!formulario.riesgoNatural && !formulario.fecha
             && !formulario.practicaPreventiva && !formulario.responsable
             && !formulario.resultadoPractica) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.riesgoNatural) {
-            alert('Ingrese un Riesgo Natural');
+            showInfoAlert('Ingrese un Riesgo Natural');
             isValid = false;
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese la Fecha');
+            showInfoAlert('Ingrese la Fecha');
             isValid = false;
             return
         }
         if (!formulario.practicaPreventiva) {
-            alert('Ingrese la Practica Preventiva');
+            showInfoAlert('Ingrese la Practica Preventiva');
             isValid = false;
             return
         }
 
         if (!formulario.responsable) {
-            alert('Ingrese el Responsable');
+            showInfoAlert('Ingrese el Responsable');
             isValid = false;
             return
         }
         if (!formulario.resultadoPractica) {
-            alert('Ingrese un Resultado de Practica Preventiva');
+            showInfoAlert('Ingrese un Resultado de Practica Preventiva');
             isValid = false;
             return
         }
@@ -110,27 +181,27 @@ export const RegistrarRiesgosScreen: React.FC = () => {
 
         if (!formulario.accionesCorrectivas
             && !formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
 
         if (!formulario.accionesCorrectivas) {
-            alert('Ingrese las Acciones Correctivas');
+            showInfoAlert('Ingrese las Acciones Correctivas');
             isValid = false;
             return
         }
         if (!formulario.observaciones) {
-            alert('Ingrese la Observaciones');
+            showInfoAlert('Ingrese la Observaciones');
             isValid = false;
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
 
@@ -198,20 +269,21 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                 }
 
                 if (errorEnviandoArchivos) {
-                    alert('Error al insertar uno o varios documentos');
+                    showErrorAlert('Error al insertar uno o varios documentos');
                 } else {
-                    Alert.alert('Se registro correctamente', '', [
-                        {
-                            text: 'OK',
-                            onPress: () => {
-                                navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
-                            },
-                        },
-                    ]);
+                    showSuccessAlert('Se registro correctamente')
+                    // Alert.alert('Se registro correctamente', '', [
+                    //     {
+                    //         text: 'OK',
+                    //         onPress: () => {
+                    //             navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
+                    //         },
+                    //     },
+                    // ]);
                 }
 
             } else {
-                alert('Error al registrar');
+                showErrorAlert('Error al registrar');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -333,7 +405,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
 
             // Validar que no se exceda el límite de 5 archivos
             if (selectedFiles.length + acceptedFiles.length > 5) {
-                alert('No se puede ingresar más de 5 archivos');
+                showErrorAlert('No se puede ingresar más de 5 archivos');
                 return;
             }
 
@@ -341,7 +413,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
             const validFiles = acceptedFiles.filter(file => {
                 // Verificar tamaño (mayor de 5 MB)
                 if (file.size > 5 * 1024 * 1024) { // 5 MB en bytes
-                    alert(`El archivo es mayor de 5 MB`);
+                    showErrorAlert(`El archivo es mayor de 5 MB`);
                     return false;
                 }
                 return true;
@@ -395,7 +467,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Riesgos Naturales</Text>
+                            <Text style={styles.createAccountText} >Riesgos naturales</Text>
                         </View>
                         {loading && (
                             <View style={styles.loadingContainer}>
@@ -411,7 +483,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                             {isFirstFormVisible && (
                                 <>
 
-                                    <Text style={styles.formText} >Riesgo Natural</Text>
+                                    <Text style={styles.formText} >Riesgo natural</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -431,7 +503,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Resultado de la Practica</Text>
+                                    <Text style={styles.formText} >Resultado de la práctica</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -518,7 +590,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                         </View>
                                     )}
 
-                                    <Text style={styles.formText} >Practica Preventiva</Text>
+                                    <Text style={styles.formText} >Practica preventiva</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Practica Preventiva"
@@ -587,7 +659,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Acciones Correctivas</Text>
+                                    <Text style={styles.formText} >Acciones correctivas</Text>
                                     <TextInput
                                         style={styles.inputMultiline}
                                         placeholder="Acciones Correctivas"
@@ -647,7 +719,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                         style={[styles.button, { backgroundColor: 'lightgray', marginTop: 10 }]}
                                         onPress={handleDocumentSelection}
                                     >
-                                        <Text style={styles.buttonTextBack}>Seleccionar Archivos</Text>
+                                        <Text style={styles.buttonTextBack}>Seleccionar archivos</Text>
                                     </TouchableOpacity>
                                     {/* Mostrar archivos seleccionados */}
                                     <View style={styles.fileList}>
@@ -680,7 +752,7 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar riesgos naturales</Text>
                                             </View>
                                         </TouchableOpacity>
                                 </>
@@ -691,6 +763,24 @@ export const RegistrarRiesgosScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.RiskNaturalList.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

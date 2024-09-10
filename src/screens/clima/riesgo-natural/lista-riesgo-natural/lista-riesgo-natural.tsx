@@ -14,12 +14,13 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { riesgoNaturalDataInterface } from '../../../../interfaces/riesgoNaturalInterface';
 import { ObtenerRiesgosNaturales } from '../../../../servicios/ServicioRiesgoNatural';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
-
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 
 export const ListaRiesgoNaturalScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const [parcelas, setParcelas] = useState<{ idParcela: number }[] | []>([]);
     const [apiData, setApiData] = useState<riesgoNaturalDataInterface[]>([]);
     const [riesgosFiltradosData, setRiesgosFiltradosData] = useState<any[]>([]);
@@ -121,18 +122,19 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.InsertRiskNatural.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista Riesgos Naturales</Text>
+                    <Text style={styles.textAbove} >Lista riesgos naturales</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
-                    <TextInput
+            
+                       <TextInput
                         style={styles.searchInput}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {riesgos.map((item, index) => {
@@ -152,6 +154,16 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
 
         </View>
     );

@@ -17,6 +17,7 @@ import { RelacionFincaParcela, UserDataInterface } from '../../../../interfaces/
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { LandPreparationDataInterface } from '../../../../interfaces/preparacionTerreno';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 type RootStackParamList = {
     ListLandPreparation: { reload: boolean };
@@ -24,7 +25,8 @@ type RootStackParamList = {
 
 export const ListaPreparacionTerrenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const route = useRoute<RouteProp<RootStackParamList, 'ListLandPreparation'>>();
 
     const [apiData, setApiData] = useState<LandPreparationDataInterface[]>([]);
@@ -153,9 +155,9 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
         'Actividad': 'actividad',
         'Maquinaria': 'maquinaria',
         'Identificación': 'identificacion',
-        'Horas Trabajadas': 'horasTrabajadas',
-        'Pago por Hora': 'pagoPorHora',
-        'Pago Total': 'totalPago',
+        'Horas trabajadas': 'horasTrabajadas',
+        'Pago por hora': 'pagoPorHora',
+        'Pago total': 'totalPago',
         'Observaciones': 'observaciones',
     };
 
@@ -187,27 +189,32 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.RegisterLandPreparation.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de Preparación de Terreno</Text>
+                    <Text style={styles.textAbove} >Lista de preparación de terreno</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
+                <View style={styles.searchContainer}>
+                <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
-
+                    </View>
+                     <View style={styles.searchContainer}>
+                     <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {preparacionTerrenoFiltradosData.map((item, index) => {
@@ -225,7 +232,16 @@ export const ListaPreparacionTerrenoScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

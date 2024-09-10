@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -16,10 +16,17 @@ import { FontAwesome } from '@expo/vector-icons';
 
 import { CrearRegistroSeguimientoUsoAgua } from '../../../../servicios/ServicioUsoAgua';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 export const RegistrarUsoAguaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
@@ -43,6 +50,69 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
         observaciones: ''
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -104,27 +174,27 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
         let isValid = true;
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese una fecha valida');
+            showInfoAlert('Ingrese una fecha valida');
             isValid = false;
             return
         }
         if (!formulario.actividad) {
-            alert('Ingrese una actividad');
+            showInfoAlert('Ingrese una actividad');
             isValid = false;
             return
         }
 
         if (!formulario.idFinca && !formulario.idParcela &&
             !formulario.actividad && !formulario.fecha) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
@@ -136,21 +206,21 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (!formulario.caudal && !formulario.caudal && !formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.caudal) {
-            alert('Ingrese el caudal');
+            showInfoAlert('Ingrese el caudal');
             return
         }
         if (!formulario.consumoAgua) {
-            alert('Ingrese el consumo del agua');
+            showInfoAlert('Ingrese el consumo del agua');
             return
         }
 
         if (!formulario.observaciones) {
-            alert('Ingrese las observaciones');
+            showInfoAlert('Ingrese las observaciones');
             return
         }
 
@@ -172,16 +242,17 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registró el uso de agua correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registró el uso de agua correctamente!')
+            // Alert.alert('¡Se registró el uso de agua correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -439,7 +510,7 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar seguimiento de agua</Text>
                                             </View>
                                         </TouchableOpacity>
                                 </>
@@ -455,6 +526,24 @@ export const RegistrarUsoAguaScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

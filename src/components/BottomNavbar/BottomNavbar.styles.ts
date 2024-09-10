@@ -3,10 +3,11 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        bottom: 15,
+        bottom: 8,
         flexDirection: 'row',
-        height: 40,
-        backgroundColor: '#d8d8d8',
+        height: 42,
+        //backgroundColor: '#d8d8d8',
+        backgroundColor: '#025951',
         borderRadius: 40,
         marginLeft: 20,
         marginRight: 20,
@@ -15,11 +16,12 @@ export const styles = StyleSheet.create({
     tab: {
         flex: 1,
         justifyContent: 'center',
-        marginTop: 5,
+        marginTop: 2,
         alignItems: 'center',
     },
     tabText: {
-        color: '#565656',
+        //color: '#565656',
+        color: '#a5cf60',
         fontSize: 10,
         fontFamily: 'CatamaranRegular',
     },

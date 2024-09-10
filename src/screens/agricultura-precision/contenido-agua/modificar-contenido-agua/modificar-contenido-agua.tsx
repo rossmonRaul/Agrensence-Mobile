@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,6 +21,13 @@ import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';;
 import { ModificarRegistroContenidoDeAgua, ObtenerPuntoMedicionFincaParcela ,CambiarEstadoRegistroContenidoDeAgua } from '../../../../servicios/ServicioContenidoAgua';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 
 interface RouteParams {
     idContenidoDeAgua: string,
@@ -37,7 +44,8 @@ interface RouteParams {
 
 export const ModificarContenidoAguaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const route = useRoute();
 
@@ -93,7 +101,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
         contenidoDeAguaEnPlanta : contenidoDeAguaEnPlanta,
         metodoDeMedicion : metodoDeMedicion,
         condicionSuelo : condicionSuelo
-       
+
     });
 
     //  Esta es una función para actualizar el estado del formulario
@@ -104,27 +112,97 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
         }));
     };
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.WaterContentList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
+
+
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
 
-       
-        
+
+
         if (parseFloat(formulario.contenidoDeAguaEnSuelo) < 0.1) {
-            alert('El contenido de agua en el suelo debe ser mayor que cero.');
+            showInfoAlert('El contenido de agua en el suelo debe ser mayor que cero.');
             return;
         }
- 
+
         if (parseFloat(formulario.contenidoDeAguaEnPlanta) < 0.1) {
-            alert('El contenido de agua en la Planta debe ser mayor que cero.');
+            showInfoAlert('El contenido de agua en la Planta debe ser mayor que cero.');
             return;
         }
          if (formulario.metodoDeMedicion.trim() === '') {
-            alert('El Metodo de medicion es requerido.');
+            showInfoAlert('El Metodo de medicion es requerido.');
             return;
         }
-        
+
         if (formulario.condicionSuelo.trim() === '') {
-            alert('Debe seleccionar la condicion del suelo');
+            showInfoAlert('Debe seleccionar la condicion del suelo');
             return;
         }
 
@@ -145,16 +223,17 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
         const responseInsert = await ModificarRegistroContenidoDeAgua(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico el registro de contenido de Agua!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps. WaterContentList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modifico el registro de contenido de Agua!')
+            // Alert.alert('¡Se modifico el registro de contenido de Agua!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps. WaterContentList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -187,19 +266,19 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                     idFinca: formulario.idFinca,
                     idParcela: formulario.idParcela
                 }
-                
+
                 const cargaInicialParcelas = parcelasUnicas.filter((parcela: any) => fincasUnicas.some((f: any) => idFinca === parcela.idFinca));
                 setParcelasFiltradas(cargaInicialParcelas);
 
                 const puntosMedicion = await ObtenerPuntoMedicionFincaParcela(fincaParcela);
                 setPuntosMedicion(puntosMedicion);
                 setPuntoMedicion(formulario.idPuntoMedicion);
-    
+
                 const puntoMedicionInicial = puntosMedicion.find(puntoMedicion => puntoMedicion.idPuntoMedicion === parseInt(formulario.idPuntoMedicion));
 
                 // Establecer el nombre de la parcela inicial como selectedFinca
                 setPuntoMedicion(puntoMedicionInicial?.codigo || null);
-                
+
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -242,24 +321,24 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (!formulario.idPuntoMedicion|| formulario.idPuntoMedicion === null) {
             isValid = false;
-            alert('Ingrese el punto de Medición');
+            showInfoAlert('Ingrese el punto de Medición');
             return;
         }
-        
+
         if (formulario.fechaMuestreo.trim() === '') {
             isValid = false;
-            alert('La fecha es requerida.');
+            showInfoAlert('La fecha es requerida.');
             return isValid;
         }
 
@@ -272,46 +351,60 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
         const formData = {
             idContenidoDeAgua: idContenidoDeAgua,
         };
-
+        try {
+            const responseInsert = await CambiarEstadoRegistroContenidoDeAgua(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se eliminó el registro de contenido de Agua!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el registro de contenido de Agua?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoRegistroContenidoDeAgua(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se eliminó el registro de contenido de Agua!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps. WaterContentList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el registro de contenido de Agua?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoRegistroContenidoDeAgua(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se eliminó el registro de contenido de Agua!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps. WaterContentList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -354,7 +447,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
             idFinca: selectedFinca,
             idParcela: parcelaId
         }
-        
+
         const puntosMedicion = await ObtenerPuntoMedicionFincaParcela(fincaParcela);
         setPuntosMedicion(puntosMedicion)
         setPuntoMedicion(null);
@@ -456,7 +549,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                                 }
 
                                 <Text style={styles.formText} >Parcela:</Text>
-                                
+
                                     <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -546,7 +639,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
 
                                         </View>
                                     )}
-                                    
+
 
 
                                     <TouchableOpacity
@@ -577,10 +670,10 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                                          value={formulario.contenidoDeAguaEnSuelo.toString()}
                                            onChangeText={(text) => {
                                             const numericText = text.replace(/[^0-9.]/g, '');
-    
+
                                             // Verifica la cantidad de puntos en el texto
                                             const pointCount = (numericText.match(/\./g) || []).length;
-                                        
+
                                             // Si hay más de un punto, no actualiza el estado
                                             if (pointCount > 1) {
                                               return;
@@ -600,14 +693,14 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
 
                                         // Verifica la cantidad de puntos en el texto
                                         const pointCount = (numericText.match(/\./g) || []).length;
-                                    
+
                                         // Si hay más de un punto, no actualiza el estado
                                         if (pointCount > 1) {
                                           return;
                                         }
                                         updateFormulario('contenidoDeAguaEnPlanta', numericText);
                                     }}
-                                    
+
                                 />
 
                                 <Text style={styles.formText} >Metodo de Medicion:</Text>
@@ -630,7 +723,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                                             { label: "Erosionado", value: "Erosionado" },
                                             { label: "Saturado", value: "Saturado" },
                                             { label: "Arenoso", value: "Arenoso" }
-                                
+
                                         ]}
                                         value={formulario.condicionSuelo}
                                         iconName=""
@@ -666,7 +759,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -678,7 +771,7 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -695,6 +788,41 @@ export const ModificarContenidoAguaScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps. WaterContentList.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el registro de contenido de Agua?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

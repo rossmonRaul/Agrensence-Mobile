@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, Button, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Pressable, Button, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,7 +21,13 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as base64js from 'base64-js';
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert {
+    text: string;
+    onPress: () => void;
+  }
 
 //datos desde la lista para mostrarlos en los input
 interface RouteParams {
@@ -39,7 +45,8 @@ interface RouteParams {
 }
 export const ModificarRiesgoNaturalScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
 
     const [isFirstFormVisible, setFirstFormVisible] = useState(true);
@@ -89,6 +96,75 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
+
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -103,45 +179,59 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
         const formData = {
             idRiesgoNatural: idRiesgoNatural,
         };
-
+        try {
+            const responseInsert = await CambiarEstadoRiesgoNatural(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se elimino el riesgo natural correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el riesgo natural?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado 
-                        const responseInsert = await CambiarEstadoRiesgoNatural(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se elimino el riesgo natural correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.RiskNaturalList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el riesgo natural?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado 
+        //                 const responseInsert = await CambiarEstadoRiesgoNatural(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se elimino el riesgo natural correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.RiskNaturalList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -226,33 +316,33 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
         if (!formulario.riesgoNatural && !formulario.fecha
             && !formulario.practicaPreventiva && !formulario.responsable
             && !formulario.resultadoPractica) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.riesgoNatural) {
-            alert('Ingrese un Riesgo Natural');
+            showInfoAlert('Ingrese un Riesgo Natural');
             isValid = false;
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese la Fecha');
+            showInfoAlert('Ingrese la Fecha');
             isValid = false;
             return
         }
         if (!formulario.practicaPreventiva) {
-            alert('Ingrese la Practica Preventiva');
+            showInfoAlert('Ingrese la Practica Preventiva');
             isValid = false;
             return
         }
 
         if (!formulario.responsable) {
-            alert('Ingrese el Responsable');
+            showInfoAlert('Ingrese el Responsable');
             isValid = false;
             return
         }
         if (!formulario.resultadoPractica) {
-            alert('Ingrese un Resultado de Practica Preventiva');
+            showInfoAlert('Ingrese un Resultado de Practica Preventiva');
             isValid = false;
             return
         }
@@ -264,27 +354,27 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
         if (!formulario.accionesCorrectivas
             && !formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
 
         if (!formulario.accionesCorrectivas) {
-            alert('Ingrese las Acciones Correctivas');
+            showInfoAlert('Ingrese las Acciones Correctivas');
             isValid = false;
             return
         }
         if (!formulario.observaciones) {
-            alert('Ingrese la Observaciones');
+            showInfoAlert('Ingrese la Observaciones');
             isValid = false;
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
 
@@ -416,19 +506,20 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                 }
 
                 if (errorEnviandoArchivos) {
-                    alert('Error al insertar uno o varios documentos');
+                    showErrorAlert('Error al insertar uno o varios documentos');
                 } else {
-                    Alert.alert('Se Modifico correctamente', '', [
-                        {
-                            text: 'OK',
-                            onPress: () => {
-                                navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
-                            },
-                        },
-                    ]);
-                }
+                    showSuccessAlert('Se Modifico correctamente')
+                //     Alert.alert('Se Modifico correctamente', '', [
+                //         {
+                //             text: 'OK',
+                //             onPress: () => {
+                //                 navigation.navigate(ScreenProps.RiskNaturalList.screenName as never);
+                //             },
+                //         },
+                //     ]);
+                 }
             } else {
-                alert(responseInsert.mensaje)
+                showErrorAlert(responseInsert.mensaje)
             }
         } catch (error) {
             console.error('Error:', error);
@@ -492,7 +583,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
 
             // Validar que no se exceda el límite de 5 archivos
             if (selectedFiles.length + acceptedFiles.length > 5) {
-                alert('No se puede ingresar más de 5 archivos');
+                showErrorAlert('No se puede ingresar más de 5 archivos');
                 return;
             }
 
@@ -500,7 +591,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
             const validFiles = acceptedFiles.filter(file => {
                 // Verificar tamaño (mayor de 5 MB)
                 if (file.size > 5 * 1024 * 1024) { // 5 MB en bytes
-                    alert(`El archivo es mayor de 5 MB`);
+                    showErrorAlert(`El archivo es mayor de 5 MB`);
                     return false;
                 }
                 return true;
@@ -583,7 +674,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Riesgos Naturales</Text>
+                            <Text style={styles.createAccountText} >Riesgos naturales</Text>
                         </View>
                         {loading && (
                             <View style={styles.loadingContainer}>
@@ -599,7 +690,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                             {isFirstFormVisible && (
                                 <>
 
-                                    <Text style={styles.formText} >Riesgo Natural</Text>
+                                    <Text style={styles.formText} >Riesgo natural</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -619,7 +710,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Resultado de la Practica</Text>
+                                    <Text style={styles.formText} >Resultado de la práctica</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -706,7 +797,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         </View>
                                     )}
 
-                                    <Text style={styles.formText} >Practica Preventiva</Text>
+                                    <Text style={styles.formText} >Practica preventiva</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Practica Preventiva"
@@ -775,7 +866,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Acciones Correctivas</Text>
+                                    <Text style={styles.formText} >Acciones correctivas</Text>
                                     <TextInput
                                         style={styles.inputMultiline}
                                         placeholder="Acciones Correctivas"
@@ -835,7 +926,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         style={[styles.button, { backgroundColor: 'lightgray', marginTop: 10 }]}
                                         onPress={handleDocumentSelection}
                                     >
-                                        <Text style={styles.buttonTextBack}>Seleccionar Archivos</Text>
+                                        <Text style={styles.buttonTextBack}>Seleccionar archivos</Text>
                                     </TouchableOpacity>
                                     {/* Mostrar archivos seleccionados */}
                                     <View style={styles.fileList}>
@@ -872,7 +963,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -881,7 +972,7 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                                     <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -899,6 +990,41 @@ export const ModificarRiesgoNaturalScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.RiskNaturalList.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el riesgo natural?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

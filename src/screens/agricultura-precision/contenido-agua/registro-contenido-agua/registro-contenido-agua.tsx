@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -22,12 +22,17 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { InsertarRegistroContenidoDeAgua,ObtenerPuntoMedicionFincaParcela } from '../../../../servicios/ServicioContenidoAgua';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
-
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 
 export const InsertarContenidoAguaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
@@ -65,6 +70,69 @@ export const InsertarContenidoAguaScreen: React.FC = () => {
 
         
     });
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.WaterContentList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
    // Función para obtener la fecha po defecto 
 
@@ -141,24 +209,24 @@ useEffect(() => {
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (!formulario.idPuntoMedicion|| formulario.idPuntoMedicion === null) {
             isValid = false;
-            alert('Ingrese el punto de Medición');
+            showInfoAlert('Ingrese el punto de Medición');
             return;
         }
         
         if (formulario.fechaMuestreo.trim() === '') {
             isValid = false;
-            alert('La fecha es requerida.');
+            showInfoAlert('La fecha es requerida.');
             return isValid;
         }
 
@@ -170,22 +238,22 @@ useEffect(() => {
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
         if (formulario.contenidoDeAguaEnSuelo.trim() === '') {
-            alert('El Contenido de Agua en el Suelo es requerido.');
+            showInfoAlert('El Contenido de Agua en el Suelo es requerido.');
             return;
         }
         
         if (formulario.contenidoDeAguaEnPlanta.trim() === '') {
-            alert('El Contenido de Agua en la Planta es requerido.');
+            showInfoAlert('El Contenido de Agua en la Planta es requerido.');
             return;
         }
 
         if (formulario.metodoDeMedicion.trim() === '') {
-            alert('El Metodo de Medicion es requerido.');
+            showInfoAlert('El Metodo de Medicion es requerido.');
             return;
         }
 
         if (formulario.condicionSuelo.trim() === '') {
-            alert('La Condicion del Suelo es requerido.');
+            showInfoAlert('La Condicion del Suelo es requerido.');
             return;
         }
 
@@ -206,16 +274,17 @@ useEffect(() => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro de contenido de Agua correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps. WaterContentList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registro de contenido de Agua correctamente!')
+            // Alert.alert('¡Se registro de contenido de Agua correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.WaterContentList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -600,7 +669,7 @@ useEffect(() => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar Contenido de Agua</Text>
                                         </View>
                                     </TouchableOpacity>
                             </>
@@ -610,6 +679,24 @@ useEffect(() => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.WaterContentList.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

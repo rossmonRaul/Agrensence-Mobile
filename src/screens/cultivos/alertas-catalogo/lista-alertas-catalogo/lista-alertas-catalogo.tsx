@@ -14,7 +14,7 @@ import { useAuth } from '../../../../hooks/useAuth';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
-
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 type RootStackParamList = {
     ListAlertasCatalogo: { reload: boolean };
 };
@@ -37,7 +37,8 @@ interface MedicionesSensor {
 
 export const ListaAlertasCatalogoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const route = useRoute<RouteProp<RootStackParamList, 'ListAlertasCatalogo'>>();
 
     const [apiData, setApiData] = useState<any[]>([]);
@@ -223,30 +224,35 @@ export const ListaAlertasCatalogoScreen: React.FC = () => {
 
             <View style={styles.listcontainer}>
                 <AddButtonComponent screenName={ScreenProps.RegisterAlertaCatalogo.screenName} color={'#274c48'} />
-                <BackButtonComponent screenName={ScreenProps.MenuPrecisionAgriculture.screenName} color={'#274c48'} />
+                <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Catálogo de Alertas</Text>
+                    <Text style={styles.textAbove} >Catálogo de alertas</Text>
                 </View>
-
+                
                 <View style={styles.dropDownContainer}>
+                <View style={styles.searchContainer}>
+                <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
-
+                    </View>
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {alertasFiltradosData.map((item, index) => {
@@ -265,7 +271,16 @@ export const ListaAlertasCatalogoScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

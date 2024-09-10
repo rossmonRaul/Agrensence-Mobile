@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { ObtenerDetalleOrdenDeCompraPorId } from '../../servicios/ServicioOrdenCompra';
 import { Ionicons } from '@expo/vector-icons'
 import DropdownComponent from '../Dropdown/Dropwdown';

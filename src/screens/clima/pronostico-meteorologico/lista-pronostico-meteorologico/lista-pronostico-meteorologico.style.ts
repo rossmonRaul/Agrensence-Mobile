@@ -78,6 +78,7 @@ export const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#548256',
   },
   input: {
     width: '100%',
@@ -108,5 +109,9 @@ export const styles = StyleSheet.create({
   },
   texto: {
     fontSize: 25,
+  },
+  formText: {
+    fontSize: 20,
+    fontFamily: 'CatamaranBold'
   },
 })

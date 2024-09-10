@@ -139,7 +139,7 @@ export const ScreenProps = {
 
 // Esta es la IP que uno debe cambiar en local por la IP de cada uno
 
-export const IP_API = '192.168.0.13';
+export const IP_API = '192.168.100.20';
 
 export const API_URL = `http://${IP_API}:5271`
 
@@ -155,26 +155,26 @@ export const Company_Props = [
     { id: 7, iconImage: require('./assets/images/icons/agricultura-precision.png'), text: 'Agricultura de precisión', screen: ScreenProps.MenuPrecisionAgriculture.screenName  },
     { id: 8, iconImage: require('./assets/images/icons/comunidad.png'), text: 'Comunidad', screen: '' },
     { id: 9, iconImage: require('./assets/images/icons/recomendacion.png'), text: 'Recomendación', screen: '' },
-    { id: 10, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de Calidad', screen: '' },
+    { id: 10, iconImage: require('./assets/images/icons/calidad.png'), text: ' Control de calidad', screen: '' },
     { id: 11, iconImage: require('./assets/images/icons/preferencias.png'), text: 'Preferencias', screen: '' },
 
     //Administrador
     { id: 50, iconImage: require('./assets/images/icons/lista-usuarios-habilitados.png'), text: 'Lista usuarios habilitados', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
     //{ id: 51, iconImage: require('./assets/images/icons/asignar-usuario.png'), text: 'Habilitar usuarios', screen: ScreenProps.ListUsersRol4.screenName },
     { id: 52, iconImage: require('./assets/images/icons/editar-usuario.png'), text: 'Panel de usuarios', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '1' },
-    { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de Fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
-    { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de Parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
+    { id: 53, iconImage: require('./assets/images/icons/campo.png'), text: 'Lista de fincas', screen: ScreenProps.ListEstate.screenName, datoValidacion: '1' },
+    { id: 54, iconImage: require('./assets/images/icons/parcela.png'), text: 'Lista de parcelas', screen: ScreenProps.ListPlot.screenName, datoValidacion: '1' },
     { id: 55, iconImage: require('./assets/images/icons/cultivo.png'), text: 'Cultivos', screen: ScreenProps.CropsList.screenName },
     { id: 56, iconImage: require('./assets/images/icons/sensores.png'), text: 'Sensores', screen: ScreenProps.AdminSensors.screenName, datoValidacion: '1' },
     { id: 57, iconImage: require('./assets/images/icons/administracion.png'), text: 'Administración', screen: ScreenProps.AdminAdminstration.screenName },
     { id: 58, iconImage: require('./assets/images/icons/reporte.png'), text: 'Reportes', screen: ScreenProps.AdminReports.screenName, datoValidacion: '1' },
-    { id: 60, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de Alertas', screen: ScreenProps.ListAlertasCatalogo.screenName, datoValidacion: '1' },
+    { id: 60, iconImage: require('./assets/images/icons/historial.png'), text: 'Catálogo de alertas', screen: ScreenProps.ListAlertasCatalogo.screenName, datoValidacion: '1' },
     //SuperAdmin
     { id: 101, iconImage: require('./assets/images/icons/lista-companias.png'), text: 'Panel de empresas', screen: ScreenProps.CompanyList.screenName },
     { id: 103, iconImage: require('./assets/images/icons/panel-usuarios-administradores.png'), text: 'Panel usuarios administradores', screen: ScreenProps.AdminUserList.screenName, datoValidacion: '0' },
-    { id: 104, iconImage: require('./assets/images/icons/grafico-de-barras.png'), text: 'Mediciones de Sensor', screen: ScreenProps.ListMeasureSensor.screenName, datoValidacion: '0' },
-    { id: 105, iconImage: require('./assets/images/icons/medida-cultivo.png'), text: 'Mediciones de Cultivos', screen: ScreenProps.CropMeasurementsList.screenName, datoValidacion: '0' },
-    { id: 106, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de actividades de preparación de terreno', screen: ScreenProps.ListCatalogoActividades.screenName, datoValidacion: '0 ' },
+    { id: 104, iconImage: require('./assets/images/icons/grafico-de-barras.png'), text: 'Mediciones de sensor', screen: ScreenProps.ListMeasureSensor.screenName, datoValidacion: '0' },
+    { id: 105, iconImage: require('./assets/images/icons/medida-cultivo.png'), text: 'Mediciones de cultivos', screen: ScreenProps.CropMeasurementsList.screenName, datoValidacion: '0' },
+    { id: 106, iconImage: require('./assets/images/icons/historial.png'), text: 'Catálogo de actividades de preparación de terreno', screen: ScreenProps.ListCatalogoActividades.screenName, datoValidacion: '0 ' },
 ]
 
 export const Admin_cultivation = [
@@ -185,7 +185,7 @@ export const Admin_cultivation = [
 ]
 
 export const Admin_suelo = [
-    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de Fertilizantes', screen: ScreenProps.ListFertilizer.screenName },
+    { id: 1, iconImage: require('./assets/images/icons/fertilizante.png'), text: 'Manejo de fertilizantes', screen: ScreenProps.ListFertilizer.screenName },
     { id: 2, iconImage: require('./assets/images/icons/suelo.png'), text: 'Calidad de suelo', screen: ScreenProps.ListQualityFloorScreen.screenName },
     { id: 3, iconImage: require('./assets/images/icons/analisis.png'), text: 'Tipo de aplicación', screen: ScreenProps.ListApplicationType.screenName },
 ]
@@ -199,19 +199,19 @@ export const Admin_hidrico = [
 ]
 
 export const Admin_clima = [
-    { id: 1, iconImage: require('./assets/images/icons/weather.png'), text: 'Pronóstico Meteorológico', screen: ScreenProps.WatchWeather.screenName },
+    { id: 1, iconImage: require('./assets/images/icons/weather.png'), text: 'Pronóstico meteorológico', screen: ScreenProps.WatchWeather.screenName },
     { id: 2, iconImage: require('./assets/images/icons/condiciones-climaticas.png'), text: 'Condiciones meteorológicas y climáticas', screen: ScreenProps.ListWeatherClimateConditions.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/calentamiento-global.png'), text: 'Riesgos Naturales', screen: ScreenProps.RiskNaturalList.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/calentamiento-global.png'), text: 'Riesgos naturales', screen: ScreenProps.RiskNaturalList.screenName },
 ]
 
 export const Admin_Agricultura_Precision = [
-    { id: 1, iconImage: require('./assets/images/icons/salud-planta.png'), text: 'Salud de la Planta', screen: ScreenProps.PlantHealthList.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Contenido Clorofila', screen: ScreenProps.ChlorophyllContentList.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/cantidad-plantas.png'), text: 'Cantidad de Plantas', screen: ScreenProps.NumberOfPlantsList.screenName },
-    { id: 4, iconImage: require('./assets/images/icons/contenidodeagua.png'), text: 'Contenido de Agua', screen: ScreenProps.WaterContentList.screenName },
-    { id: 5, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Cobertura Vegetal', screen: ScreenProps.VegetationcoverList.screenName },
-    { id: 6, iconImage: require('./assets/images/icons/nitrogen.png'), text: 'Contenido Nitrógeno', screen: ScreenProps.NitrogenContentList.screenName },
-    { id: 7, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de Alertas', screen: ScreenProps.ListAlertasCatalogo.screenName },
+    { id: 1, iconImage: require('./assets/images/icons/salud-planta.png'), text: 'Salud de la planta', screen: ScreenProps.PlantHealthList.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/clorofila.png'), text: 'Contenido clorofila', screen: ScreenProps.ChlorophyllContentList.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/cantidad-plantas.png'), text: 'Cantidad de plantas', screen: ScreenProps.NumberOfPlantsList.screenName },
+    { id: 4, iconImage: require('./assets/images/icons/contenidodeagua.png'), text: 'Contenido de agua', screen: ScreenProps.WaterContentList.screenName },
+    { id: 5, iconImage: require('./assets/images/icons/cobertura-vegetal.png'), text: 'Cobertura vegetal', screen: ScreenProps.VegetationcoverList.screenName },
+    { id: 6, iconImage: require('./assets/images/icons/nitrogen.png'), text: 'Contenido nitrógeno', screen: ScreenProps.NitrogenContentList.screenName },
+    // { id: 7, iconImage: require('./assets/images/icons/historial.png'), text: 'Catalogo de Alertas', screen: ScreenProps.ListAlertasCatalogo.screenName },
 ]
 
 
@@ -221,7 +221,7 @@ export const Admin_plagas = [
 
 export const Admin_sensor = [
     { id: 1, iconImage: require('./assets/images/icons/sensor.png'), text: 'Sensores', screen: ScreenProps.ListSensors.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/punto-medicion.png'), text: 'Punto Medición', screen: ScreenProps.ListMeasurementPoint.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/punto-medicion.png'), text: 'Punto medición', screen: ScreenProps.ListMeasurementPoint.screenName },
 ]
 
 export const Admin_ordenCompra = [
@@ -232,9 +232,9 @@ export const Admin_ordenCompra = [
 
 
 export const Admin_Reports = [
-    { id: 1, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Reporte Entrada Salida Total', screen: ScreenProps.ReportEntradaSalidaTotal.screenName },
-    { id: 2, iconImage: require('./assets/images/icons/entrada.png'), text: 'Reporte Entrada Total', screen: ScreenProps.ReportEntradaTotal.screenName },
-    { id: 3, iconImage: require('./assets/images/icons/salida.png'), text: 'Reporte Salida Total', screen: ScreenProps.ReportSalidaTotal.screenName },
-    { id: 4, iconImage: require('./assets/images/icons/orden-compra.png'), text: 'Reporte Orden De Compra', screen: ScreenProps.ReportOrdenDeCompra.screenName },
-    { id: 5, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Reporte Planilla', screen: ScreenProps.ReportPlanilla.screenName },
+    { id: 1, iconImage: require('./assets/images/icons/arriba-y-abajo.png'), text: 'Reporte entrada salida total', screen: ScreenProps.ReportEntradaSalidaTotal.screenName },
+    { id: 2, iconImage: require('./assets/images/icons/entrada.png'), text: 'Reporte entrada total', screen: ScreenProps.ReportEntradaTotal.screenName },
+    { id: 3, iconImage: require('./assets/images/icons/salida.png'), text: 'Reporte salida total', screen: ScreenProps.ReportSalidaTotal.screenName },
+    { id: 4, iconImage: require('./assets/images/icons/orden-compra.png'), text: 'Reporte orden de compra', screen: ScreenProps.ReportOrdenDeCompra.screenName },
+    { id: 5, iconImage: require('./assets/images/icons/mano-obra.png'), text: 'Reporte planilla', screen: ScreenProps.ReportPlanilla.screenName },
 ]

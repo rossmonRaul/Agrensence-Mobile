@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
         marginBottom: 20,
     },
     searchInput: {
-        width: '90%',
+        width: '105%',
         height: 40,
         borderWidth: 1.2,
         fontFamily: 'CatamaranSemiBold',
@@ -62,4 +62,8 @@ export const styles = StyleSheet.create({
         padding: 60,
         alignItems: 'center'
     },
+    formText: {
+        fontSize: 20,
+        fontFamily: 'CatamaranBold'
+      },
 })

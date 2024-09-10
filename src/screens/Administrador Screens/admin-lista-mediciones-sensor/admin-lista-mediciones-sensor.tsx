@@ -14,6 +14,9 @@ import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 import { ObtenerMedicionesSensor } from '../../../servicios/ServiciosSensor';
+import { FontAwesome } from '@expo/vector-icons';
+
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 
 export const ListaMedicionesSensorScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -21,7 +24,8 @@ export const ListaMedicionesSensorScreen: React.FC = () => {
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     //  Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
@@ -69,18 +73,19 @@ export const ListaMedicionesSensorScreen: React.FC = () => {
                 <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.RegisterMeasureSensor.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de Mediciones</Text>
+                    <Text style={styles.textAbove} >Lista de mediciones</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:10}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -95,7 +100,16 @@ export const ListaMedicionesSensorScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

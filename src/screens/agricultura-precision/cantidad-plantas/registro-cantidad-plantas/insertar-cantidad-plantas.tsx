@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -22,10 +22,16 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { InsertarRegistroCantidadDePlantas,ObtenerPuntoMedicionFincaParcela } from '../../../../servicios/ServicioCantidadDePlantas';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 export const InsertarCantidadDePlantasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
  
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
@@ -57,6 +63,70 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
         cantidadPromedioMetroCuadrado:'',
         usuarioCreacionModificacion: ''
     });
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.NumberOfPlantsList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
 
     //  Esta es una función para actualizar el estado del formulario
@@ -100,18 +170,18 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (!formulario.idPuntoMedicion || formulario.idPuntoMedicion === null) {
             isValid = false;
-            alert('Ingrese el punto de Medición');
+            showInfoAlert('Ingrese el punto de Medición');
             return;
         }
         
@@ -123,12 +193,12 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
         if (formulario.cultivo.trim() === '') {
-            alert('El campo Cultivo es requerido.');
+            showInfoAlert('El campo Cultivo es requerido.');
             return;
         }
         
         if (formulario.cantidadPromedioMetroCuadrado.trim() === '') {
-            alert('El campo de cantidad promedio (m²) requerido.');
+            showInfoAlert('El campo de cantidad promedio (m²) requerido.');
             return;
         }
         
@@ -146,16 +216,17 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registró el registro de cantidad de plantas correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.NumberOfPlantsList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registró el registro de cantidad de plantas correctamente!')
+            // Alert.alert('¡Se registró el registro de cantidad de plantas correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.NumberOfPlantsList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -365,7 +436,7 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar Cantidad de Plantas</Text>
                                         </View>
                                     </TouchableOpacity>
                             </>
@@ -375,6 +446,24 @@ export const InsertarCantidadDePlantasScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.NumberOfPlantsList.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

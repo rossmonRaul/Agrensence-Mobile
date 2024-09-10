@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ImageBackground, ScrollView, Platform, KeyboardAvoidingView, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, ImageBackground, ScrollView, Platform, KeyboardAvoidingView, TextInput, TouchableOpacity, Text } from 'react-native';
 import { styles } from './admin-modificar-usuario.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -15,7 +15,13 @@ import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons';
-
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     identificacion: string;
     idEmpresa: number;
@@ -29,7 +35,8 @@ interface RouteParams {
 export const AdminModificarUsuarioScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
-    const { userData } = useAuth();
+    //const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const { identificacion, idEmpresa, estado, idRol, idFinca, idParcela, idUsuarioFincaParcela } = route.params as RouteParams;
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
@@ -48,7 +55,73 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
     const [parcelaDataSort, setParcelaDataSort] = useState<DropdownData[]>([]);
     const [handleEmpresaCalled, setHandleEmpresaCalled] = useState(false);
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                    datoValidacion: 0,
+                });
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         identificacion: identificacion || '',
@@ -106,50 +179,68 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
 
     const handleChangeAccess = async () => {
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
+        try {
         const formData = {
             identificacion: formulario.identificacion,
             idFinca: idFinca,
             idParcela: idParcela,
         };
-        //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de acceso',
-            '¿Estás seguro de que deseas cambiar el acceso para este usuario?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se realiza el cambio de acceso
-                        const responseInsert = await CambiarEstadoUsuarioFincaParcela(formData);
+        const responseInsert = await CambiarEstadoUsuarioFincaParcela(formData);
+        if (responseInsert.indicador === 1) {
+            // Mostrar éxito o realizar otra acción
+            showSuccessAlert('¡Se actualizó el usuario correctamente!');
+            //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+          } else {
+              showErrorAlert('¡Oops! Parece que algo salió mal');
+          }
+        } catch (error) {
+              showErrorAlert('¡Oops! Algo salió mal.');
+        } finally {
+          // setLoading(false);
+          setAlertVisibleEstado(false);
+        }
 
-                        //  Se muestra una alerta de éxito o error según la respuesta obtenida
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el usuario correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(ScreenProps.AdminUserList.screenName, {
-                                                datoValidacion: 0,
-                                            });
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+
+
+        // //  Se muestra una alerta con opción de aceptar o cancelar
+        // Alert.alert(
+        //     'Confirmar cambio de acceso',
+        //     '¿Estás seguro de que deseas cambiar el acceso para este usuario?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se realiza el cambio de acceso
+        //                 const responseInsert = await CambiarEstadoUsuarioFincaParcela(formData);
+
+        //                 //  Se muestra una alerta de éxito o error según la respuesta obtenida
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el usuario correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(ScreenProps.AdminUserList.screenName, {
+        //                                         datoValidacion: 0,
+        //                                     });
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     //  Se definen funciones para manejar el cambio de valor en los dropdowns
@@ -186,18 +277,9 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
         };
         const responseInsert = await AsignarNuevaFincaParcela(formData);
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se le agrego la nueva finca y parcela al usuario correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.AdminUserList.screenName, {
-                            datoValidacion: 0,
-                        });
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se le agrego la nueva finca y parcela al usuario correctamente!');
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     }
     //  Se define una función para manejar el registro del identificacion
@@ -216,23 +298,9 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert(
-                '¡Se actualizó el usuario correctamente!',
-                '',
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            navigation.navigate(
-                                ScreenProps.AdminUserList.screenName, {
-                                datoValidacion: 0,
-                            });
-                        },
-                    },
-                ]
-            );
+            showSuccessAlert('¡Se actualizó el usuario correctamente!');
         } else {
-            alert('¡Oops! Parece que algo salió mal');
+            showErrorAlert('¡Oops! Parece que algo salió mal');
         }
     };
 
@@ -348,7 +416,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                             {estado === 'Activo' ? <TouchableOpacity
                                 style={styles.buttonDelete}
                                 onPress={() => {
-                                    handleChangeAccess();
+                                    showConfirmAlert();
                                 }}
                             >
                                 <View style={styles.buttonContent}>
@@ -360,7 +428,7 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => {
-                                        handleChangeAccess();
+                                        showConfirmAlert();
                                     }}
                                 >
                                     <View style={styles.buttonContent}>
@@ -376,6 +444,43 @@ export const AdminModificarUsuarioScreen: React.FC = () => {
                 </View>
                 <BottomNavBar />
             </KeyboardAvoidingView>
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () =>  navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                    datoValidacion: 0,
+                }) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el acceso para este usuario?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

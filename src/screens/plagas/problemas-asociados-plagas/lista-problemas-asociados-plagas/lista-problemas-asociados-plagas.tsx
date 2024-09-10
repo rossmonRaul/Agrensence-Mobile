@@ -14,10 +14,12 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerRegistroSeguimientoPlagasYEnfermedades } from '../../../../servicios/ServicioPlagas&Enfermedades';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
@@ -224,6 +226,16 @@ export const ListaProblemasAsociadosPlagasScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

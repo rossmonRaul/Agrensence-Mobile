@@ -17,10 +17,12 @@ import { RelacionFincaParcela, UserDataInterface } from '../../../../interfaces/
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { FertilizerDataInterface } from '../../../../interfaces/fertilizanteInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaFertilizantesScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [apiData, setApiData] = useState<FertilizerDataInterface[]>([]);
     const [fertilizantesFiltradosData, setfertilizantesFiltrados] = useState<any[]>([]);
@@ -161,9 +163,9 @@ export const ListaFertilizantesScreen: React.FC = () => {
 
         'Unidad de medida': 'dosisUnidad',
 
-        'Cultivo Tratado': 'cultivoTratado',
-        'Acciones Adicionales': 'accionesAdicionales',
-        'Condiciones Ambientales ': 'condicionesAmbientales',
+        'Cultivo tratado': 'cultivoTratado',
+        'Acciones adicionales': 'accionesAdicionales',
+        'Condiciones ambientales ': 'condicionesAmbientales',
         'Observaciones': 'observaciones',
         'Estado': 'estado',
     };
@@ -204,24 +206,29 @@ export const ListaFertilizantesScreen: React.FC = () => {
 
                 <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
-
+                    </View> 
                     {/* Dropdown para Parcelas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {fertilizantesFiltradosData.map((item, index) => {
@@ -245,7 +252,16 @@ export const ListaFertilizantesScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

@@ -14,13 +14,14 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { riesgoNaturalDataInterface } from '../../../../interfaces/riesgoNaturalInterface';
 import { ObtenerSaludDeLaPlanta } from '../../../../servicios/ServicioSaludDeLaPlanta';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
-
+import { FontAwesome } from '@expo/vector-icons';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { paginationStyles } from '../../../../styles/pagination-styles.styles';
-
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 export const ListaSaludPlantaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const [parcelas, setParcelas] = useState<{ idParcela: number }[] | []>([]);
     const [apiData, setApiData] = useState<riesgoNaturalDataInterface[]>([]);
     const [saludPlantaFiltradosData, setSaludPlantaFiltradosData] = useState<any[]>([]);
@@ -124,10 +125,10 @@ export const ListaSaludPlantaScreen: React.FC = () => {
         'Parcela': 'nombreParcela',
         'Fecha': 'fecha',
         'Cultivo': 'cultivo',
-        'Color Hojas': 'colorHojas',
-        'Tamano y Forma de la Hoja': 'tamanoFormaHoja',
-        'Estado de Tallo': 'estadoTallo',
-        'Estado de Raíz': 'estadoRaiz'
+        'Color hojas': 'colorHojas',
+        'Tamano y forma de la hoja': 'tamanoFormaHoja',
+        'Estado de tallo': 'estadoTallo',
+        'Estado de raíz': 'estadoRaiz'
     };
 
 
@@ -225,18 +226,19 @@ export const ListaSaludPlantaScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.InsertPlantHealth.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista Salud de la Planta</Text>
+                    <Text style={styles.textAbove} >Lista salud de la planta</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información por finca o parcela"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {!currentItems ? (
@@ -262,7 +264,16 @@ export const ListaSaludPlantaScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

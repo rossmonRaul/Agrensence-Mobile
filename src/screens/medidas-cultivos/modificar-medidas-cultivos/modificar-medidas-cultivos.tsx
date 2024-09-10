@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ModificarMedidasCultivos, CambiarEstadoMedidasCultivos } from '../../../servicios/ServicioCultivos';
@@ -10,6 +10,14 @@ import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons'
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idMedidasCultivos: string;
     medida : string;
@@ -18,7 +26,8 @@ interface RouteParams {
 
 export const ModificarMedidasCultivosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const route = useRoute();
     const { idMedidasCultivos, medida, estado } = route.params as RouteParams;
 
@@ -28,7 +37,13 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
         medida: medida,
         estado: estado
     });
-
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -36,58 +51,131 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
             [key]: value
         }));
     };
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.CropMeasurementsList.screenName);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
 
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     const handleChangeAccess = async () => {
+        Keyboard.dismiss()
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idMedidasCultivo: formulario.idMedidasCultivos,
         };
 
+        try {
+            const responseInsert = await CambiarEstadoMedidasCultivos(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado de la medida de cultivo correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
+
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado de la medida de cultivo?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado de la finca
-                        const responseInsert = await CambiarEstadoMedidasCultivos(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado de la medida de cultivo correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.CropMeasurementsList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado de la medida de cultivo?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado de la finca
+        //                 const responseInsert = await CambiarEstadoMedidasCultivos(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado de la medida de cultivo correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.CropMeasurementsList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     //  Se defina una función para manejar el registro de la finca
     const handleModifyEstate = async () => {
+        Keyboard.dismiss()
         //  Se valida que la empresa, finca y parcela estén seleccionadas
         if (!formulario.medida) {
-            alert('Ingrese una medida de cultivo');
+            showInfoAlert('Ingrese una medida de cultivo');
             return;
         }
 
@@ -103,22 +191,23 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert(
-                '¡Se modificó la medida de cultivo!',
-                '',
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            navigation.navigate(
-                                ScreenProps.CropMeasurementsList.screenName as never
-                            );
-                        },
-                    },
-                ]
-            );
+            showSuccessAlert('¡Se modificó la medida de cultivo!');
+            // Alert.alert(
+            //     '¡Se modificó la medida de cultivo!',
+            //     '',
+            //     [
+            //         {
+            //             text: 'OK',
+            //             onPress: () => {
+            //                 navigation.navigate(
+            //                     ScreenProps.CropMeasurementsList.screenName as never
+            //                 );
+            //             },
+            //         },
+            //     ]
+            // );
         } else {
-            alert('¡Oops! Parece que algo salió mal');
+            showErrorAlert('¡Oops! Parece que algo salió mal');
         }
 
     };
@@ -134,10 +223,10 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
             <BackButtonComponent screenName={ScreenProps.CropMeasurementsList.screenName} color={'#ffff'} />
             <View style={styles.lowerContainer}>
                 <View>
-                    <Text style={styles.createAccountText} >Modificar Medida de Cultivo</Text>
+                    <Text style={styles.createAccountText} >Modificar medida de cultivo</Text>
                 </View>
                 <View style={styles.formContainer}>
-                    <Text style={styles.formText} >Medida de Cultivo</Text>
+                    <Text style={styles.formText} >Nombre</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Medida de cultivo"
@@ -159,7 +248,7 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
                         ? <TouchableOpacity
                             style={styles.buttonDelete}
                             onPress={() => {
-                                handleChangeAccess();
+                                showConfirmAlert();
                             }}
                         >
                             <View style={styles.buttonContent}>
@@ -171,7 +260,7 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => {
-                                handleChangeAccess();
+                                showConfirmAlert();
                             }}
                         >
                             <View style={styles.buttonContent}>
@@ -184,6 +273,41 @@ export const ModificarMedidasCultivosScreen: React.FC = () => {
 
             </View>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.CropMeasurementsList.screenName) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado de la medida de cultivo?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

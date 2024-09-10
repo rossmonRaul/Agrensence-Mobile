@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -11,11 +11,20 @@ import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
 import { InsertarSensores, ObtenerEstadoSensores, ObtenerMedicionesSensor, InsertarMedicionAutorizadaSensor } from '../../../../servicios/ServiciosSensor';
 import { ObtenerRegistroPuntoMedicion } from '../../../../servicios/ServicioPuntoMedicion';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
+
 export const InsertarSensoresScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const [inputs, setInputs] = useState(['']);
 
     const [estadoSensor, setEstadoSensor] = useState(null);
@@ -32,9 +41,71 @@ export const InsertarSensoresScreen: React.FC = () => {
             newInputs[index] = newValue;
             setInputs(newInputs);
         } else {
-            Alert.alert('Este valor ya ha sido seleccionado anteriormente.')
+            showInfoAlert('Este valor ya ha sido seleccionado anteriormente.')
         }
     };
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.AdminSensors.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
     const handleAddInput = () => {
         // Verificar si el último elemento del array no está vacío
@@ -44,7 +115,7 @@ export const InsertarSensoresScreen: React.FC = () => {
             setInputs([...inputs, '']);
         } else {
             // Si el último elemento está vacío, muestra una alerta o realiza alguna acción
-            Alert.alert('Por favor, seleccione un valor antes de agregar otro campo.');
+            showInfoAlert('Por favor, seleccione un valor antes de agregar otro campo.');
         }
     };
 
@@ -77,38 +148,38 @@ export const InsertarSensoresScreen: React.FC = () => {
 
     const validateFirstForm = () => {
         let isValid = true;
-
+        Keyboard.dismiss()
 
         if (!formulario.nombre) {
-            alert('El nombre es requerido.');
+            showInfoAlert('El nombre es requerido.');
             return;
         } else if (formulario.nombre.length > 50) {
-            alert('El nombre no puede exceder los 50 caracteres.');
+            showInfoAlert('El nombre no puede exceder los 50 caracteres.');
             return;
         } else if (/^\s/.test(formulario.nombre)) {
-            alert('El nombre no puede comenzar con espacios en blanco.');
+            showInfoAlert('El nombre no puede comenzar con espacios en blanco.');
             return;
         }
 
         if (!formulario.modelo) {
-            alert('El modelo es requerido.');
+            showInfoAlert('El modelo es requerido.');
             return;
         } else if (formulario.modelo.length > 150) {
-            alert('El modelo no puede exceder los 150 caracteres.');
+            showInfoAlert('El modelo no puede exceder los 150 caracteres.');
             return;
         } else if (/^\s/.test(formulario.modelo)) {
-            alert('El modelo no puede comenzar con espacios en blanco.');
+            showInfoAlert('El modelo no puede comenzar con espacios en blanco.');
             return;
         }
 
         if (!formulario.identificadorSensor) {
-            alert('El identificador de sensor es requerido.');
+            showInfoAlert('El identificador de sensor es requerido.');
             return;
         } else if (formulario.identificadorSensor.length > 100) {
-            alert('El identificador de sensor no puede exceder los 100 caracteres.');
+            showInfoAlert('El identificador de sensor no puede exceder los 100 caracteres.');
             return;
         } else if (/^\s/.test(formulario.identificadorSensor)) {
-            alert('El identificador de sensor no puede comenzar con espacios en blanco.');
+            showInfoAlert('El identificador de sensor no puede comenzar con espacios en blanco.');
             return;
         }
 
@@ -121,45 +192,45 @@ export const InsertarSensoresScreen: React.FC = () => {
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
 
-
+        Keyboard.dismiss()
         if (!formulario.nombre) {
-            alert('El nombre es requerido.');
+            showInfoAlert('El nombre es requerido.');
             return;
         } else if (formulario.nombre.length > 50) {
-            alert('El nombre no puede exceder los 50 caracteres.');
+            showInfoAlert('El nombre no puede exceder los 50 caracteres.');
             return;
         } else if (/^\s/.test(formulario.nombre)) {
-            alert('El nombre no puede comenzar con espacios en blanco.');
+            showInfoAlert('El nombre no puede comenzar con espacios en blanco.');
             return;
         }
 
         if (!formulario.modelo) {
-            alert('El modelo es requerido.');
+            showInfoAlert('El modelo es requerido.');
             return;
         } else if (formulario.modelo.length > 150) {
-            alert('El modelo no puede exceder los 150 caracteres.');
+            showInfoAlert('El modelo no puede exceder los 150 caracteres.');
             return;
         } else if (/^\s/.test(formulario.modelo)) {
-            alert('El modelo no puede comenzar con espacios en blanco.');
+            showInfoAlert('El modelo no puede comenzar con espacios en blanco.');
             return;
         }
 
         if (!formulario.identificadorSensor) {
-            alert('El identificador de sensor es requerido.');
+            showInfoAlert('El identificador de sensor es requerido.');
             return;
         } else if (formulario.identificadorSensor.length > 100) {
-            alert('El identificador de sensor no puede exceder los 100 caracteres.');
+            showInfoAlert('El identificador de sensor no puede exceder los 100 caracteres.');
             return;
         } else if (/^\s/.test(formulario.identificadorSensor)) {
-            alert('El identificador de sensor no puede comenzar con espacios en blanco.');
+            showInfoAlert('El identificador de sensor no puede comenzar con espacios en blanco.');
             return;
         }
         if (formulario.idEstado.trim() === '') {
-            alert('El estado de sensor es requerido.');
+            showInfoAlert('El estado de sensor es requerido.');
             return
         }
         if (formulario.idPuntoMedicion.trim() === '') {
-            alert('El punto de medición es requerido.');
+            showInfoAlert('El punto de medición es requerido.');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -174,7 +245,7 @@ export const InsertarSensoresScreen: React.FC = () => {
         const inputsData = inputs.join(';');
         const isDuplicate = inputs.some((input, index) => inputs.indexOf(input) !== index);
         if (isDuplicate) {
-            Alert.alert('Los valores no pueden estar duplicados.');
+            showInfoAlert('Los valores no pueden estar duplicados.');
             return;
         }
         try {
@@ -187,16 +258,18 @@ export const InsertarSensoresScreen: React.FC = () => {
                 const resultadoMediciones = await InsertarMedicionAutorizadaSensor(medicionAutorizada);
                 //  Se muestra una alerta de éxito o error según la respuesta obtenida
                 if (resultadoMediciones.indicador === 1) {
-                    Alert.alert('¡Se registro sensores correctamente!', '', [
-                        {
-                            text: 'OK',
-                            onPress: () => {
-                                navigation.navigate(ScreenProps.AdminSensors.screenName as never);
-                            },
-                        },
-                    ]);
+                    showSuccessAlert('¡Se registro sensores correctamente!')
+
+                    // Alert.alert('¡Se registro sensores correctamente!', '', [
+                    //     {
+                    //         text: 'OK',
+                    //         onPress: () => {
+                    //             navigation.navigate(ScreenProps.AdminSensors.screenName as never);
+                    //         },
+                    //     },
+                    // ]);
                 } else {
-                    alert('!Oops! Parece que algo salió mal')
+                    showErrorAlert('!Oops! Parece que algo salió mal')
                 }
             }
 
@@ -284,6 +357,7 @@ export const InsertarSensoresScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('identificadorSensor', text)}
                                         maxLength={50}
                                     />
+                                     <Text style={styles.formText} >Estado de sensor</Text>
                                     <DropdownComponent
                                         placeholder="Estado de sensor"
                                         data={estadosSensor.map((estado: any) => ({ label: estado.estado, value: String(estado.idEstado) }))}
@@ -291,7 +365,7 @@ export const InsertarSensoresScreen: React.FC = () => {
                                         iconName='microchip'
                                         onChange={handleEstadoSensor}
                                     />
-
+                                    <Text style={styles.formText} >Punto de medición</Text>
                                     <DropdownComponent
                                         placeholder="Punto de medición"
                                         data={puntosMedicion.map((puntoMedicion: any) => ({ label: puntoMedicion.codigo, value: String(puntoMedicion.idPuntoMedicion) }))}
@@ -336,7 +410,7 @@ export const InsertarSensoresScreen: React.FC = () => {
                                                             if (!isDuplicate) {
                                                                 handleInputsChange(index, newValue.value);
                                                             } else {
-                                                                Alert.alert('Por favor, seleccione un valor que no sea repetido.');
+                                                                showInfoAlert('Por favor, seleccione un valor que no sea repetido.');
                                                             }
                                                         }}
                                                     />
@@ -374,7 +448,7 @@ export const InsertarSensoresScreen: React.FC = () => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar sensor</Text>
                                         </View>
                                     </TouchableOpacity>
                                 </>
@@ -384,6 +458,24 @@ export const InsertarSensoresScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView >
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.AdminSensors.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View >
     );
 }

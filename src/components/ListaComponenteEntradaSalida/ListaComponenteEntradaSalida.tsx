@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+//import { Picker } from '@react-native-picker/picker';
 import { ObtenerDetalleRegistroEntradaSalidaPorId } from '../../servicios/ServicioEntradaSalida';
 import { Ionicons } from '@expo/vector-icons'
 import DropdownComponent from '../Dropdown/Dropwdown';
@@ -145,7 +145,7 @@ const ListaComponenteEntradaSalida: React.FC<PropsEnviarDatos> = ({enviarDatos,i
                 onChangeText={setCantidad}
                 style={styles.input}
             />
-            <Text style={styles.formText} >Precio Unitario</Text>
+            <Text style={styles.formText} >Precio unitario</Text>
             <TextInput
                 placeholder="Precio Unitario"
                 keyboardType="numeric"
@@ -184,7 +184,7 @@ const ListaComponenteEntradaSalida: React.FC<PropsEnviarDatos> = ({enviarDatos,i
                     </View>
                     <Text style={styles.text}>Producto: {item.producto}</Text>
                     <Text style={styles.text}>Cantidad: {item.cantidad}</Text>
-                    <Text style={styles.text}>Precio Unitario: ₡{item.precioUnitario}</Text>
+                    <Text style={styles.text}>Precio unitario: ₡{item.precioUnitario}</Text>
                     <Text style={styles.text}>IVA: {item.iva}%</Text>
                     <Text style={styles.text}>Total: ₡{item.total}</Text>
                     

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -22,6 +22,13 @@ import { ModificarRegistroSeguimientoCondicionesMeteorologicas } from '../../../
 import { CambiarEstadoRegistroCondicionesMeteorologicas } from '../../../../servicios/ServicioClima';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 interface RouteParams {
     idRegistroCondicionesMeteorologicasClimaticas: string,
@@ -38,8 +45,8 @@ interface RouteParams {
 
 export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
-
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const route = useRoute();
 
     const { idRegistroCondicionesMeteorologicasClimaticas,
@@ -87,6 +94,75 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
     const handleCheckBoxChange = (value, setState) => {
         setState(value);
     };
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListWeatherClimateConditions.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         idRegistroCondicionesMeteorologicasClimaticas: idRegistroCondicionesMeteorologicasClimaticas,
@@ -136,19 +212,19 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
         const temperaturaRegex = /^-?\d+(\.\d+)?$/;
         const humedadRegex = /^\d+$/;
         if (formulario.temperaturaAcumulada.toString().trim() === '') {
-            alert('Por favor ingrese la temperatura.');
+            showInfoAlert('Por favor ingrese la temperatura.');
             return
         }
         if (!temperaturaRegex.test(formulario.temperaturaAcumulada.toString().trim())) {
-            alert('Por favor ingrese una temperatura válida (permitiendo decimales con punto).');
+            showInfoAlert('Por favor ingrese una temperatura válida (permitiendo decimales con punto).');
             return
         }
         if (formulario.humedadAcumulada.toString().trim() === '') {
-            alert('Por favor ingrese la humedad.');
+            showInfoAlert('Por favor ingrese la humedad.');
             return
         }
         if (!humedadRegex.test(formulario.humedadAcumulada.toString().trim())) {
-            alert('Por favor ingrese una humedad válida (números enteros).');
+            showInfoAlert('Por favor ingrese una humedad válida (números enteros).');
             return
         }
 
@@ -170,16 +246,17 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
         const responseInsert = await ModificarRegistroSeguimientoCondicionesMeteorologicas(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico el registro condiciones meterológicas y climáticas!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListWeatherClimateConditions.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modifico el registro condiciones meterológicas y climáticas!')
+            // Alert.alert('¡Se modifico el registro condiciones meterológicas y climáticas!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListWeatherClimateConditions.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -257,52 +334,52 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
 
         if (formulario.fecha.trim() === '') {
             isValid = false;
-            alert('La fecha es requerida.');
+            showInfoAlert('La fecha es requerida.');
             return isValid;
         }
         if (hours === '' && minutes === '') {
             isValid = false;
-            alert('La hora es requerida.');
+            showInfoAlert('La hora es requerida.');
             return isValid;
         }
         if (formulario.temperatura.toString().trim() === '') {
             isValid = false;
-            alert('La temperatura es requerida.');
+            showInfoAlert('La temperatura es requerida.');
             return isValid;
         }
         if (!temperaturaRegex.test(formulario.temperatura.toString().toString().trim())) {
             isValid = false;
-            alert('Por favor ingrese una temperatura válida (permitiendo decimales con punto).');
+            showInfoAlert('Por favor ingrese una temperatura válida (permitiendo decimales con punto).');
             return isValid;
         }
         if (period === '') {
             isValid = false;
-            alert('El periodo es requerido.');
+            showInfoAlert('El periodo es requerido.');
             return isValid;
         }
         if (formulario.humedad.toString().trim() === '') {
             isValid = false;
-            alert('La humedad es requerida.');
+            showInfoAlert('La humedad es requerida.');
             return isValid;
         }
         if (!humedadRegex.test(formulario.humedad.toString().trim())) {
             isValid = false;
-            alert('Por favor ingrese una humedad válida (números enteros).');
+            showInfoAlert('Por favor ingrese una humedad válida (números enteros).');
             return isValid;
         }
         if (parseInt(formulario.humedad) < 0 || parseInt(formulario.humedad) > 100) {
             isValid = false;
-            alert('La humedad tiene que ser un número entre 0 y 100.');
+            showInfoAlert('La humedad tiene que ser un número entre 0 y 100.');
             return isValid;
         }
         if (parseInt(formulario.humedadAcumulada) < 0) {
             isValid = false;
-            alert('La humedad acumulada no puede ser un número negativo.');
+            showInfoAlert('La humedad acumulada no puede ser un número negativo.');
             return isValid;
         }
         if (formulario.temperaturaAcumulada.toString().trim() === '') {
             isValid = false;
-            alert('La temperatura acumulada es requerida.');
+            showInfoAlert('La temperatura acumulada es requerida.');
             return isValid;
         }
 
@@ -315,46 +392,61 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
         const formData = {
             idRegistroCondicionesMeteorologicasClimaticas: idRegistroCondicionesMeteorologicasClimaticas,
         };
+        try {
+            const responseInsert = await CambiarEstadoRegistroCondicionesMeteorologicas(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado del registro condiciones meterológicas y climáticas!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del registro condiciones meterológicas y climáticas?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoRegistroCondicionesMeteorologicas(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado del registro condiciones meterológicas y climáticas!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListWeatherClimateConditions.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del registro condiciones meterológicas y climáticas?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoRegistroCondicionesMeteorologicas(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado del registro condiciones meterológicas y climáticas!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListWeatherClimateConditions.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -671,6 +763,9 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                     maxLength={3}
                                 />
                                 {empresa &&
+                                    (
+                                        <>
+                                    <Text style={styles.formText} >Finca</Text>
                                     <DropdownComponent
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -685,8 +780,11 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                             // Actualizar el formulario con la selección de la finca
                                             updateFormulario('idFinca', selectedItem.value);
                                         }}
-                                    />
+                                        />
+                                        </>
+                                    )
                                 }
+                                <Text style={styles.formText} >Parcela</Text>
                                 <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -728,7 +826,7 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -740,7 +838,7 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -757,6 +855,44 @@ export const ModificarCondicionesMeterologicasClimaticasScreen: React.FC = () =>
                 </View>
             </KeyboardAvoidingView >
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListWeatherClimateConditions.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del registro condiciones meterológicas y climáticas?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View >
     );
 }
+
+
+

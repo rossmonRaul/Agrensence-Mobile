@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -23,6 +23,14 @@ import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import ListaComponenteOrdenCompra from '../../../components/ListaComponenteOrdenCompra/ListaComponenteOrdenCompra';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 interface Item {
     id: string;
@@ -34,7 +42,9 @@ interface Item {
 }
 export const InsertarOrdenCompraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
+
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
@@ -61,10 +71,67 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
     const [ultimoIdOrdenDeCompra, setUltimoIdOrdenDeCompra] = useState(null);
     const [title, setTitle] = useState('Orden de compra');
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
     const toggleTitle = () => {
         setTitle((prevTitle) => (prevTitle === 'Orden de compra' ? 'Listado productos' : 'Orden de compra'));
     };
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
 
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     const handleInputsChange = (index, newValue) => {
         const newInputs = [...inputs];
 
@@ -74,7 +141,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
             newInputs[index] = newValue;
             setInputs(newInputs);
         } else {
-            Alert.alert('Este valor ya ha sido seleccionado anteriormente.')
+            showInfoAlert('Este valor ya ha sido seleccionado anteriormente.')
         }
     };
 
@@ -86,7 +153,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
             setInputs([...inputs, '']);
         } else {
             // Si el último elemento está vacío, muestra una alerta o realiza alguna acción
-            Alert.alert('Por favor, seleccione un valor antes de agregar otro campo.');
+            showInfoAlert('Por favor, seleccione un valor antes de agregar otro campo.');
         }
     };
 
@@ -123,32 +190,33 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
 
 
     const validateFirstForm = () => {
+        Keyboard.dismiss()
         let isValid = true;
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
 
         if (formulario.numeroOrden.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el número de orden.');
+            showInfoAlert('Por favor ingrese el número de orden.');
             return;
         }
         if (formulario.proveedor.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el proveedor.');
+            showInfoAlert('Por favor ingrese el proveedor.');
             return;
         }
 
         if (formulario.observaciones.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese observaciones o n/a.');
+            showInfoAlert('Por favor ingrese observaciones o n/a.');
             return;
         }
 
@@ -163,19 +231,19 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
         // Comparar fechas
         if (isNaN(DateOrden.getTime())) {
             isValid = false;
-            alert('La fecha de orden no es válida.');
+            showInfoAlert('La fecha de orden no es válida.');
             return isValid;
         }
 
         if (isNaN(DateEntrega.getTime())) {
             isValid = false;
-            alert('La fecha de entrega no es válida.');
+            showInfoAlert('La fecha de entrega no es válida.');
             return isValid;
         }
 
         if (DateEntrega < DateOrden) {
             isValid = false;
-            alert('El de entrega no puede ser anterior a la fecha de orden.');
+            showInfoAlert('El de entrega no puede ser anterior a la fecha de orden.');
             return isValid;
         }
 
@@ -191,8 +259,9 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
     }
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
+        Keyboard.dismiss()
         if (DatosDelHijo.length === 0) {
-            alert('Por favor ingrese un producto a la lista.');
+            showInfoAlert('Por favor ingrese un producto a la lista.');
             return;
         }
 
@@ -220,17 +289,18 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
         const responseInsert = await InsertarOrdenDeCompra(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro la orden de compra correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        //navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);ScreenProps.ListPurchaseOrder.screenName
-                        navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registro la orden de compra correctamente!')
+            // Alert.alert('¡Se registro la orden de compra correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             //navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);ScreenProps.ListPurchaseOrder.screenName
+            //             navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -419,7 +489,9 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
+                                <Text style={styles.formText} >Finca</Text>
                                 {empresa &&
+                                    
                                     <DropdownComponent
                                         placeholder="Finca"
                                         data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
@@ -428,7 +500,10 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                                         onChange={handleValueFinca}
                                     />
                                 }
-                                {finca &&
+                               
+                                {finca &&(
+                                    <>
+                                    <Text style={styles.formText} >Parcela</Text>
                                     <DropdownComponent
                                         placeholder="Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -436,6 +511,8 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                                         value={parcela}
                                         onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
                                     />
+                                  </>
+                                )
                                 }
                                     <Text style={styles.formText} >Número de orden</Text>
                                     <TextInput
@@ -648,7 +725,7 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                                 >
                                     <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Guardar cambios</Text>
+                                        <Text style={styles.buttonText}>Guardar orden de compra</Text>
                                     </View>
                                 </TouchableOpacity>}
                             </>
@@ -658,6 +735,24 @@ export const InsertarOrdenCompraScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
         
     );

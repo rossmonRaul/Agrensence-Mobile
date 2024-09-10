@@ -5,6 +5,14 @@ import { UserContext } from '../context/UserProvider';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenProps } from '../constants';
 
+
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
+
 // Se define el hook que gestionará la lógica de inicio de sesión
 const useLogin = () => {
     const navigation = useNavigation();
@@ -12,17 +20,78 @@ const useLogin = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
     let estado = false;
+
+
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.Menu.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+        
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
     // Se define la función para manejar el proceso de inicio de sesión
     const handleLogin = async () => {
         //Se utilizan algunas validaciones 
         if (!username || !password) {
-            alert('Por favor, rellene todos los campos.');
+            showInfoAlert('Por favor, rellene todos los campos.');
             return;
         }
         if (password.length < 8) {
-            alert('La contraseña debe tener al menos 8 caracteres.');
+            showInfoAlert('La contraseña debe tener al menos 8 caracteres.');
             return;
         }
 
@@ -33,19 +102,19 @@ const useLogin = () => {
 
         const userFound = await ValidarUsuario(formData)
         if (userFound.indicador === 500) {
-            alert(userFound.mensaje);
+            showErrorAlert(userFound.mensaje);
         } else {
 
             if (userFound.usuario.mensaje === "Usuario no encontrado.") {
-                alert('Este usuario no se ha encontrado.');
+                showInfoAlert('Este usuario no se ha encontrado.');
                 return;
             }
             if (userFound.usuario.mensaje === 'Credenciales incorrectas.') {
-                alert('Credenciales incorrectas.');
+                showInfoAlert('Credenciales incorrectas.');
                 return;
             }
             if (userFound.usuario.mensaje === 'Usuario o empresa inactivos.') {
-                alert('¡Hola! Parece que aún no hemos activado tu cuenta.');
+                showInfoAlert('¡Hola! Parece que aún no hemos activado tu cuenta.');
                 return;
             }
             if (userFound.usuario.estado === 1) estado = true
@@ -65,14 +134,7 @@ const useLogin = () => {
                     token: userFound.token
                 });
                 setIsLoggedIn(true)
-                Alert.alert('¡Inicio sesión correctamente!', '', [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            navigation.navigate(ScreenProps.Menu.screenName as never);
-                        },
-                    },
-                ]);
+                showSuccessAlert('¡Inicio sesión correctamente!')
             }
 
         }
@@ -88,7 +150,10 @@ const useLogin = () => {
         setPassword,
         isLoggedIn,
         handleLogin,
-        userData
+        userData,
+        isAlertVisible,
+        alertProps,
+        hideAlert
     }
 }
 

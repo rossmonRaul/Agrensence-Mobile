@@ -29,6 +29,7 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+        //height: 40,
     },
     input: {
         height: 40,

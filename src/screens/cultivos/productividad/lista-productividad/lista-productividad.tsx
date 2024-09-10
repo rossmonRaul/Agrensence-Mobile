@@ -16,10 +16,12 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ProduccionDataInterdace } from '../../../../interfaces/produccionInterface';
 import { ObtenerProductividadCultivos } from '../../../../servicios/ServicioCultivos';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaProductividadScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const [apiData, setApiData] = useState<ProduccionDataInterdace[]>([]);
     const [productividadFiltradaData, setProductividadFiltrada] = useState<any[]>([]);
@@ -162,9 +164,9 @@ export const ListaProductividadScreen: React.FC = () => {
         'Parcela': 'parcela',
         'Temporada': 'temporada',
         'Área': 'area',
-        'Medida del Área': 'medidaArea',
+        'Medida del área': 'medidaArea',
         'Producción': 'produccion',
-        'Medición del Cultivo': 'medidaCultivo',
+        'Medición del cultivo': 'medidaCultivo',
         'Productividad': 'productividad',
         'Estado': 'estado',
     };
@@ -192,29 +194,35 @@ export const ListaProductividadScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.RegisterProductivity.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de Productividad</Text>
+                    <Text style={styles.textAbove} >Lista de productividad</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
 
                     {/* Dropdown para Parcelas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {productividadFiltradaData.map((item, index) => {
@@ -234,7 +242,16 @@ export const ListaProductividadScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

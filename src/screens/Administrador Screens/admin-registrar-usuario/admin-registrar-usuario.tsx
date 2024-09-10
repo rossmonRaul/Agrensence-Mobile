@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from './admin-registrar-usuario.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -16,10 +16,18 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 
 export const AdminRegistrarUsuarioScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
@@ -38,6 +46,12 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
         empresa: ''
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -46,6 +60,61 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
             [key]: value
         }));
     };
+
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                    datoValidacion: 0,
+                });
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
     /*  Estan son las Props para obtener datos de empresas, 
         fincas y parcelas mediante el hook useFetchDropdownData */
@@ -67,29 +136,30 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
     // Función para validar la primera parte formulario
     const validateFirstForm = () => {
         let isValid = true;
+        Keyboard.dismiss()
 
         if (!formulario.identificacion && !formulario.nombre && !formulario.correo && !formulario.contrasena && !formulario.confirmarContrasena) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (isValid && !formulario.identificacion) {
-            alert('Ingrese una identificacion');
+            showInfoAlert('Ingrese una identificacion');
             isValid = false;
             return
         }
         if (isValid && !formulario.nombre) {
-            alert('Ingrese un nombre completo');
+            showInfoAlert('Ingrese un nombre completo');
             isValid = false;
             return
         }
         if (isValid && (!formulario.correo || !isEmail(formulario.correo))) {
-            alert('Ingrese un correo electrónico válido');
+            showInfoAlert('Ingrese un correo electrónico válido');
             isValid = false;
             return
         }
         if (isValid && !formulario.contrasena) {
-            alert('Ingrese una contraseña');
+            showInfoAlert('Ingrese una contraseña');
             isValid = false;
             return
         }
@@ -98,7 +168,7 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
         }
 
         if (isValid && formulario.contrasena !== formulario.confirmarContrasena) {
-            alert('Las contraseñas no coinciden');
+            showInfoAlert('Las contraseñas no coinciden');
             isValid = false;
             return
         }
@@ -108,10 +178,10 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
 
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
-
+        Keyboard.dismiss()
         //  Se valida que la empresa, finca y parcela estén seleccionadas
         if (!formulario.empresa) {
-            alert('Ingrese una empresa');
+            showInfoAlert('Ingrese una empresa');
             return
         }
 
@@ -128,18 +198,9 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
         const responseInsert = await GuardarUsuarioPorSuperUsuario(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 0) {
-            Alert.alert('¡Se creo el usuario correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.AdminUserList.screenName, {
-                            datoValidacion: 0,
-                        });
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo el usuario correctamente!')
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -218,11 +279,15 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                                             }
                                         }}
                                     >
+                                        <View style={styles.buttonContent}>
                                         <Text style={styles.buttonText}>Siguiente</Text>
+                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                            </View>
                                     </TouchableOpacity>
                                 </>
                             ) : (
                                 <>
+                                    <Text style={styles.formText} >Empresa</Text>
                                     <DropdownComponent
                                         placeholder="Empresa"
                                         data={empresaData}
@@ -234,6 +299,17 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                                         }}
                                         customWidth={440} 
                                     />
+                                    <TouchableOpacity
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(false);
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     {empresa && (
                                         <TouchableOpacity
                                             style={styles.button}
@@ -254,6 +330,26 @@ export const AdminRegistrarUsuarioScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                    datoValidacion: 0,
+                }) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

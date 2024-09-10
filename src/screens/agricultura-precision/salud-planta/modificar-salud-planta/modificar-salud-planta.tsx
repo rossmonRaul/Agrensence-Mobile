@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Pressable, Button, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Pressable, Button, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ActivityIndicator, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,7 +21,13 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as base64js from 'base64-js';
-
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert {
+    text: string;
+    onPress: () => void;
+  }
 
 //datos desde la lista para mostrarlos en los input
 interface RouteParams {
@@ -38,7 +44,8 @@ interface RouteParams {
 }
 export const ModificarSaludPlantaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
 
     const [isFirstFormVisible, setFirstFormVisible] = useState(true);
@@ -87,6 +94,75 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
 
     });
 
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.PlantHealthList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -101,45 +177,59 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
         const formData = {
             idSaludDeLaPlanta: idSaludDeLaPlanta,
         };
-
+        try {
+            const responseInsert = await CambiarEstadoSaludDeLaPlanta(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se eliminó el registro de salud de la planta correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el registro de salud de la planta?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado 
-                        const responseInsert = await CambiarEstadoSaludDeLaPlanta(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se eliminó el registro de salud de la planta correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.PlantHealthList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el registro de salud de la planta?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado 
+        //                 const responseInsert = await CambiarEstadoSaludDeLaPlanta(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se eliminó el registro de salud de la planta correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.PlantHealthList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -223,27 +313,27 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
 
         if (!formulario.idFinca && !formulario.fecha
             && !formulario.idParcela && !formulario.cultivo) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             isValid = false;
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             isValid = false;
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese la Fecha');
+            showInfoAlert('Ingrese la Fecha');
             isValid = false;
             return
         }
         if (!formulario.cultivo) {
-            alert('Ingrese un cultivo');
+            showInfoAlert('Ingrese un cultivo');
             isValid = false;
             return
         }
@@ -255,28 +345,28 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
 
         if (!formulario.idColorHojas && !formulario.idTamanoFormaHoja
             && !formulario.idEstadoTallo && !formulario.idEstadoRaiz) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
 
         if (!formulario.idColorHojas) {
-            alert('Seleccione un color de hojas');
+            showInfoAlert('Seleccione un color de hojas');
             isValid = false;
             return
         }
         if (!formulario.idTamanoFormaHoja) {
-            alert('Seleccione un tamaño y forma de la hoja');
+            showInfoAlert('Seleccione un tamaño y forma de la hoja');
             isValid = false;
             return
         }
         if (!formulario.idEstadoTallo) {
-            alert('Seleccione un estado del tallo');
+            showInfoAlert('Seleccione un estado del tallo');
             isValid = false;
             return
         }
         if (!formulario.idEstadoRaiz) {
-            alert('Seleccione un estado de la raíz');
+            showInfoAlert('Seleccione un estado de la raíz');
             isValid = false;
             return
         }
@@ -354,7 +444,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
 
     const handleRegister = async () => {
         if (selectedFiles.length<1) {
-            alert('Se debe insertar minimo una imagen');
+            showInfoAlert('Se debe insertar minimo una imagen');
             return;
         }
         try {
@@ -411,19 +501,20 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                 }
 
                 if (errorEnviandoArchivos) {
-                    alert('Error al insertar uno o varios documentos');
+                    showErrorAlert('Error al insertar uno o varios documentos');
                 } else {
-                    Alert.alert('Se Modifico correctamente', '', [
-                        {
-                            text: 'OK',
-                            onPress: () => {
-                                navigation.navigate(ScreenProps.PlantHealthList.screenName as never);
-                            },
-                        },
-                    ]);
+                    showSuccessAlert('Se Modifico correctamente')
+                    // Alert.alert('Se Modifico correctamente', '', [
+                    //     {
+                    //         text: 'OK',
+                    //         onPress: () => {
+                    //             navigation.navigate(ScreenProps.PlantHealthList.screenName as never);
+                    //         },
+                    //     },
+                    // ]);
                 }
             } else {
-                alert(responseInsert.mensaje)
+                showErrorAlert(responseInsert.mensaje)
             }
         } catch (error) {
             console.error('Error:', error);
@@ -487,7 +578,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
 
             // Validar que no se exceda el límite de 5 archivos
             if (selectedFiles.length + acceptedFiles.length > 3) {
-                alert('No se puede ingresar más de 3 archivos');
+                showErrorAlert('No se puede ingresar más de 3 archivos');
                 return;
             }
 
@@ -495,7 +586,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
             const validFiles = acceptedFiles.filter(file => {
                 // Verificar tamaño (mayor de 5 MB)
                 if (file.size > 5 * 1024 * 1024) { // 5 MB en bytes
-                    alert(`El archivo es mayor de 5 MB`);
+                    showErrorAlert(`El archivo es mayor de 5 MB`);
                     return false;
                 }
                 return true;
@@ -727,7 +818,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
 
                                 <>
 
-                                <Text style={styles.formText} >Color de las Hojas</Text>
+                                <Text style={styles.formText} >Color de las hojas</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -745,7 +836,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Tamaño y Forma de las Hojas</Text>
+                                    <Text style={styles.formText} >Tamaño y forma de las hojas</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -761,7 +852,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Estado del Tallo</Text>
+                                    <Text style={styles.formText} >Estado del tallo</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -778,7 +869,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         }}
                                     />
 
-                                    <Text style={styles.formText} >Estado de las Raíces</Text>
+                                    <Text style={styles.formText} >Estado de las raíces</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -838,7 +929,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         style={[styles.button, { backgroundColor: 'lightgray', marginTop: 10 }]}
                                         onPress={handleDocumentSelection}
                                     >
-                                        <Text style={styles.buttonTextBack}>Seleccionar Archivos</Text>
+                                        <Text style={styles.buttonTextBack}>Seleccionar archivos</Text>
                                     </TouchableOpacity>
                                     {/* Mostrar archivos seleccionados */}
                                     <View style={styles.fileList}>
@@ -876,7 +967,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -885,7 +976,7 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                                     <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -903,6 +994,41 @@ export const ModificarSaludPlantaScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.PlantHealthList.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el registro de salud de la planta?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

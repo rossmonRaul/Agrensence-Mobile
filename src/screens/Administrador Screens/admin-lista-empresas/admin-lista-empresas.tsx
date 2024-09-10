@@ -13,6 +13,9 @@ import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
 import { FontAwesome } from '@expo/vector-icons';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+
 
 export const ListaEmpresaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -20,12 +23,13 @@ export const ListaEmpresaScreen: React.FC = () => {
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     //  Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
 
     //  Se hace el mapeo segun los datos que se ocupen en el formateo
     const keyMapping = {
-        'Nombre de empresa': 'nombre',
+        'Nombre': 'nombre',
         'Estado': 'estado',
     };
 
@@ -70,15 +74,16 @@ export const ListaEmpresaScreen: React.FC = () => {
                 <Text style={styles.textAbove} >Empresas</Text>
             </View>
 
-            <View style={styles.searchContainer}>
+            <View style={[styles.searchContainer,{marginLeft:8} ]}>
+            <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Buscar información"
                     onChangeText={(text) => handleSearch(text)}
                 />
-                <TouchableOpacity style={styles.searchIconContainer}>
+                {/* <TouchableOpacity style={styles.searchIconContainer}>
                     <Ionicons name="search" size={20} color="#333" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
             <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -93,7 +98,16 @@ export const ListaEmpresaScreen: React.FC = () => {
             </ScrollView>
             </View>
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

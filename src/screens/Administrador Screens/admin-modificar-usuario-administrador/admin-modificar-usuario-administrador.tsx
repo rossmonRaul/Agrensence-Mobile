@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View,KeyboardAvoidingView,Platform,ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View,KeyboardAvoidingView,Platform,ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Keyboard } from 'react-native';
 import { styles } from './admin-modificar-usuario-administrador.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -16,6 +16,14 @@ import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 
 interface RouteParams {
     identificacion: string;
@@ -33,7 +41,8 @@ interface RouteParams {
 export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const route = useRoute();
-    const { userData } = useAuth();
+    //const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela} = route.params as RouteParams;
     const [isFormVisible, setFormVisible] = useState(false);
 
@@ -41,6 +50,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         del segundo formulario y almacenar datos del formulario*/
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
     const [empresa, setEmpresa] = useState(null);
+    const [nombreEmpresa, setNombreEmpresa] = useState(null);
 
     //  Se definen estados para almacenar datos obtenidos mediante el hook useFetchDropdownData
     const [empresaData, setEmpresaData] = useState<DropdownData[]>([]);
@@ -53,6 +63,14 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         contrasena: '',
         confirmarContrasena: '',
         idEmpresa: idEmpresa || empresa || '',
+    });
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
     });
 
     //  Esta es una función para actualizar el estado del formulario
@@ -73,19 +91,110 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         idKey: 'idEmpresa',
     };
 
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                    datoValidacion: 1,
+                });
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
 
+      const showSuccessAlertTipo2 = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.AdminModifyAdminUser.screenName, { identificacion, nombre, correo, idEmpresa, estado, idRol, idFinca, idParcela });
+                setFormVisible(false);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
 
     /*  Se utiliza el hook useFetchDropdownData para obtener
         y gestionar los datos de empresas, fincas y parcelas*/
     useFetchDropdownData(obtenerEmpresasProps);
 
+    useEffect(() => {
+        if (idEmpresa) {
+            const obtenerNombreEmpresa = async () => {
+                try {
+                    const empresas = await ObtenerEmpresas();
+                    const empresaSeleccionada = empresas.find(empresa=> empresa.idEmpresa === idEmpresa);
+                    if (empresaSeleccionada) {
+                        setNombreEmpresa(empresaSeleccionada.nombre);
+                    }
+                } catch (error) {
+                    console.error('Error obteniendo la empresa:', error);
+                }
+            };
 
+            obtenerNombreEmpresa();
+        }
+    }, [idEmpresa]);
     //  Función para validar la primera parte formulario
     const validateFirstForm = () => {
         let isValid = true;
+        Keyboard.dismiss()
 
         if (isValid && !formulario.identificacion) {
-            alert('Ingrese una identificacion');
+            showInfoAlert('Ingrese una identificacion');
             isValid = false;
             return
         }
@@ -96,7 +205,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
             }
         }
         if (isValid && formulario.contrasena !== formulario.confirmarContrasena) {
-            alert('Las contraseñas no coinciden');
+            showInfoAlert('Las contraseñas no coinciden');
             isValid = false;
             return
         }
@@ -105,54 +214,76 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
     }
 
     const handleChangeAccess = async () => {
+        Keyboard.dismiss()
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             identificacion: formulario.identificacion,
         };
-        //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar el cambio de acceso de usuario',
-            '¿Estás seguro de que deseas cambiar el acceso este usuario?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se realiza la desactivación de usuario
-                        const responseInsert = await CambiarEstadoUsuario(formData);
 
-                        //  Se muestra una alerta de éxito o error según la respuesta obtenida
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se desactivó el usuario correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(ScreenProps.AdminUserList.screenName, {
-                                                datoValidacion: 1,
-                                            });
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        try {
+            const responseInsert = await CambiarEstadoUsuario(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se cambio el estado del usuario correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
+
+
+
+
+        //  Se muestra una alerta con opción de aceptar o cancelar
+        // Alert.alert(
+        //     'Confirmar el cambio de acceso de usuario',
+        //     '¿Estás seguro de que deseas cambiar el acceso este usuario?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                  Se realiza la desactivación de usuario
+        //                 const responseInsert = await CambiarEstadoUsuario(formData);
+
+        //                  Se muestra una alerta de éxito o error según la respuesta obtenida
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se desactivó el usuario correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(ScreenProps.AdminUserList.screenName, {
+        //                                         datoValidacion: 1,
+        //                                     });
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     //  Se define una función para manejar la modificacion de usuario
     const handleModifyUser = async () => {
+        Keyboard.dismiss()
         if (formulario.contrasena != formulario.confirmarContrasena) {
-            alert('Las contraseñas no coinciden.')
+            showInfoAlert('Las contraseñas no coinciden.')
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         let formData = {
@@ -182,23 +313,12 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
         if (userData.idRol === 1) responseInsert = await ActualizarUsuarioAdministrador(formData);
         if (userData.idRol === 2) responseInsert = await ActualizarDatosUsuario(formData)
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
-        if (responseInsert.indicador === 1) {
-            Alert.alert(
-                '¡Se actualizó el usuario correctamente!',
-                '',
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            navigation.navigate(ScreenProps.AdminUserList.screenName, {
-                                datoValidacion: 1,
-                            });
-                        },
-                    },
-                ]
-            );
-        } else {
-            alert('¡Oops! Parece que algo salió mal');
+        if (responseInsert.indicador === 1 && userData.idRol === 1) {
+            showSuccessAlert('¡Se actualizó el usuario correctamente!')
+        } else if (responseInsert.indicador === 1 && userData.idRol === 2) {
+            showSuccessAlertTipo2('¡Se actualizó el usuario correctamente!')
+        }else {
+            showErrorAlert('¡Oops! Parece que algo salió mal');
         }
     };
 
@@ -294,9 +414,9 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                                     >
 
                                         <View style={styles.buttonContent}>
-                                            <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}> Siguiente</Text>
-                                        </View>
+                                        <Text style={styles.buttonText}>Siguiente</Text>
+                                        <Ionicons name="arrow-forward-outline" size={20} color="white" style={styles.iconStyleRight} />
+                                            </View>
                                     </TouchableOpacity>
                                     :
                                     <TouchableOpacity
@@ -316,15 +436,28 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                             </>
                         ) : (
                             <>
+                            <Text style={styles.formText} >Empresa</Text>
                                 {userData.idRol === 1 &&
+                                
                                     <DropdownComponent
-                                        placeholder="Empresa"
+                                        placeholder={nombreEmpresa ? nombreEmpresa:"Empresa"}
                                         data={empresaData}
                                         iconName="building-o"
                                         value={formulario.idEmpresa}
                                         onChange={(item) => (setEmpresa(item.value as never), updateFormulario('empresa', item.value))}
                                     />
                                 }
+                                <TouchableOpacity
+                                            style={styles.backButton}
+                                            onPress={() => {
+                                                setSecondFormVisible(false);
+                                            }}
+                                        >
+                                            <View style={styles.buttonContent}>
+                                                <Ionicons name="arrow-back-outline" size={20} color="black" style={styles.iconStyle} />
+                                                <Text style={styles.buttonTextBack}> Atrás</Text>
+                                            </View>
+                                        </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={styles.button}
@@ -346,7 +479,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                     <TouchableOpacity
                         style={styles.buttonDelete}
                         onPress={() => {
-                            handleChangeAccess();
+                            showConfirmAlert();
                         }}
                     >
                         <View style={styles.buttonContent}>
@@ -358,7 +491,7 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => {
-                            handleChangeAccess();
+                            showConfirmAlert();
                         }}
                     >
                         <View style={styles.buttonContent}>
@@ -372,6 +505,43 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
             </View>
             <BottomNavBar />
             </KeyboardAvoidingView>
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () =>  navigation.navigate(ScreenProps.AdminUserList.screenName, {
+                    datoValidacion: 1,
+                }) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el acceso este usuario?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

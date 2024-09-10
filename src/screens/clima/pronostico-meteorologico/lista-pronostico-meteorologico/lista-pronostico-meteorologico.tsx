@@ -11,6 +11,7 @@ import { ScreenProps } from '../../../../constants';
 import { useAuth } from '../../../../hooks/useAuth';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { WebView } from 'react-native-webview';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 //import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 //import { residueDataInterface } from '../../../../interfaces/residuosInterfaces';
 //import { ObtenerManejoResiduos } from '../../../../servicios/ServicioResiduos';
@@ -22,7 +23,8 @@ import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 const API_WEATHER = `http://api.weatherapi.com/v1/current.json?key=19d59db408fe401f928191944240504&lang=es&q=`;
 
 export const ListaPronosticoMeteorologico: React.FC = () => {
-  const { userData } = useAuth();
+ // const { userData } = useAuth();
+ const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
   const [city, setCity] = useState('');
   const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
   const [fincas, setFincas] = useState<{ idFinca?: number; nombreFinca?: string }[] | []>([]);
@@ -113,9 +115,10 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
       <View style={styles.textAboveContainer}>
         {/* <Text style={styles.textAbove} >Pronostico Meteorologico</Text> */}
       </View>
-      <Text style={styles.title}>Pronóstico Meteorológico</Text>
+      <Text style={styles.title}>Pronóstico meteorológico</Text>
       <View style={styles.dropDownContainer}>
         {/* Dropdown para Fincas */}
+        <Text style={styles.formText} >Finca</Text>
         <DropdownComponent
 
           placeholder="Seleccione una Finca"
@@ -138,6 +141,16 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
         Powered by: {' '}
         <Text style={styles.link}>WeatherAPI.com</Text>
       </Text>
+      {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
     </View>
   );
 }

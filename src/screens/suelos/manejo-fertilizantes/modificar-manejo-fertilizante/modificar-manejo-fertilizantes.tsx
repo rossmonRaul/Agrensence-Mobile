@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,6 +15,15 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 interface RouteParams {
     idmanejoFertilizantes: string
     idFinca: string;
@@ -33,7 +42,8 @@ interface RouteParams {
 
 export const ModificarFertilizanteScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const route = useRoute();
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(new Date())
@@ -48,6 +58,74 @@ export const ModificarFertilizanteScreen: React.FC = () => {
     const [selectedFinca, setSelectedFinca] = useState<string | null>(null);
     const [selectedParcela, setSelectedParcela] = useState<string | null>(null);
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
 
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
@@ -78,42 +156,42 @@ export const ModificarFertilizanteScreen: React.FC = () => {
 
         if (!formulario.fecha && !formulario.aplicacion && !formulario.cultivotratado &&
             !formulario.fertilizante && !formulario.dosis && !formulario.accionesadicionales) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese una fecha');
+            showInfoAlert('Ingrese una fecha');
             isValid = false;
             return
         }
         if (!formulario.aplicacion) {
-            alert('Ingrese una aplicacion');
+            showInfoAlert('Ingrese una aplicacion');
             isValid = false;
             return
         }
         if (!formulario.cultivotratado) {
-            alert('Ingrese un Cultivo Tratado');
+            showInfoAlert('Ingrese un Cultivo Tratado');
             isValid = false;
             return
         }
         if (!formulario.fertilizante) {
-            alert('Ingrese un Fertilizante');
+            showInfoAlert('Ingrese un Fertilizante');
             isValid = false;
             return
         }
         if (!formulario.dosis) {
-            alert('Ingrese la Dosis');
+            showInfoAlert('Ingrese la Dosis');
             isValid = false;
             return
         }
         if (!formulario.dosisUnidad) {
-            alert('Ingrese la unidad de la dosis');
+            showInfoAlert('Ingrese la unidad de la dosis');
             isValid = false;
             return
         }
         if (!formulario.accionesadicionales) {
-            alert('Ingrese las Acciones Adicionales');
+            showInfoAlert('Ingrese las Acciones Adicionales');
             isValid = false;
             return
         }
@@ -124,25 +202,25 @@ export const ModificarFertilizanteScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (!formulario.condicionesAmbientales && !formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.condicionesAmbientales) {
-            alert('Ingrese las Condiciones ambientales');
+            showInfoAlert('Ingrese las Condiciones ambientales');
             return
         }
         if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
+            showInfoAlert('Ingrese las Observaciones');
             return
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -166,16 +244,17 @@ export const ModificarFertilizanteScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Exito en modificar!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Exito en modificar!');
+            // Alert.alert('¡Exito en modificar!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -276,44 +355,59 @@ export const ModificarFertilizanteScreen: React.FC = () => {
             idManejoFertilizantes: idmanejoFertilizantes,
         };
 
+        try {
+            const responseInsert = await CambiarEstadoManejoFertilizantes(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado del manejo del fertilizante correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del manejo del fertilizante?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado del manejo del fertilizante
-                        const responseInsert = await CambiarEstadoManejoFertilizantes(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado del manejo del fertilizante correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListFertilizer.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del manejo del fertilizante?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado del manejo del fertilizante
+        //                 const responseInsert = await CambiarEstadoManejoFertilizantes(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado del manejo del fertilizante correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListFertilizer.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     //funcion que se encarga de poder formatear la fecha
     const formatSpanishDate = (date) => {
@@ -456,7 +550,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         value={formulario.aplicacion}
                                         onChangeText={(text) => updateFormulario('aplicacion', text)}
                                     />
-                                    <Text style={styles.formText} >Cultivo Tratado</Text>
+                                    <Text style={styles.formText} >Cultivo tratado</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Cultivo Tratado"
@@ -498,7 +592,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         value={formulario.dosisUnidad}
                                         onChange={(selectedItem) => updateFormulario('dosisUnidad', selectedItem.value)} iconName={''} >
                                     </DropdownComponent>
-                                    <Text style={styles.formText} >Acciones Adicionales</Text>
+                                    <Text style={styles.formText} >Acciones adicionales</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Acciones Adicionales"
@@ -594,7 +688,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
                                    
@@ -603,7 +697,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -615,7 +709,7 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.buttonActive}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -632,6 +726,41 @@ export const ModificarFertilizanteScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListFertilizer.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del manejo del fertilizante?'"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard, } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -21,10 +21,16 @@ import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { CrearRegistroEficienciaRiego } from '../../../../servicios/ServicioUsoAgua';
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
@@ -75,6 +81,69 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     });
 
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -91,12 +160,12 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
         if (formulario.consumoAgua.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el volumen de agua utilizado.');
+            showInfoAlert('Por favor ingrese el volumen de agua utilizado.');
             return isValid;
         }
         if (formulario.nivelFreatico.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el nivel freático.');
+            showInfoAlert('Por favor ingrese el nivel freático.');
             return isValid;
         }
 
@@ -109,11 +178,11 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -139,16 +208,17 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
         const responseInsert = await CrearRegistroEficienciaRiego(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro el monitoreo eficiencia riego correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registro el monitoreo eficiencia riego correctamente!')
+            // Alert.alert('¡Se registro el monitoreo eficiencia riego correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -262,7 +332,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
-                                    <Text style={styles.formText} >Consumo Agua (L)</Text>
+                                    <Text style={styles.formText} >Consumo agua (L)</Text>
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
@@ -407,7 +477,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     />
                                      <View style={styles.container}>
             <View style={styles.checkboxContainer}>
-                <Text style={styles.formText}>Fugas en el Sistema de Riego</Text>
+                <Text style={styles.formText}>Fugas en el sistema de riego</Text>
                 <CheckBox
                     checked={estadoTuberias}
                     checkedIcon='check-square-o'
@@ -428,7 +498,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
             {estadoTuberias && (
                 <>
-                    <Text style={styles.formText}>Rango de Alerta de fugas en el sistema de riego :</Text>
+                    <Text style={styles.formText}>Rango de alerta de fugas en el sistema de riego :</Text>
                     <DropdownComponent
                         placeholder="Seleccione"
                         data={[
@@ -452,7 +522,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             )}
 
             <View style={styles.checkboxContainer}>
-                <Text style={styles.formText}>Uniformidad de Riego</Text>
+                <Text style={styles.formText}>Uniformidad de riego</Text>
                 <CheckBox
                     checked={uniformidadRiego}
                     checkedIcon='check-square-o'
@@ -473,7 +543,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
             {uniformidadRiego && (
                 <>
-                    <Text style={styles.formText}>Rango de Alerta de Uniformidad de riego :</Text>
+                    <Text style={styles.formText}>Rango de alerta de uniformidad de riego :</Text>
                     <DropdownComponent
                         placeholder="Seleccione"
                         data={[
@@ -485,7 +555,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         iconName=""
                         onChange={(selectedItem) => updateFormulario('uniformidadalerta', selectedItem.value)}
                     />
-                    <Text style={styles.formText}>Detalles de Uniformidad de riego:</Text>
+                    <Text style={styles.formText}>Detalles de uniformidad de riego:</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Detalles"
@@ -497,7 +567,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             )}
 
             <View style={styles.checkboxContainer}>
-                <Text style={styles.formText}>Obstrucción Canales de Riego</Text>
+                <Text style={styles.formText}>Obstrucción canales de riego</Text>
                 <CheckBox
                     checked={estadoCanalesRiego}
                     checkedIcon='check-square-o'
@@ -518,7 +588,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
             {estadoCanalesRiego && (
                 <>
-                    <Text style={styles.formText}>Rango de Alerta de Obstrucción en Canales de Riego:</Text>
+                    <Text style={styles.formText}>Rango de alerta de obstrucción en canales de riego:</Text>
                     <DropdownComponent
                         placeholder="Seleccione"
                         data={[
@@ -530,7 +600,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         iconName=""
                         onChange={(selectedItem) => updateFormulario('canalesalerta', selectedItem.value)}
                     />
-                    <Text style={styles.formText}>Detalles de Obstrucción en Canales de Riego:</Text>
+                    <Text style={styles.formText}>Detalles de obstrucción en canales de riego:</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Detalles"
@@ -562,6 +632,9 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                             ) : (<>
 
                                 {empresa &&
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Finca</Text>
                                     <DropdownComponent
                                         placeholder="Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -569,8 +642,13 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         iconName='tree'
                                         onChange={handleValueFinca}
                                     />
+                                    </>
+                                )
                                 }
                                 {finca &&
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Parcela</Text>
                                     <DropdownComponent
                                         placeholder="Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -578,6 +656,8 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         value={parcela}
                                         onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
                                     />
+                                       </>
+                                )
                                 }
                                 
                                 <TouchableOpacity
@@ -600,7 +680,7 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar monitoreo </Text>
                                         </View>
                                     </TouchableOpacity>
                             </>
@@ -613,6 +693,27 @@ export const InsertarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never) : undefined}
+                />
+                
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
+
+
         </View>
     );
 }

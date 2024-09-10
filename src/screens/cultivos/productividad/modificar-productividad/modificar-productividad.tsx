@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,7 +16,15 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { CambiarEstadoProductividadCultivo, EditarProductividadCultivo,ObtenerMedidasCultivos } from '../../../../servicios/ServicioCultivos';
-interface RouteParams {
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+  interface RouteParams {
     idFinca: string;
     idParcela: string;
     idManejoProductividadCultivo: string;
@@ -32,7 +40,8 @@ interface RouteParams {
 
 export const ModificarProductividadScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const route = useRoute();
 
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
@@ -76,7 +85,74 @@ export const ModificarProductividadScreen: React.FC = () => {
         productividad: productividad
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate( ScreenProps.ListProductivity.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -90,61 +166,61 @@ export const ModificarProductividadScreen: React.FC = () => {
 
         if (!formulario.cultivo && !formulario.temporada && !formulario.area &&
             !formulario.produccion && !formulario.productividad) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
 
         if (!formulario.cultivo) {
-            alert('Ingrese una cultivo');
+            showInfoAlert('Ingrese una cultivo');
             isValid = false;
             return
         }
 
         if (!formulario.area) {
-            alert('Ingrese el área');
+            showInfoAlert('Ingrese el área');
             isValid = false;
             return
         }
 
         if (!/^\d+(\.\d+)?$/.test(formulario.area.toString())) {
-            alert('El área debe contener solo números y si son decimales utilizar .');
+            showInfoAlert('El área debe contener solo números y si son decimales utilizar .');
             isValid = false;
             return;
         }
 
         if (!formulario.idMedidaArea || formulario.idMedidaArea === null) {
-            alert('Seleccione una medida de área');
+            showInfoAlert('Seleccione una medida de área');
             isValid = false;
             return
         }
 
         if (!formulario.produccion) {
-            alert('Ingrese la producción');
+            showInfoAlert('Ingrese la producción');
             isValid = false;
             return
         }
 
         if (!/^\d+(\.\d+)?$/.test(formulario.produccion.toString())) {
-            alert('La producción debe contener solo números válidos y si son decimales utilizar . ');
+            showInfoAlert('La producción debe contener solo números válidos y si son decimales utilizar . ');
             isValid = false;
             return;
         }
 
         if (!formulario.idMedidasCultivos || formulario.idMedidasCultivos === null) {
-            alert('Seleccione una medicion para el cultivo');
+            showInfoAlert('Seleccione una medicion para el cultivo');
             isValid = false;
             return
         }
 
         if (!formulario.productividad) {
-            alert('Ingrese la productividad');
+            showInfoAlert('Ingrese la productividad');
             isValid = false;
             return
         }
 
         if (!/^\d+(\.\d+)?$/.test(formulario.productividad.toString())) {
-            alert('La productividad debe contener solo números y si son decimales utilizar .');
+            showInfoAlert('La productividad debe contener solo números y si son decimales utilizar .');
             isValid = false;
             return;
         }
@@ -155,16 +231,16 @@ export const ModificarProductividadScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (!formulario.temporada || formulario.temporada === null) {
-            alert('Seleccione la temporada');
+            showInfoAlert('Seleccione la temporada');
             return
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Seleccione la Finca');
+            showInfoAlert('Seleccione la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Seleccione la Parcela');
+            showInfoAlert('Seleccione la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -187,16 +263,17 @@ export const ModificarProductividadScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Exito en modificar!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListProductivity.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Exito en modificar!')
+            // Alert.alert('¡Exito en modificar!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListProductivity.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -308,44 +385,61 @@ export const ModificarProductividadScreen: React.FC = () => {
             IdManejoProductividadCultivo: idManejoProductividadCultivo,
         };
 
+
+        try {
+            const responseInsert = await CambiarEstadoProductividadCultivo(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado del registro correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
+
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del registro?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado del manejo del fertilizante
-                        const responseInsert = await CambiarEstadoProductividadCultivo(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado del registro correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListProductivity.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del registro?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado del manejo del fertilizante
+        //                 const responseInsert = await CambiarEstadoProductividadCultivo(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado del registro correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListProductivity.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
 
@@ -388,7 +482,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('area', text)}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Unidad de medida de Área</Text>
+                                    <Text style={styles.formText} >Unidad de medida de área</Text>
                                     {/* Dropdown para Temporadas */}
                                     <DropdownComponent
                                         placeholder={selectedMedidaArea ? selectedMedidaArea : "Seleccione una medida de Área"}
@@ -412,7 +506,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         keyboardType="numeric"
                                     />
 
-                                    <Text style={styles.formText} >Medida Producción</Text>
+                                    <Text style={styles.formText} >Medida producción</Text>
                                     {/* Dropdown para Fincas */}
                                     <DropdownComponent
                                         placeholder={selectedMedidasCultivos ? selectedMedidasCultivos : "Seleccione una medida Producción"}
@@ -521,7 +615,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
                                     
@@ -530,7 +624,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -542,7 +636,7 @@ export const ModificarProductividadScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.buttonActive}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -559,6 +653,41 @@ export const ModificarProductividadScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate( ScreenProps.ListProductivity.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del registro?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

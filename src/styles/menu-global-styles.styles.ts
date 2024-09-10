@@ -22,6 +22,18 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
+    rowEspaciado: {
+        flexDirection: 'row',
+        justifyContent: 'space-between', // Espacio uniforme entre botones
+        marginBottom: 10, // Espacio entre filas de botones
+       
+    },
+
+    scrollContainer: {
+        paddingVertical: 10, // Espacio dentro del ScrollView
+        alignItems: 'center',
+        width:350
+    },
     textAbove: {
         fontFamily: 'CatamaranBold',
         fontSize: 24,

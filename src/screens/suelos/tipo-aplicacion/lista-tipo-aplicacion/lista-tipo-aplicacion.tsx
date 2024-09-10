@@ -17,6 +17,8 @@ import { RelacionFincaParcela, UserDataInterface } from '../../../../interfaces/
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { FertilizerDataInterface } from '../../../../interfaces/fertilizanteInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import { FontAwesome } from '@expo/vector-icons';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 // Definición de la interfaz para los datos de tipo de aplicación
 interface TipoAplicacionDataInterface {
@@ -25,9 +27,11 @@ interface TipoAplicacionDataInterface {
   estado: number; // 0: Inactivo, 1: Activo
 }
 
+
 export const ListaTipoAplicacionScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
+  const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
   const [apiData, setApiData] = useState<TipoAplicacionDataInterface[]>([]);
   const [apiDataFiltrada, setApiDataFiltrada] = useState<TipoAplicacionDataInterface[]>([]);
 
@@ -85,17 +89,18 @@ export const ListaTipoAplicacionScreen: React.FC = () => {
         <AddButtonComponent screenName={ScreenProps.RegisterApplicationType.screenName} color={'#274c48'} />
 
         <View style={styles.textAboveContainer}>
-          <Text style={styles.textAbove}>Lista de Tipos de Aplicación</Text>
+          <Text style={styles.textAbove}>Lista de tipos de aplicación</Text>
         </View>
         <View style={styles.searchContainer}>
+        <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, {marginLeft:45}]}
             placeholder="Buscar información"
             onChangeText={(text) => handleSearch(text)}
           />
-          <TouchableOpacity style={styles.searchIconContainer}>
+          {/* <TouchableOpacity style={styles.searchIconContainer}>
             <Ionicons name="search" size={20} color="#333" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
           {apiDataFiltrada.map((item) => (
@@ -117,6 +122,17 @@ export const ListaTipoAplicacionScreen: React.FC = () => {
       </View>
 
       <BottomNavBar />
+      
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
     </View>
   );
 };

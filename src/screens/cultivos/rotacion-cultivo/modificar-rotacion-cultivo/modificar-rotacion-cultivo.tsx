@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -22,6 +22,10 @@ import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { CambiarEstadoRotacionCultivo } from '../../../../servicios/ServicioCultivos';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
 interface RouteParams {
     idRotacionCultivoSegunEstacionalidad: string,
     idFinca: string,
@@ -34,10 +38,14 @@ interface RouteParams {
     epocaSiembraCultivoSiguiente: string,
     estado: string
 }
-
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const ModificarRotacionCultivosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const route = useRoute();
 
@@ -88,7 +96,74 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         epocaSiembraCultivoSiguiente: epocaSiembraCultivoSiguiente || ''
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.CropRotationList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -101,24 +176,24 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
     const handleModify = async () => {
 
         if (formulario.cultivo.trim() === '') {
-            alert('Por favor ingrese el Cultivo.');
+            showInfoAlert('Por favor ingrese el Cultivo.');
             return;
         } else if (formulario.cultivo.trim().length > 50) {
-            alert('El Cultivo no puede tener más de 50 caracteres.');
+            showInfoAlert('El Cultivo no puede tener más de 50 caracteres.');
             return;
         }
         if (formulario.epocaSiembra.trim() === '') {
-            alert('Por favor ingrese la Época Siembra en formato dd/mm/aa.');
+            showInfoAlert('Por favor ingrese la Época Siembra en formato dd/mm/aa.');
             return
         }
 
         if (formulario.epocaSiembraCultivoSiguiente.trim() === '') {
-            alert('Por favor ingrese la Época de siembra siguiente en formato dd/mm/aa.');
+            showInfoAlert('Por favor ingrese la Época de siembra siguiente en formato dd/mm/aa.');
             return
         }
 
         if (formulario.tiempoCosecha.trim() === '') {
-            alert('Por favor ingrese el Tiempo cosecha en formato dd/mm/aa.');
+            showInfoAlert('Por favor ingrese el Tiempo cosecha en formato dd/mm/aa.');
             return
         }
 
@@ -143,16 +218,17 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico la rotación de cultivo correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.CropRotationList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modifico la rotación de cultivo correctamente!')
+            // Alert.alert('¡Se modifico la rotación de cultivo correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.CropRotationList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -293,11 +369,11 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         // Validación del campo Cultivo
         if (formulario.cultivo.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el Cultivo.');
+            showInfoAlert('Por favor ingrese el Cultivo.');
             return;
         } else if (formulario.cultivo.trim().length > 50) {
             isValid = false;
-            alert('El Cultivo no puede tener más de 50 caracteres.');
+            showInfoAlert('El Cultivo no puede tener más de 50 caracteres.');
             return;
         }
 
@@ -308,40 +384,40 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         // Comparar fechas
         if (isNaN(epocaSiembraDate.getTime())) {
             isValid = false;
-            alert('La fecha de Época de siembra no es válida.');
+            showInfoAlert('La fecha de Época de siembra no es válida.');
             return isValid;
         }
 
         if (isNaN(epocaSiembraCultivoSiguienteDate.getTime())) {
             isValid = false;
-            alert('La fecha de Época de siembra siguiente no es válida.');
+            showInfoAlert('La fecha de Época de siembra siguiente no es válida.');
             return isValid;
         }
 
         if (isNaN(tiempoCosechaDate.getTime())) {
             isValid = false;
-            alert('La fecha de Tiempo de cosecha no es válida.');
+            showInfoAlert('La fecha de Tiempo de cosecha no es válida.');
             return isValid;
         }
 
         if (tiempoCosechaDate <= epocaSiembraDate || tiempoCosechaDate >= epocaSiembraCultivoSiguienteDate) {
             isValid = false;
-            alert('El tiempo de cosecha no puede ser anterior a la época de siembra ni tampoco después de la época de siembra siguiente.');
+            showInfoAlert('El tiempo de cosecha no puede ser anterior a la época de siembra ni tampoco después de la época de siembra siguiente.');
             return isValid;
         }
 
         if (epocaSiembraCultivoSiguienteDate <= epocaSiembraDate || epocaSiembraCultivoSiguienteDate <= tiempoCosechaDate) {
             isValid = false;
-            alert('Época de siembra no puede ser anterior a la época de siembra ni tampoco al tiempo de cosecha.');
+            showInfoAlert('Época de siembra no puede ser anterior a la época de siembra ni tampoco al tiempo de cosecha.');
             return isValid;
         }
         if (formulario.cultivoSiguiente.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el Cultivo siguiente.');
+            showInfoAlert('Por favor ingrese el Cultivo siguiente.');
             return isValid;
         } else if (formulario.cultivoSiguiente.trim().length > 50) {
             isValid = false;
-            alert('El Cultivo siguiente no puede tener más de 50 caracteres.');
+            showInfoAlert('El Cultivo siguiente no puede tener más de 50 caracteres.');
             return;
         }
 
@@ -354,46 +430,60 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
         const formData = {
             idRotacionCultivoSegunEstacionalidad: idRotacionCultivoSegunEstacionalidad,
         };
+        try {
+            const responseInsert = await CambiarEstadoRotacionCultivo(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado de esta rotación de cultivo correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
-
-        //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado de la rotación de cultivos?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoRotacionCultivo(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado de esta rotación de cultivo correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.CropRotationList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // //  Se muestra una alerta con opción de aceptar o cancelar
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado de la rotación de cultivos?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoRotacionCultivo(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado de esta rotación de cultivo correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.CropRotationList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     const confirmIOSDate = (picker) => {
         switch (picker) {
@@ -494,7 +584,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                         value={formulario.cultivo}
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
-                                    <Text style={styles.formText}>Época Siembra</Text>
+                                    <Text style={styles.formText}>Época siembra</Text>
 
                                     {!showPickerSiembra && (
                                         <Pressable
@@ -725,6 +815,9 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                             ) : (<>
 
                                 {empresa &&
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Finca</Text>
                                     <DropdownComponent
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -738,7 +831,10 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                             updateFormulario('idFinca', selectedItem.value);
                                         }}
                                     />
+                                    </>
+                                )
                                 }
+                                <Text style={styles.formText} >Parcela</Text>
                                 <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -779,7 +875,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -791,7 +887,7 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -808,6 +904,43 @@ export const ModificarRotacionCultivosScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.CropRotationList.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado de la rotación de cultivos?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }
+
+

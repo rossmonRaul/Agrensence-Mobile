@@ -13,6 +13,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
+
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+import { FontAwesome } from '@expo/vector-icons';
 interface RouteParams {
     datoValidacion?: string;
 }
@@ -23,7 +27,8 @@ export const AdminListaUsuarioScreen: React.FC = () => {
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     //  Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([])
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const { params } = useRoute();
     const route = useRoute();
 
@@ -141,14 +146,15 @@ export const AdminListaUsuarioScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.searchContainer}>
+                    <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -169,6 +175,16 @@ export const AdminListaUsuarioScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
 
     );

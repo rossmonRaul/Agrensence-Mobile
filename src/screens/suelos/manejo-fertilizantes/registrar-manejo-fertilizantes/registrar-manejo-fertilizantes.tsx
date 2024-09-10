@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {  Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,11 +16,17 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { FontAwesome } from '@expo/vector-icons';
 import { ObtenerTipoAplicacion } from '../../../../servicios/ServicioTipoAplicacion';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
-
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const RegistrarFertilizanteScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
@@ -50,7 +56,69 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
         observaciones: '',
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -63,42 +131,42 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
         if (!formulario.fecha && !formulario.aplicacion && !formulario.cultivotratado &&
             !formulario.fertilizante && !formulario.dosis && !formulario.accionesadicionales) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese una fecha');
+            showInfoAlert('Ingrese una fecha');
             isValid = false;
             return
         }
         if (!formulario.aplicacion) {
-            alert('Ingrese una aplicacion');
+            showInfoAlert('Ingrese una aplicacion');
             isValid = false;
             return
         }
         if (!formulario.cultivotratado) {
-            alert('Ingrese un Cultivo Tratado');
+            showInfoAlert('Ingrese un Cultivo Tratado');
             isValid = false;
             return
         }
         if (!formulario.fertilizante) {
-            alert('Ingrese un Fertilizante');
+            showInfoAlert('Ingrese un Fertilizante');
             isValid = false;
             return
         }
         if (!formulario.dosis) {
-            alert('Ingrese la Dosis');
+            showInfoAlert('Ingrese la Dosis');
             isValid = false;
             return
         }
         if (!formulario.dosisUnidad) {
-            alert('Ingrese la Unidad de medida de la dosis');
+            showInfoAlert('Ingrese la Unidad de medida de la dosis');
             isValid = false;
             return
         }
         if (!formulario.accionesadicionales) {
-            alert('Ingrese las Acciones Adicionales');
+            showInfoAlert('Ingrese las Acciones Adicionales');
             isValid = false;
             return
         }
@@ -109,25 +177,25 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (!formulario.condicionalesambientales && !formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.condicionalesambientales) {
-            alert('Ingrese las Condiciones ambientales');
+            showInfoAlert('Ingrese las Condiciones ambientales');
             return
         }
         if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
+            showInfoAlert('Ingrese las Observaciones');
             return
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -150,16 +218,17 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo el manejo del fertilizante correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo el manejo del fertilizante correctamente!')
+            // Alert.alert('¡Se creo el manejo del fertilizante correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListFertilizer.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -366,7 +435,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         value={formulario.aplicacion}
                                         onChangeText={(text) => updateFormulario('aplicacion', text)}
                                     />                                   
-                                    <Text style={styles.formText} >Cultivo Tratado</Text>
+                                    <Text style={styles.formText} >Cultivo tratado</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Cultivo Tratado"
@@ -407,7 +476,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         ]}
                                         value={formulario.dosisUnidad}
                                         onChange={(selectedItem) => updateFormulario('dosisUnidad', selectedItem.value)} iconName={''}                                />
-                                    <Text style={styles.formText} >Acciones Adicionales</Text>
+                                    <Text style={styles.formText} >Acciones adicionales</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Acciones Adicionales"
@@ -503,7 +572,7 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar manejo fertilizante</Text>
                                             </View>
                                         </TouchableOpacity>
                                     {/* </View> */}
@@ -515,6 +584,24 @@ export const RegistrarFertilizanteScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListFertilizer.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

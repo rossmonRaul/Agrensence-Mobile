@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View,Button,  ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View,Button,  ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -24,11 +24,19 @@ import { InsertarRegistroSeguimientoPlagasYEnfermedades } from '../../../../serv
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import * as DocumentPicker from "expo-document-picker";
 import { InsertarDocumentacionProblemasDePlagas } from '../../../../servicios/ServicioPlagas&Enfermedades';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
+interface ButtonAlert {
+    text: string;
+    onPress: () => void;
+  }
 
 export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
 
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
@@ -75,6 +83,71 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
         valor: '',
     });
 
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
     const [formDataDocument] = useState({
         idRegistroSeguimientoPlagasYEnfermedades: '',
         documento: '',
@@ -95,31 +168,31 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
 
         if (formulario.fecha.trim() === '') {
             isValid = false;
-            alert('La fecha es requerida.');
+            showInfoAlert('La fecha es requerida.');
             return isValid;
         }
 
         if (formulario.cultivo.trim() === '') {
             isValid = false;
-            alert('El campo Cultivo es requerido.');
+            showInfoAlert('El campo Cultivo es requerido.');
             return isValid;
         }
 
         if (formulario.problema.trim() === '') {
             isValid = false;
-            alert('El campo Problema es requerido.');
+            showInfoAlert('El campo Problema es requerido.');
             return isValid;
         }
 
         if (formulario.plagaEnfermedad.trim() === '') {
             isValid = false;
-            alert('El campo Plaga/Enfermedad es requerido.');
+            showInfoAlert('El campo Plaga/Enfermedad es requerido.');
             return isValid;
         }
 
         if (formulario.incidencia.trim() === '') {
             isValid = false;
-            alert('El campo Incidencia es requerido.');
+            showInfoAlert('El campo Incidencia es requerido.');
             return isValid;
         }
 
@@ -131,20 +204,20 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
         let isValid = true;
 
         if (formulario.metodologiaEstimacion.trim() === '') {
-            alert('El campo Metodología de estimación es requerido.');
+            showInfoAlert('El campo Metodología de estimación es requerido.');
             return;
         }
 
         if (formulario.accionTomada.trim() === '') {
-            alert('El campo Acción tomada es requerido.');
+            showInfoAlert('El campo Acción tomada es requerido.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
         return isValid
@@ -169,7 +242,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (selectedFiles.length<1) {
-            alert('Se debe insertar minimo una imagen');
+            showInfoAlert('Se debe insertar minimo una imagen');
             return;
         }
         try {
@@ -215,20 +288,21 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                 }
 
                 if (errorEnviandoArchivos) {
-                    alert('Error al insertar uno o varios documentos');
+                    showErrorAlert('Error al insertar uno o varios documentos');
                 } else {
-                    Alert.alert('Se registro correctamente', '', [
-                        {
-                            text: 'OK',
-                            onPress: () => {
-                                navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
-                            },
-                        },
-                    ]);
+                    showSuccessAlert('Se registro correctamente')
+                    // Alert.alert('Se registro correctamente', '', [
+                    //     {
+                    //         text: 'OK',
+                    //         onPress: () => {
+                    //             navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
+                    //         },
+                    //     },
+                    // ]);
                 }
 
             } else {
-                alert('Error al registrar');
+                showErrorAlert('Error al registrar');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -415,7 +489,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
 
             // Validar que no se exceda el límite de 5 archivos
             if (selectedFiles.length + acceptedFiles.length > 3) {
-                alert('No se puede ingresar más de 3 archivos');
+                showErrorAlert('No se puede ingresar más de 3 archivos');
                 return;
             }
 
@@ -423,7 +497,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
             const validFiles = acceptedFiles.filter(file => {
                 // Verificar tamaño (mayor de 5 MB)
                 if (file.size > 5 * 1024 * 1024) { // 5 MB en bytes
-                    alert(`El archivo es mayor de 5 MB`);
+                    showErrorAlert(`El archivo es mayor de 5 MB`);
                     return false;
                 }
                 return true;
@@ -566,7 +640,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('problema', text)}
                                         maxLength={100}
                                     />
-                                    <Text style={styles.formText} >Plaga o Enfermedad</Text>
+                                    <Text style={styles.formText} >Plaga o enfermedad</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Plaga o enfermedad"
@@ -575,7 +649,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         maxLength={50}
 
                                     />
-                                   <Text style={styles.formText} >Valoracion</Text>
+                                   <Text style={styles.formText} >Valoración</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -644,6 +718,9 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                     maxLength={200}
                                 />
                                 {empresa &&
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Finca</Text>
                                     <DropdownComponent
                                         placeholder="Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -651,8 +728,13 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         iconName='tree'
                                         onChange={handleValueFinca}
                                     />
+                                    </>
+                                )
                                 }
                                 {finca &&
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Parcela</Text>
                                     <DropdownComponent
                                         placeholder="Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -660,6 +742,8 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         value={parcela}
                                         onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
                                     />
+                                     </>
+                                )
                                 }
                                <View style={styles.buttonContainer}>
                                         <TouchableOpacity
@@ -706,7 +790,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                  style={[styles.button, { backgroundColor: 'lightgray', marginTop: 10 }]}
                                   onPress={handleDocumentSelection}
                                  >
-                                 <Text style={styles.buttonTextBack}>Seleccionar Archivos</Text>
+                                 <Text style={styles.buttonTextBack}>Seleccionar archivos</Text>
                               </TouchableOpacity>
                                  {/* Mostrar archivos seleccionados */}
                                   <View style={styles.fileList}>
@@ -739,7 +823,7 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                                      >
                                          <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                         <Text style={styles.buttonText}> Guardar</Text>
+                                         <Text style={styles.buttonText}> Guardar problema asociado a plagas</Text>
                                           </View>
                                   </TouchableOpacity>
                                  
@@ -751,6 +835,24 @@ export const InsertarProblemasAsociadosPlagasScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

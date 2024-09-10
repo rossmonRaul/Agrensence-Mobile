@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {  Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -13,10 +13,17 @@ import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
@@ -50,27 +57,89 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
             [key]: value
         }));
     };
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     const validateFirstForm = () => {
         let isValid = true;
 
         if (!formulario.fecha && !formulario.idActividad && !formulario.idMaquinaria) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return;
         }
         if (!formulario.fecha) {
-            alert('Ingrese una fecha');
+            showInfoAlert('Ingrese una fecha');
             isValid = false;
             return;
         }
         if (!formulario.idActividad) {
-            alert('Ingrese una actividad');
+            showInfoAlert('Ingrese una actividad');
             isValid = false;
             return;
         }
         if (!formulario.idMaquinaria) {
-            alert('Ingrese alguna maquinaria');
+            showInfoAlert('Ingrese alguna maquinaria');
             isValid = false;
             return;
         }
@@ -80,21 +149,21 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
 
     const handleRegister = async () => {
         if (!formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return;
         }
 
         if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
+            showInfoAlert('Ingrese las Observaciones');
             return;
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
@@ -115,16 +184,17 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
         const responseInsert = await InsertarPreparacionTerrenos(formData);
 
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo la preparación de terreno correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo la preparación de terreno correctamente!')
+            // Alert.alert('¡Se creo la preparación de terreno correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal');
+            showErrorAlert('!Oops! Parece que algo salió mal');
         }
     };
 
@@ -242,7 +312,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>
-                            <Text style={styles.createAccountText}>Preparación de Terrenos</Text>
+                            <Text style={styles.createAccountText}>Preparación de terreno</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -341,7 +411,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('identificacion', text)}
                                     />
 
-                                    <Text style={styles.formText}>Horas Trabajadas</Text>
+                                    <Text style={styles.formText}>Horas trabajadas</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Horas Trabajadas"
@@ -350,7 +420,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                         keyboardType="numeric"
                                     />
 
-                                    <Text style={styles.formText}>Pago por Hora</Text>
+                                    <Text style={styles.formText}>Pago por hora</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Pago por Hora"
@@ -411,7 +481,7 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                                             >
                                                 <View style={styles.buttonContent}>
                                                     <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                    <Text style={styles.buttonText}> Guardar</Text>
+                                                    <Text style={styles.buttonText}> Guardar preparación de terreno</Text>
                                                 </View>
                                             </TouchableOpacity>
                                        
@@ -423,6 +493,25 @@ export const RegistrarPreparacionTerrenoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListLandPreparation.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
+
         </View>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -22,10 +22,18 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import { InsertarCultivo } from '../../../../servicios/ServicioCultivos';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const InsertarCultivoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
  
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
@@ -50,8 +58,64 @@ export const InsertarCultivoScreen: React.FC = () => {
         cultivo: cultivo,
         UsuarioCreacionModificacion: ''
     });
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.CropsList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
 
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
 
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -82,18 +146,18 @@ export const InsertarCultivoScreen: React.FC = () => {
 
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
-
+        Keyboard.dismiss()
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (formulario.cultivo.trim() === '') {
-            alert('El campo Cultivo es requerido.');
+            showInfoAlert('El campo Cultivo es requerido.');
             return;
         }
         
@@ -109,17 +173,20 @@ export const InsertarCultivoScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registró el cultivo correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.CropsList.screenName as never);
-                    },
-                },
-            ]);
-        } else Alert.alert('¡Oops! Parece que algo salió mal', responseInsert.mensaje, [
-            { text: 'OK' },
-        ]);
+            showSuccessAlert('¡Se registró el cultivo correctamente!')
+            // Alert.alert('¡Se registró el cultivo correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.CropsList.screenName as never);
+            //         },
+            //     },
+            // ]);
+        } else 
+        showErrorAlert('¡Oops! Parece que algo salió mal')
+        // Alert.alert('¡Oops! Parece que algo salió mal', responseInsert.mensaje, [
+        //     { text: 'OK' },
+        // ]);
     };
 
     useEffect(() => {
@@ -253,7 +320,7 @@ export const InsertarCultivoScreen: React.FC = () => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar Cultivo</Text>
                                         </View>
                                     </TouchableOpacity>
                             </>
@@ -262,6 +329,24 @@ export const InsertarCultivoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.CropsList.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Pressable, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import { isEmail } from 'validator'
@@ -16,10 +16,17 @@ import { RelacionFincaParcela } from '../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 export const InsertarPuntoMedicionScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[] | []>([]);
@@ -40,7 +47,67 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
         latitud: '',
         longitud: '',
     });
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListMeasurementPoint.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -51,24 +118,24 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
     };
     const validateFirstForm = () => {
         let isValid = true;
-        
+        Keyboard.dismiss()
         if (!formulario.codigo) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             isValid = false;
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null||formulario.idParcela === '') {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             isValid = false;
             return
         }
         if (!formulario.codigo) {
-            alert('Ingrese un codigo');
+            showInfoAlert('Ingrese un codigo');
             isValid = false;
             return
         }
@@ -77,23 +144,23 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
     }
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
-
+        Keyboard.dismiss()
         if (!formulario.longitud && !formulario.altitud && !formulario.latitud) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.longitud) {
-            alert('Ingrese la longitud');
+            showInfoAlert('Ingrese la longitud');
             return
         }
         if (!formulario.altitud) {
-            alert('Ingrese una altitud');
+            showInfoAlert('Ingrese una altitud');
             
             return
         }
         if (!formulario.latitud ) {
-            alert('Ingrese una latitud');
+            showInfoAlert('Ingrese una latitud');
             return
         }
 
@@ -116,16 +183,17 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo el punto de medición correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListMeasurementPoint.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo el punto de medición correctamente!')
+            // Alert.alert('¡Se creo el punto de medición correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListMeasurementPoint.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     
@@ -227,7 +295,7 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Punto de Medición</Text>
+                            <Text style={styles.createAccountText} >Punto de medición</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -340,7 +408,7 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar punto de medición</Text>
                                             </View>
                                         </TouchableOpacity>
                                     {/* </View> */}
@@ -352,6 +420,24 @@ export const InsertarPuntoMedicionScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListMeasurementPoint.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

@@ -15,11 +15,11 @@ import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../servicios/ServicioUsuario';
 import { ObtenerDatosRegistroManoObra } from '../../../servicios/ServicioManoObra';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
-
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 export const ListaManoObraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
-
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
     const [manoObra, setManoObra] = useState<any[]>([]);
@@ -112,14 +112,17 @@ export const ListaManoObraScreen: React.FC = () => {
                 </View>
                 <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {!manoObra ? (
@@ -144,6 +147,16 @@ export const ListaManoObraScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -17,10 +17,19 @@ import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
 import { CrearParcela } from '../../../servicios/ServicioParcela';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 
 export const RegistrarParcelaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     /*  Se definen los estados para controlar la visibilidad 
         del segundo formulario y almacenar datos del formulario*/
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
@@ -35,7 +44,65 @@ export const RegistrarParcelaScreen: React.FC = () => {
         idFinca: '',
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListPlot.screenName);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -65,13 +132,14 @@ export const RegistrarParcelaScreen: React.FC = () => {
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
 
+        Keyboard.dismiss()
         //  Se valida que la empresa, finca y parcela estén seleccionadas
         if (!formulario.nombre) {
-            alert('Ingrese un nombre para la parcela');
+            showInfoAlert('Ingrese un nombre para la parcela');
             return
         }
         if (!formulario.idFinca) {
-            alert('Seleccione una finca');
+            showInfoAlert('Seleccione una finca');
             return
         }
 
@@ -85,16 +153,17 @@ export const RegistrarParcelaScreen: React.FC = () => {
         const responseInsert = await CrearParcela(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo la parcela correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListPlot.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo la parcela correctamente!');
+            // Alert.alert('¡Se creo la parcela correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListPlot.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -135,12 +204,12 @@ export const RegistrarParcelaScreen: React.FC = () => {
                                     onChange={(item) => (setFinca(item.value as never), updateFormulario('idFinca', item.value))}
                                 />
                                 {finca && <TouchableOpacity
-                                    style={styles.button}
+                                    // style={styles.button}
                                     onPress={() => {
                                         handleRegister();
                                     }}
                                 >
-                                    <View style={styles.buttonContent}>
+                                    {/* <View style={styles.buttonContent}> */}
                                         <TouchableOpacity
                                             style={styles.button}
                                             onPress={() => {
@@ -152,7 +221,7 @@ export const RegistrarParcelaScreen: React.FC = () => {
                                                 <Text style={styles.buttonText}> Guardar Parcela</Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
+                                    {/* </View> */}
                                 </TouchableOpacity>}
                             </>
                         </View>
@@ -160,6 +229,24 @@ export const RegistrarParcelaScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListPlot.screenName) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

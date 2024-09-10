@@ -12,10 +12,13 @@ import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
+import { FontAwesome } from '@expo/vector-icons';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 
 export const ListaFincasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     // Estado para los datos originales sin filtrar
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
@@ -77,14 +80,15 @@ export const ListaFincasScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -98,6 +102,16 @@ export const ListaFincasScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

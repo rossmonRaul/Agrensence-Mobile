@@ -16,6 +16,7 @@ import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData, UseFetchDropdownDataProps, DropdownData } from '../../../hooks/useFetchDropDownData';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 
 export const ListaParcelasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -23,8 +24,8 @@ export const ListaParcelasScreen: React.FC = () => {
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
     //  Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
-    const { userData } = useAuth();
-
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const [finca, setFinca] = useState(null);
 
     const [fincaDataOriginal, setFincaDataOriginal] = useState<DropdownData[]>([]);
@@ -124,16 +125,19 @@ export const ListaParcelasScreen: React.FC = () => {
                     <Text style={styles.textAbove} >Lista de parcelas</Text>
                 </View>
 
-                <View style={styles.dropDownContainer}>
 
+                <View style={styles.searchContainer}>
+                <Text style={styles.formText} >Finca: </Text>
+                <View style={styles.dropDownContainer}>
                     <DropdownComponent
                         placeholder="Finca"
                         data={fincaDataSort}
                         value={finca}
                         iconName='tree'
                         onChange={handleValueFinca}
-                        customWidth={375}
+                        customWidth={325}
                     />
+                </View>
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {apiData.map((item, index) => {
@@ -151,7 +155,16 @@ export const ListaParcelasScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

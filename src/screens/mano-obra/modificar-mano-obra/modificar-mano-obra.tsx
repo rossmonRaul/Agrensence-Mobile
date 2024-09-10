@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,6 +21,13 @@ import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import { ModificarRegistroManoObra, CambiarEstadoRegistroManoObra } from '../../../servicios/ServicioManoObra';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idRegistroManoObra: string,
     idFinca: string,
@@ -36,8 +43,8 @@ interface RouteParams {
 
 export const ModificarManoObraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
-
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const route = useRoute();
 
     const {
@@ -88,7 +95,74 @@ export const ModificarManoObraScreen: React.FC = () => {
         estado: estado || '',
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListManoObra.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -100,23 +174,23 @@ export const ModificarManoObraScreen: React.FC = () => {
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
         if (parseFloat(formulario.pagoPorHora) < 0.1) {
-            alert('El pago por hora debe ser mayor que cero.');
+            showInfoAlert('El pago por hora debe ser mayor que cero.');
             return;
         }
         if (parseFloat(formulario.horasTrabajadas) < 0.1) {
-            alert('Las horas trabajadas deben ser mayor que cero.');
+            showInfoAlert('Las horas trabajadas deben ser mayor que cero.');
             return;
         }
         if (formulario.horasTrabajadas.toString().trim() === '') {
-            alert('Por favor ingrese las horas trabajadas.');
+            showInfoAlert('Por favor ingrese las horas trabajadas.');
             return;
         }
         if (formulario.pagoPorHora.toString().trim() === '') {
-            alert('Por favor ingrese el pago por hora.');
+            showInfoAlert('Por favor ingrese el pago por hora.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -137,16 +211,17 @@ export const ModificarManoObraScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico el registro de mano obra correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListManoObra.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modifico el registro de mano obra correctamente!')
+            // Alert.alert('¡Se modifico el registro de mano obra correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListManoObra.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -243,22 +318,22 @@ export const ModificarManoObraScreen: React.FC = () => {
 
         if (isNaN(fecha.getTime())) {
             isValid = false;
-            alert('La fecha no es válida.');
+            showInfoAlert('La fecha no es válida.');
             return isValid;
         }
         if (formulario.actividad.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese la actividad.');
+            showInfoAlert('Por favor ingrese la actividad.');
             return;
         }
         if (formulario.identificacion.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese la identificación.');
+            showInfoAlert('Por favor ingrese la identificación.');
             return;
         }
         if (formulario.trabajador.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el trabajador.');
+            showInfoAlert('Por favor ingrese el trabajador.');
             return;
         }
         return isValid;
@@ -270,46 +345,60 @@ export const ModificarManoObraScreen: React.FC = () => {
         const formData = {
             idRegistroManoObra: formulario.idRegistroManoObra,
         };
-
+        try {
+            const responseInsert = await CambiarEstadoRegistroManoObra(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se elimino este registro de mano obra correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Eliminar este registro',
-            '¿Estás seguro de que deseas eliminar este registro de mano obra?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoRegistroManoObra(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se elimino este registro de mano obra correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListManoObra.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Eliminar este registro',
+        //     '¿Estás seguro de que deseas eliminar este registro de mano obra?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoRegistroManoObra(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se elimino este registro de mano obra correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListManoObra.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -537,6 +626,7 @@ export const ModificarManoObraScreen: React.FC = () => {
                                     onChangeText={(text) => updateFormulario('totalPago', text)}
                                     readOnly={true}
                                 />
+                                <Text style={styles.formText} >Finca</Text>
                                 {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
@@ -573,7 +663,7 @@ export const ModificarManoObraScreen: React.FC = () => {
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -593,6 +683,41 @@ export const ModificarManoObraScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListManoObra.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar este registro de mano obra?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

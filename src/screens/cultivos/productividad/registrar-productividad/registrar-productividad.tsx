@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,12 +16,18 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { FontAwesome } from '@expo/vector-icons';
 import { AgregarProductividadCultivo, ObtenerMedidasCultivos } from '../../../../servicios/ServicioCultivos';
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 
 export const RegistrarProductividadScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[] | []>([]);
     const [medidasCultivos, setMedidasCultivos] = useState<{ idMedidasCultivos: number; medida?: string }[] | []>([]);
@@ -61,6 +67,69 @@ export const RegistrarProductividadScreen: React.FC = () => {
         productividad: ''
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListProductivity.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -74,61 +143,61 @@ export const RegistrarProductividadScreen: React.FC = () => {
 
         if (!formulario.cultivo && !formulario.temporada && !formulario.area &&
             !formulario.produccion && !formulario.productividad) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
 
         if (!formulario.cultivo) {
-            alert('Ingrese un cultivo');
+            showInfoAlert('Ingrese un cultivo');
             isValid = false;
             return
         }
 
         if (!formulario.area) {
-            alert('Ingrese el área');
+            showInfoAlert('Ingrese el área');
             isValid = false;
             return
         }
 
         if (!/^\d+(\.\d+)?$/.test(formulario.area.toString())) {
-            alert('El área debe contener solo números y si son decimales utilizar .');
+            showInfoAlert('El área debe contener solo números y si son decimales utilizar .');
             isValid = false;
             return;
         }
         if (!formulario.idMedidaArea || formulario.idMedidaArea === null) {
-            alert('Seleccione una medida de área');
+            showInfoAlert('Seleccione una medida de área');
             isValid = false;
             return
         }
 
        
         if (!formulario.produccion) {
-            alert('Ingrese la producción');
+            showInfoAlert('Ingrese la producción');
             isValid = false;
             return
         }
 
         if (!/^\d+(\.\d+)?$/.test(formulario.produccion.toString())) {
-            alert('La producción debe contener solo números válidos y si son decimales utilizar . ');
+            showInfoAlert('La producción debe contener solo números válidos y si son decimales utilizar . ');
             isValid = false;
             return;
         }
 
         if (!formulario.idMedidasCultivos || formulario.idMedidasCultivos === null) {
-            alert('Seleccione una medicion para el cultivo');
+            showInfoAlert('Seleccione una medicion para el cultivo');
             isValid = false;
             return
         }
 
         if (!formulario.productividad) {
-            alert('Ingrese la productividad');
+            showInfoAlert('Ingrese la productividad');
             isValid = false;
             return
         }
 
         if (!/^\d+(\.\d+)?$/.test(formulario.productividad.toString())) {
-            alert('La productividad debe contener solo números y si son decimales utilizar .');
+            showInfoAlert('La productividad debe contener solo números y si son decimales utilizar .');
             isValid = false;
             return;
         }
@@ -138,16 +207,16 @@ export const RegistrarProductividadScreen: React.FC = () => {
     // Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
         if (!formulario.temporada || formulario.temporada === null) {
-            alert('Seleccione la temporada');
+            showInfoAlert('Seleccione la temporada');
             return
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Seleccione la Finca');
+            showInfoAlert('Seleccione la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Seleccione la Parcela');
+            showInfoAlert('Seleccione la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -170,16 +239,17 @@ export const RegistrarProductividadScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo el registro de productividad correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListProductivity.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se creo el registro de productividad correctamente!')
+            // Alert.alert('¡Se creo el registro de productividad correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListProductivity.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -266,7 +336,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Productividad de Cultivos</Text>
+                            <Text style={styles.createAccountText} >Productividad de cultivos</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -289,7 +359,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         keyboardType="numeric"
                                     />
 
-                                    <Text style={styles.formText} >Unidad de medida de Área</Text>
+                                    <Text style={styles.formText} >Unidad de medida de área</Text>
                                     {/* Dropdown para Temporadas */}
                                     <DropdownComponent
                                         placeholder="Seleccione una medida de Área"
@@ -314,7 +384,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         keyboardType="numeric"
                                     />
 
-                                    <Text style={styles.formText} >Medida Producción</Text>
+                                    <Text style={styles.formText} >Medida producción</Text>
                                     {/* Dropdown para Fincas */}
                                     <DropdownComponent
                                         placeholder="Seleccione una medida Producción"
@@ -426,7 +496,7 @@ export const RegistrarProductividadScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar productividad</Text>
                                             </View>
                                         </TouchableOpacity>
                                     
@@ -438,6 +508,24 @@ export const RegistrarProductividadScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListProductivity.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

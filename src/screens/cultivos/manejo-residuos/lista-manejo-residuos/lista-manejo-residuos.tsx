@@ -14,12 +14,14 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { residueDataInterface } from '../../../../interfaces/residuosInterfaces';
 import { ObtenerManejoResiduos } from '../../../../servicios/ServicioResiduos';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
-
+import { FontAwesome } from '@expo/vector-icons';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaManejoResiduosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const [parcelas, setParcelas] = useState<{ idParcela: number }[] | []>([]);
     const [apiData, setApiData] = useState<residueDataInterface[]>([]);
     const [residuosFiltradosData, setResiduosFiltradosData] = useState<any[]>([]);
@@ -78,11 +80,11 @@ export const ListaManejoResiduosScreen: React.FC = () => {
     const keyMapping = {
         'Usuario': 'usuario',
         'Residuo': 'residuo',
-        'Fecha Generacion': 'fechaGeneracion',
-        'Fecha Manejo': 'fechaManejo',
+        'Fecha generación': 'fechaGeneracion',
+        'Fecha manejo': 'fechaManejo',
         'Destino': 'destinoFinal',
         'Cantidad(kg)': 'cantidad',
-        'Accion Manejo': 'accionManejo',
+        'Acción manejo': 'accionManejo',
         'Finca': 'finca',
         'Parcela': 'parcela',
         'Estado': 'estado'
@@ -124,18 +126,19 @@ export const ListaManejoResiduosScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.RegisterResidue.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista Residuos</Text>
+                    <Text style={styles.textAbove} >Lista residuos</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {residuos.map((item, index) => {
@@ -155,6 +158,16 @@ export const ListaManejoResiduosScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
 
         </View>
     );

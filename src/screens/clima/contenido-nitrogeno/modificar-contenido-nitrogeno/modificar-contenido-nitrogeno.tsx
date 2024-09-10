@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ImageBackground } from 'react-native';
+import { View, ScrollView, Pressable, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ImageBackground, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,7 +21,13 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idContenidoDeNitrogeno: string,
     idFinca: string,
@@ -39,7 +45,8 @@ interface RouteParams {
 
 export const ModificarContenidoNitrogenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const route = useRoute();
 
@@ -105,45 +112,112 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
             [key]: value
         }));
     };
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.NitrogenContentList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     const handleModify = async () => {
         if (formulario.contenidoNitrogenoSuelo.trim() === '') {
-            alert('El campo Contenido de Nitrógeno en el Suelo es requerido.');
+            showInfoAlert('El campo Contenido de Nitrógeno en el Suelo es requerido.');
             return;
         }
         
         if (parseFloat(formulario.contenidoNitrogenoSuelo) < 0.1) {
-            alert('El valor de nitrógeno en el suelo debe ser mayor que cero.');
+            showInfoAlert('El valor de nitrógeno en el suelo debe ser mayor que cero.');
             return;
         }
 
         if (formulario.contenidoNitrogenoPlanta.trim() === '') {
-            alert('El campo Contenido de Nitrógeno en la Planta es requerido.');
+            showInfoAlert('El campo Contenido de Nitrógeno en la Planta es requerido.');
             return;
         }
         
         if (parseFloat(formulario.contenidoNitrogenoPlanta) < 0.1) {
-            alert('El valor de nitrógeno en la planta debe ser mayor que cero.');
+            showInfoAlert('El valor de nitrógeno en la planta debe ser mayor que cero.');
             return;
         }
 
         if (formulario.metodoAnalisis.trim() === '') {
-            alert('El campo Método de Análisis es requerido.');
+            showInfoAlert('El campo Método de Análisis es requerido.');
             return;
         }
 
         if (formulario.humedadObservable.trim() === '') {
-            alert('El campo Humedad Observable es requerido.');
+            showInfoAlert('El campo Humedad Observable es requerido.');
             return;
         }
 
         if (formulario.condicionSuelo.trim() === '') {
-            alert('El campo Condición del Suelo es requerido.');
+            showInfoAlert('El campo Condición del Suelo es requerido.');
             return;
         }
 
         if (formulario.observaciones.trim() === '') {
-            alert('El campo Observaciones es requerido.');
+            showInfoAlert('El campo Observaciones es requerido.');
             return;
         }
 
@@ -165,16 +239,17 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
 
         const responseInsert = await ModificarRegistroContenidoNitrogeno(formData);
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modificó el registro de contenido de nitrógeno!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.NitrogenContentList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modificó el registro de contenido de nitrógeno!')
+            // Alert.alert('¡Se modificó el registro de contenido de nitrógeno!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.NitrogenContentList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('¡Oops! Parece que algo salió mal')
+            showErrorAlert('¡Oops! Parece que algo salió mal')
         }
     };
 
@@ -269,24 +344,24 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (!formulario.idPuntoMedicion || formulario.idPuntoMedicion === null) {
             isValid = false;
-            alert('Ingrese el punto de Medición');
+            showInfoAlert('Ingrese el punto de Medición');
             return;
         }
         
         if (formulario.fechaMuestreo.trim() === '') {
             isValid = false;
-            alert('La fecha es requerida.');
+            showInfoAlert('La fecha es requerida.');
             return isValid;
         }
 
@@ -297,42 +372,57 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
         const formData = {
             idContenidoDeNitrogeno: idContenidoDeNitrogeno,
         };
+        try {
+            const responseInsert = await CambiarEstadoRegistroContenidoNitrogeno(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se eliminó el registro de contenido de nitrógeno!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el registro de contenido de nitrógeno?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Eliminar',
-                    onPress: async () => {
-                        const responseInsert = await CambiarEstadoRegistroContenidoNitrogeno(formData);
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se eliminó el registro de contenido de nitrógeno!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.NitrogenContentList.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el registro de contenido de nitrógeno?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Eliminar',
+        //             onPress: async () => {
+        //                 const responseInsert = await CambiarEstadoRegistroContenidoNitrogeno(formData);
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se eliminó el registro de contenido de nitrógeno!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.NitrogenContentList.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -666,14 +756,14 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar Cambios</Text>
                                         </View>
                                     </TouchableOpacity>
                                     {estado === 'Activo'
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -685,7 +775,7 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.button}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -701,6 +791,42 @@ export const ModificarContenidoNitrogenoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.NitrogenContentList.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el registro de contenido de nitrógeno?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

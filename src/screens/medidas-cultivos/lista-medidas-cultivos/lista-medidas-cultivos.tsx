@@ -12,10 +12,13 @@ import { ScreenProps } from '../../../constants';
 import { useAuth } from '../../../hooks/useAuth';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../components/AddButton/AddButton';
+import { FontAwesome } from '@expo/vector-icons';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 
 export const ListaMedidasCultivosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     // Estado para los datos originales sin filtrar
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
@@ -70,18 +73,19 @@ export const ListaMedidasCultivosScreen: React.FC = () => {
                 <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertCropMeasurements.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de Medidas de Cultivos</Text>
+                    <Text style={styles.textAbove} >Lista de medidas de cultivos</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -95,6 +99,16 @@ export const ListaMedidasCultivosScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

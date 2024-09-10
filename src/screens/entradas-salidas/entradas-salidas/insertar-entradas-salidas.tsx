@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -21,6 +21,14 @@ import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import { InsertarRegistroEntradaSalida } from '../../../servicios/ServicioEntradaSalida';
 import ListaComponenteEntradaSalida from '../../../components/ListaComponenteEntradaSalida/ListaComponenteEntradaSalida';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 interface Item {
     id: string;
     producto: string;
@@ -32,7 +40,9 @@ interface Item {
 
 export const InsertarEntradasSalidasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
@@ -81,8 +91,70 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         }));
     };
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListInflowsOutflows.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
 
     const validateFirstForm = () => {
+        Keyboard.dismiss()
         let isValid = true;
         const parseDate = (dateString) => {
             const [day, month, year] = dateString.split('/');
@@ -94,22 +166,22 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         // Comparar fechas
         if (isNaN(fecha.getTime())) {
             isValid = false;
-            alert('La fecha no es válida.');
+            showInfoAlert('La fecha no es válida.');
             return isValid;
         }
         if (formulario.tipo.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el tipo.');
+            showInfoAlert('Por favor ingrese el tipo.');
             return;
         }
         if (formulario.detallesCompraVenta.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese los detalles de compra/venta.');
+            showInfoAlert('Por favor ingrese los detalles de compra/venta.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
 
@@ -119,8 +191,9 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
 
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
+        Keyboard.dismiss()
             if (DatosDelHijo.length === 0) {
-                alert('Por favor ingrese un producto a la lista.');
+                showInfoAlert('Por favor ingrese un producto a la lista.');
                 return;
             }
 
@@ -140,16 +213,17 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
         const responseInsert = await InsertarRegistroEntradaSalida(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro la entrada o salida correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListInflowsOutflows.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registro la entrada o salida correctamente!')
+            // Alert.alert('¡Se registro la entrada o salida correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListInflowsOutflows.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     
@@ -408,6 +482,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                                         value={formulario.detallesCompraVenta}
                                         onChangeText={(text) => updateFormulario('detallesCompraVenta', text)}
                                     />
+                                    <Text style={styles.formText} >Finca</Text>
                                     {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
@@ -463,7 +538,7 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                                 >
                                     <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Guardar cambios</Text>
+                                        <Text style={styles.buttonText}>Guardar entrada o salida</Text>
                                     </View>
                                 </TouchableOpacity>}
                             </>
@@ -473,6 +548,24 @@ export const InsertarEntradasSalidasScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListInflowsOutflows.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

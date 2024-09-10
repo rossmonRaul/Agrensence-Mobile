@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -20,10 +20,18 @@ import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import { InsertarRegistroManoObra } from '../../../servicios/ServicioManoObra';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 export const InsertarManoObraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
@@ -56,6 +64,71 @@ export const InsertarManoObraScreen: React.FC = () => {
     });
 
 
+const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListManoObra.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	    Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	    Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -76,22 +149,22 @@ export const InsertarManoObraScreen: React.FC = () => {
 
         if (isNaN(fecha.getTime())) {
             isValid = false;
-            alert('La fecha no es válida.');
+            showInfoAlert('La fecha no es válida.');
             return isValid;
         }
         if (formulario.actividad.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese la actividad.');
+            showInfoAlert('Por favor ingrese la actividad.');
             return;
         }
         if (formulario.identificacion.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese la identificación.');
+            showInfoAlert('Por favor ingrese la identificación.');
             return;
         }
         if (formulario.trabajador.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el trabajador.');
+            showInfoAlert('Por favor ingrese el trabajador.');
             return;
         }
 
@@ -102,23 +175,23 @@ export const InsertarManoObraScreen: React.FC = () => {
     // Se defina una función para manejar el registro cuando le da al boton de guardar
     const handleRegister = async () => {
         if (parseFloat(formulario.pagoPorHora) < 0.1) {
-            alert('El pago por hora debe ser mayor que cero.');
+            showInfoAlert('El pago por hora debe ser mayor que cero.');
             return;
         }
         if (parseFloat(formulario.horasTrabajadas) < 0.1) {
-            alert('Las horas trabajadas deben ser mayor que cero.');
+            showInfoAlert('Las horas trabajadas deben ser mayor que cero.');
             return;
         }
         if (formulario.horasTrabajadas.toString().trim() === '') {
-            alert('Por favor ingrese las horas trabajadas.');
+            showInfoAlert('Por favor ingrese las horas trabajadas.');
             return;
         }
         if (formulario.pagoPorHora.toString().trim() === '') {
-            alert('Por favor ingrese el pago por hora.');
+            showInfoAlert('Por favor ingrese el pago por hora.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -139,16 +212,17 @@ export const InsertarManoObraScreen: React.FC = () => {
         
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro mano de obra correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListManoObra.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registro mano de obra correctamente!')
+            // Alert.alert('¡Se registro mano de obra correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListManoObra.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -452,6 +526,7 @@ export const InsertarManoObraScreen: React.FC = () => {
                                     onChangeText={(text) => updateFormulario('totalPago', text)}
                                     readOnly={true}
                                 />
+                                <Text style={styles.formText} >Finca</Text>
                                 {empresa &&
                                     <DropdownComponent
                                         placeholder="Finca"
@@ -481,7 +556,7 @@ export const InsertarManoObraScreen: React.FC = () => {
                                 >
                                     <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Guardar cambios</Text>
+                                        <Text style={styles.buttonText}>Guardar mano de obra</Text>
                                     </View>
                                 </TouchableOpacity>}
                             </>
@@ -491,6 +566,25 @@ export const InsertarManoObraScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListManoObra.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }
+

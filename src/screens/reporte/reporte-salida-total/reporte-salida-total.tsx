@@ -21,11 +21,14 @@ import { createExcelFile } from '../../../utils/fileExportExcel';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { ObtenerReporteGasto } from '../../../servicios/ServicioReporte';
 import { paginationStyles } from '../../../styles/pagination-styles.styles';
-
+import { Ionicons } from '@expo/vector-icons'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 
 export const ReporteSalidaTotal:  React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
@@ -41,7 +44,16 @@ export const ReporteSalidaTotal:  React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);  // Añadido
     const itemsPerPage = 3;
     const keyMapping = {
-        'IdRegistroEntradaSalida':'idRegistroEntradaSalida',
+        // 'IdRegistroEntradaSalida':'idRegistroEntradaSalida',
+        'Fecha': 'fecha',
+        'Detalles': 'detallesCompraVenta',
+        //'Monto Ingreso': 'montoIngreso',
+        'Monto Gasto': 'montoGasto',
+        'Tipo': 'tipo',
+        'Balance': 'balance'
+    };
+    const keyMappingExport = {
+        'Id':'idRegistroEntradaSalida',
         'Fecha': 'fecha',
         'Detalles': 'detallesCompraVenta',
         //'Monto Ingreso': 'montoIngreso',
@@ -124,7 +136,7 @@ export const ReporteSalidaTotal:  React.FC = () => {
             const objEntradaSalida={idRegistroEntradaSalida:'',fecha:'',detallesCompraVenta:'Total',montoGasto:salidasTotales[0].gastoTotal,tipo:'',balance:salidasTotales[0].gastoTotal}
             entradaSalidasExportar.push(objEntradaSalida);
 
-            const filePath = await createExcelFile(title, entradaSalidasExportar, keyMapping, 'Reporte Gastos');
+            const filePath = await createExcelFile(title, entradaSalidasExportar, keyMappingExport, 'Reporte Gastos');
             entradaSalidasExportar.pop();
             await Sharing.shareAsync(filePath)
             Alert.alert('Éxito', 'Archivo exportado correctamente.');
@@ -216,6 +228,7 @@ export const ReporteSalidaTotal:  React.FC = () => {
 
 
           const formData = {
+            idEmpresa:userData.idEmpresa,
             idFinca: selectedFinca,
             fechaInicio: fechaInicio,
             fechaFin: fechaFinal,
@@ -345,22 +358,24 @@ export const ReporteSalidaTotal:  React.FC = () => {
 
             <View style={styles.dropDownContainer}>
                 {/* Dropdown para Fincas */}
+                <View style={styles.searchContainer}>
                 <DropdownComponent
                     placeholder="Seleccione una Finca"
                     data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                     value={selectedFinca}
                     iconName="tree"
                     onChange={handleFincaChange}
-                    customWidth={375}
+                    customWidth={372}
                 />
+                </View>
 
                 <View style={styles.datePickerContainer}>
-                    <View style={styles.datePickerContainer}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={styles.searchContainer}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
                             {!showStartDatePicker && (
                                 <Pressable onPress={() => toggleDatePicker('start')}>
                                     <TextInput
-                                        style={styles.input}
+                                        style={styles.inputDatePicker}
                                         placeholder='Fecha Inicio'
                                         value={startDate ? startDate.toLocaleDateString() : ''}
                                         editable={false}
@@ -393,7 +408,7 @@ export const ReporteSalidaTotal:  React.FC = () => {
                         {!showEndDatePicker && (
                             <Pressable onPress={() => toggleDatePicker('end')}>
                                 <TextInput
-                                    style={styles.input}
+                                    style={styles.inputDatePicker}
                                     placeholder='Fecha Fin'
                                     value={endDate ? endDate.toLocaleDateString() : ''}
                                     editable={false}
@@ -423,14 +438,26 @@ export const ReporteSalidaTotal:  React.FC = () => {
                             </View>
                         )}
                     </View>
-                    <TouchableOpacity onPress={handleDateFilter} style={styles.filterButton}>
-                        <Text style={styles.filterButtonText}>Filtrar</Text>
-                    </TouchableOpacity>
+
                 </View>
             </View>
+            <View style={[styles.searchContainer, {marginLeft:25}]}>
             <TouchableOpacity style={styles.filterButton} onPress={handleExportFile}>
-                <Text style={styles.filterButtonText}>Exportar Excel</Text>
+                <View style={[styles.buttonContent,{width:160}]}>
+                    <MaterialCommunityIcons name="file-excel" size={20} color="white" style={styles.iconStyle} />
+                    <Text style={styles.filterButtonText}>Exportar excel</Text>                   
+                </View>  
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleDateFilter} style={styles.filterButton}>
+                    <View style={[styles.buttonContent,{width:160}]}>
+                        <Ionicons name="filter-sharp" size={20} color="white" style={styles.iconStyle} />
+                        <Text style={styles.filterButtonText}>Filtrar</Text>
+                    </View>
+
+                    </TouchableOpacity>
+
+             </View>
             <View style={styles.rowContainer} >
                 {!salidasTotales ? (
                     <>
@@ -464,6 +491,16 @@ export const ReporteSalidaTotal:  React.FC = () => {
             {renderPagination()}
         </View>
         <BottomNavBar />
+        {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
     </View >
     );
 };

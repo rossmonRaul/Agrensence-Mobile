@@ -4,20 +4,25 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     listcontainer: {
         flex: 1,
         backgroundColor: '#ffffff',
         padding: 60,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     textAboveContainer: {
-        alignItems: 'flex-start',
-        width: 300,
+        //alignItems: 'flex-start',
+        width: '100%',
         paddingTop: 20,
-        paddingLeft: 20,
-        alignSelf: 'center'
+        paddingLeft: 0,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
     },
     rowContainer: {
         width: '100%',
@@ -32,7 +37,13 @@ export const styles = StyleSheet.create({
         fontFamily: 'CatamaranBold',
         fontSize: 24,
         color: '#548256',
-        alignSelf: 'flex-start',
+        // alignSelf: 'flex-start',
+        // alignItems: 'center',
+        // justifyContent: 'center',
+        // textAlign: 'center',
+        textAlign: 'center', // Esto centra el texto dentro del componente
+    alignSelf: 'center', // Asegura que el componente esté centrado en su contenedor
+    justifyContent: 'center',
     },
     titleContainer: {
         alignItems: 'flex-start',
@@ -42,13 +53,14 @@ export const styles = StyleSheet.create({
         alignSelf: 'flex-end'
     },
     searchContainer: {
-        marginTop: 20,
+        marginTop: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        justifyContent: 'center',  
+        //marginBottom: 10,
     },
     searchInput: {
-        width: '90%',
+        width: '105%',
         height: 40,
         borderWidth: 1.2,
         fontFamily: 'CatamaranSemiBold',
@@ -64,11 +76,15 @@ export const styles = StyleSheet.create({
     },
     dropDownContainer: {
         justifyContent: 'center',
+        alignItems: 'center',
         minWidth: 300,
     },
     datePickerContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        //justifyContent: 'space-between',
+        justifyContent: 'center',
+        marginRight:5,
+        marginLeft:5,
         gap: 10,
     },
     input: {
@@ -80,6 +96,17 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         fontFamily: 'CatamaranMedium',
         width: 120,
+        textAlign: 'center'
+    },
+    inputDatePicker: {
+        height: 40,
+        borderColor: '#548256',
+        borderWidth: 2,
+        marginBottom: 10,
+        paddingHorizontal: 10,
+        borderRadius: 10,
+        fontFamily: 'CatamaranMedium',
+        width: 182,
         textAlign: 'center'
     },
     iosPickerButtons: {
@@ -100,12 +127,25 @@ export const styles = StyleSheet.create({
         borderRadius: 5,
         height: 40,
         justifyContent: 'center',
+        marginRight: 10
     },
     filterButtonText: {
         color: 'white',
         paddingHorizontal: 10,
     },
+    buttonContent: {
+        marginTop: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        //height: 40,
+    },
 
+ iconStyle: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
 
     notificationContainer: {
         backgroundColor: '#fff',
@@ -132,7 +172,10 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#274c48',
     },
-
+    formText: {
+        fontSize: 20,
+        fontFamily: 'CatamaranBold'
+      },
     closeButton: {
         position: 'absolute',
         top: 110,
@@ -141,4 +184,5 @@ export const styles = StyleSheet.create({
         backgroundColor: 'transparent', // Fondo transparente para que solo se vea el icono
         padding: 1, // Añade algo de espacio alrededor del icono
     },
+    
 })

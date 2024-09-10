@@ -3,6 +3,7 @@ import { View, ScrollView, TextInput, TouchableOpacity, Text, Alert } from 'reac
 import { styles } from '../../../styles/list-global-styles.styles';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { processData } from '../../../utils/processData';
 import { CustomRectangle } from '../../../components/CustomRectangle/CustomRectangle';
@@ -21,7 +22,8 @@ import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { createExcelFile } from '../../../utils/fileExportExcel';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
-
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 interface Item {
     id: string;
     producto: string;
@@ -30,9 +32,14 @@ interface Item {
     iva: string;
     total: string;
 }
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 export const ListaOrdenCompraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
@@ -65,7 +72,67 @@ export const ListaOrdenCompraScreen: React.FC = () => {
         'Iva': 'iva',
         'Total': 'total'
     };
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     // item.idOrdenDeCompra, item.idFinca, item.idParcela,
     //                         item.numeroDeOrden, item.proveedor, item.fechaOrden, item.fechaEntrega,
     //                         item.productosAdquiridos, item.cantidad, item.precioUnitario,item.montoTotal, item.observaciones,  item.estado
@@ -291,7 +358,7 @@ export const ListaOrdenCompraScreen: React.FC = () => {
             rotacionCultivosFiltrado.forEach((item, index) => {
                 // Añadir la ID a la variable y, si no es el último elemento, añadir una coma
                 listaIds += item.idOrdenDeCompra;
-                if (index < listaIds.length - 1) {
+                if (index < rotacionCultivosFiltrado.length - 1) {
                     listaIds += ',';
                 }
             });
@@ -309,12 +376,12 @@ export const ListaOrdenCompraScreen: React.FC = () => {
             const formData2 = { ListaIdsExportar: idRegistrosExportar};
             const datosListaProductos: Item[] = await ObtenerDetallesOrdenDeCompraExportar(formData2);
             if (status !== 'granted') {
-                Alert.alert('Permisos insuficientes', 'Se requieren permisos para acceder al almacenamiento.');
+                showInfoAlert('Permisos insuficientes, re requieren permisos para acceder al almacenamiento.');
                 return;
             }
 
             if (datosListaProductos.length === 0) {
-                Alert.alert('No hay datos para exportar');
+                showInfoAlert('No hay datos para exportar');
                 return;
             }
             function formatDate(date) {
@@ -328,10 +395,10 @@ export const ListaOrdenCompraScreen: React.FC = () => {
             const filePath = await createExcelFile(title, datosListaProductos, keyMapping2, 'Detalle de Compra');
 
             await Sharing.shareAsync(filePath)
-            Alert.alert('Éxito', 'Archivo exportado correctamente.');
+            showSuccessAlert('Éxito, archivo exportado correctamente.');
         } catch (error) {
             console.error('Error al exportar el archivo:', error);
-            Alert.alert('Error', 'Ocurrió un error al exportar el archivo.');
+            showErrorAlert('Error, ocurrió un error al exportar el archivo.');
         }
     };
 
@@ -346,27 +413,36 @@ export const ListaOrdenCompraScreen: React.FC = () => {
 
                 <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombre, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
-
+                    </View>
                     {/* Dropdown para Parcelas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 <TouchableOpacity style={styles.filterButton} onPress={handleExportFile}>
-                    <Text style={styles.filterButtonText}>Exportar Excel</Text>
+                    
+                    <View style={styles.buttonContent}>
+                    <MaterialCommunityIcons name="file-excel" size={20} color="white" style={styles.iconStyle} />
+                    <Text style={styles.filterButtonText}>Exportar excel</Text>
+                    </View>
                 </TouchableOpacity>
                 {/* <View style={styles.searchContainer}>
                     <TextInput
@@ -394,6 +470,24 @@ export const ListaOrdenCompraScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => {} : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

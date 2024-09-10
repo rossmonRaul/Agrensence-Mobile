@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -21,10 +21,21 @@ import { UseFetchDropdownDataProps } from '../../../../hooks/useFetchDropDownDat
 import { FincaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 
 export const InsertarRotacionCultivosScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
@@ -61,7 +72,69 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         epocaSiembraCultivoSiguiente: ''
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.CropRotationList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -76,11 +149,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         // Validación del campo Cultivo
         if (formulario.cultivo.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el Cultivo.');
+            showInfoAlert('Por favor ingrese el Cultivo.');
             return;
         } else if (formulario.cultivo.trim().length > 50) {
             isValid = false;
-            alert('El Cultivo no puede tener más de 50 caracteres.');
+            showInfoAlert('El Cultivo no puede tener más de 50 caracteres.');
             return;
         }
 
@@ -88,14 +161,14 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         const regexDate = /^\d{2}\/\d{2}\/\d{2}$/;
         if (!regexDate.test(formulario.epocaSiembra.trim())) {
             isValid = false;
-            alert('Por favor ingrese la Época Siembra en formato dd/mm/aa.');
+            showInfoAlert('Por favor ingrese la Época Siembra en formato dd/mm/aa.');
             return isValid;
         }
 
         // Validación de la Epoca de siembra siguiente
         if (!regexDate.test(formulario.epocaSiembraCultivoSiguiente.trim())) {
             isValid = false;
-            alert('Por favor ingrese la Época de siembra siguiente en formato dd/mm/aa.');
+            showInfoAlert('Por favor ingrese la Época de siembra siguiente en formato dd/mm/aa.');
             return isValid;
         }
 
@@ -104,7 +177,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         // Validación del Tiempo cosecha
         if (!regexDate.test(formulario.tiempoCosecha.trim())) {
             isValid = false;
-            alert('Por favor ingrese el Tiempo cosecha en formato dd/mm/aa.');
+            showInfoAlert('Por favor ingrese el Tiempo cosecha en formato dd/mm/aa.');
             return isValid;
         }
         // Convertir las fechas a objetos Date
@@ -120,41 +193,41 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
         // Comparar fechas
         if (isNaN(epocaSiembraDate.getTime())) {
             isValid = false;
-            alert('La fecha de Época de siembra no es válida.');
+            showInfoAlert('La fecha de Época de siembra no es válida.');
             return isValid;
         }
 
         if (isNaN(epocaSiembraCultivoSiguienteDate.getTime())) {
             isValid = false;
-            alert('La fecha de Época de siembra siguiente no es válida.');
+            showInfoAlert('La fecha de Época de siembra siguiente no es válida.');
             return isValid;
         }
 
         if (isNaN(tiempoCosechaDate.getTime())) {
             isValid = false;
-            alert('La fecha de Tiempo de cosecha no es válida.');
+            showInfoAlert('La fecha de Tiempo de cosecha no es válida.');
             return isValid;
         }
 
         if (tiempoCosechaDate <= epocaSiembraDate || tiempoCosechaDate >= epocaSiembraCultivoSiguienteDate) {
             isValid = false;
-            alert('El tiempo de cosecha no puede ser anterior a la época de siembra ni tampoco después de la época de siembra siguiente.');
+            showInfoAlert('El tiempo de cosecha no puede ser anterior a la época de siembra ni tampoco después de la época de siembra siguiente.');
             return isValid;
         }
 
         if (epocaSiembraCultivoSiguienteDate <= epocaSiembraDate || epocaSiembraCultivoSiguienteDate <= tiempoCosechaDate) {
             isValid = false;
-            alert('Época de siembra no puede ser anterior a la época de siembra ni tampoco al tiempo de cosecha.');
+            showInfoAlert('Época de siembra no puede ser anterior a la época de siembra ni tampoco al tiempo de cosecha.');
             return isValid;
         }
 
         if (formulario.cultivoSiguiente.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el Cultivo siguiente.');
+            showInfoAlert('Por favor ingrese el Cultivo siguiente.');
             return isValid;
         } else if (formulario.cultivoSiguiente.trim().length > 50) {
             isValid = false;
-            alert('El Cultivo siguiente no puede tener más de 50 caracteres.');
+            showInfoAlert('El Cultivo siguiente no puede tener más de 50 caracteres.');
             return;
         }
 
@@ -173,11 +246,11 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
 
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -197,16 +270,17 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se registro la rotación de cultivo correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.CropRotationList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registro la rotación de cultivo correctamente!')
+            // Alert.alert('¡Se registro la rotación de cultivo correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.CropRotationList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -403,7 +477,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                         value={formulario.cultivo}
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                     />
-                                    <Text style={styles.formText}>Época Siembra</Text>
+                                    <Text style={styles.formText}>Época siembra</Text>
 
                                     {!showPickerSiembra && (
                                         <Pressable
@@ -634,6 +708,10 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                             ) : (<>
 
                                 {empresa &&
+                                
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Finca</Text>
                                     <DropdownComponent
                                         placeholder="Finca"
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -641,8 +719,14 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                         iconName='tree'
                                         onChange={handleValueFinca}
                                     />
+                                    </>
+                                )
                                 }
                                 {finca &&
+                                
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Parcela</Text>
                                     <DropdownComponent
                                         placeholder="Parcela"
                                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -650,6 +734,8 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                         value={parcela}
                                         onChange={(item) => (setParcela(item.value as never), (updateFormulario('idParcela', item.value)))}
                                     />
+                                    </>
+                                )
                                 }
                                 {parcela && 
                                 <View >
@@ -672,7 +758,7 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                                 >
                                     <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}> Guardar</Text>
+                                        <Text style={styles.buttonText}> Guardar rotación de cultivo</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>}
@@ -686,6 +772,24 @@ export const InsertarRotacionCultivosScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.CropRotationList.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

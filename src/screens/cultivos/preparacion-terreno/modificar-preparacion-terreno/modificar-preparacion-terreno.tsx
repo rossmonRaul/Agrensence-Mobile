@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,7 +16,14 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { ObtenerDatosPreparacionTerrenoActividad, ObtenerDatosPreparacionTerrenoMaquinaria } from '../../../../servicios/ServicioPreparacionTerreno';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idPreparacionTerreno: string;
     idFinca: string;
@@ -33,7 +40,8 @@ interface RouteParams {
 
 export const ModificarPreparacionTerrenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const route = useRoute();
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(new Date());
@@ -68,26 +76,95 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
         }));
     };
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
+
     const validateFirstForm = () => {
         let isValid = true;
 
         if (!formulario.fecha && !formulario.idActividad && !formulario.idMaquinaria) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return;
         }
         if (!formulario.fecha) {
-            alert('Ingrese una fecha');
+            showInfoAlert('Ingrese una fecha');
             isValid = false;
             return;
         }
         if (!formulario.idActividad) {
-            alert('Ingrese una actividad');
+            showInfoAlert('Ingrese una actividad');
             isValid = false;
             return;
         }
         if (!formulario.idMaquinaria) {
-            alert('Ingrese una maquinaria');
+            showInfoAlert('Ingrese una maquinaria');
             isValid = false;
             return;
         }
@@ -97,21 +174,21 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
 
     const handleRegister = async () => {
         if (!formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return;
         }
 
         if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
+            showInfoAlert('Ingrese las Observaciones');
             return;
         }
 
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
@@ -134,16 +211,17 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
         const responseInsert = await ModificarPreparacionTerreno(formData);
 
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Exito en modificar!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Exito en modificar!')
+            // Alert.alert('¡Exito en modificar!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListLandPreparation.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal');
+            showErrorAlert('!Oops! Parece que algo salió mal');
         }
     };
 
@@ -231,39 +309,55 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
             idPreparacionTerreno: idPreparacionTerreno,
         };
 
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el registro?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        const responseInsert = await CambiarEstadoPreparacionTerreno(formData);
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Registro eliminado con éxito!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(ScreenProps.ListLandPreparation.screenName);
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal al eliminar el registro.');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        try {
+            const responseInsert = await CambiarEstadoPreparacionTerreno(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Registro eliminado con éxito!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
+
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el registro?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 const responseInsert = await CambiarEstadoPreparacionTerreno(formData);
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Registro eliminado con éxito!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(ScreenProps.ListLandPreparation.screenName);
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal al eliminar el registro.');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const formatSpanishDate = (date) => {
@@ -324,7 +418,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>
-                            <Text style={styles.createAccountText} >Modificar Preparación de Terreno</Text>
+                            <Text style={styles.createAccountText} >Modificar preparación de terreno</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -415,7 +509,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         value={formulario.identificacion}
                                         onChangeText={(text) => updateFormulario('identificacion', text)}
                                     />
-                                    <Text style={styles.formText} >Horas Trabajadas</Text>
+                                    <Text style={styles.formText} >Horas trabajadas</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Horas Trabajadas"
@@ -423,7 +517,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         onChangeText={(text) => handleNumericInput(text, 'horasTrabajadas')}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Pago por Hora</Text>
+                                    <Text style={styles.formText} >Pago por hora</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Pago por Hora"
@@ -482,7 +576,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
                                    
@@ -490,7 +584,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -502,7 +596,7 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.buttonActive}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -518,6 +612,41 @@ export const ModificarPreparacionTerrenoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListLandPreparation.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el registro?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

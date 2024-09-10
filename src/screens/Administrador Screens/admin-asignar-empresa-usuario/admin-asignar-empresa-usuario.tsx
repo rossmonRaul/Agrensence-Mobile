@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ImageBackground, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, ImageBackground, TouchableOpacity, Text, Alert, Keyboard } from 'react-native';
 import { styles } from './admin-asignar-empresa-usuario.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
@@ -15,6 +15,12 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EmpresaInterface, FincaInterface, ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     identificacion: string;
 }
@@ -88,16 +94,78 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
         setParcela(null);
     }
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.Menu.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     //  Se defina una función para manejar el registro del identificacion
     const handleRegister = async () => {
         //  Se valida que la finca y parcela estén seleccionadas
         if (!finca) {
-            alert('Ingrese una finca');
+            showInfoAlert('Ingrese una finca');
             return
         }
         if (!parcela) {
-            alert('Ingrese una parcela');
+            showInfoAlert('Ingrese una parcela');
             return
         }
 
@@ -113,16 +181,17 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
         const responseInsert = await AsignarEmpresaFincaYParcela(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se actualizo el usuario correcamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.Menu.screenName);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se actualizo el usuario correcamente!')
+            // Alert.alert('¡Se actualizo el usuario correcamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.Menu.screenName);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     //  Se utiliza useEffect para llamar a handleValueEmpresa solo una vez al montar el componente
@@ -184,7 +253,14 @@ export const AdminAsignarEmpresaScreen: React.FC = () => {
 
             </View>
             <BottomNavBar />
-
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.Menu.screenName as never) : undefined}
+                />
         </View>
     );
 }

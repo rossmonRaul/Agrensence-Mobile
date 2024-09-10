@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,6 +15,14 @@ import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios
 import { ObtenerParcelas } from '../../../../servicios/ServicioParcela';
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { CambiarEstadoRegistroSeguimientoUsoAgua, EditarRegistroSeguimientoUsoAgua } from '../../../../servicios/ServicioUsoAgua';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idRegistroSeguimientoUsoAgua: string
     idFinca: string;
@@ -29,7 +37,8 @@ interface RouteParams {
 
 export const ModificarUsoAguaScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const route = useRoute();
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(new Date())
@@ -55,6 +64,74 @@ export const ModificarUsoAguaScreen: React.FC = () => {
         observaciones: observaciones,
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
 
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
@@ -69,25 +146,25 @@ export const ModificarUsoAguaScreen: React.FC = () => {
 
         if (!formulario.idFinca && !formulario.idParcela && !formulario.fecha &&
             !formulario.actividad) {
-            alert('Por favor rellene el formulario');
+                showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         if (!formulario.fecha) {
-            alert('Ingrese una fecha');
+            showInfoAlert('Ingrese una fecha');
             isValid = false;
             return
         }
         if (!formulario.actividad) {
-            alert('Ingrese una actividad');
+            showInfoAlert('Ingrese una actividad');
             isValid = false;
             return
         }
@@ -97,20 +174,20 @@ export const ModificarUsoAguaScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (!formulario.caudal && !formulario.consumoAgua && !formulario.observaciones) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.caudal) {
-            alert('Ingrese el caudal');
+            showInfoAlert('Ingrese el caudal');
             return
         }
         if (!formulario.consumoAgua) {
-            alert('Ingrese el consumo de agua');
+            showInfoAlert('Ingrese el consumo de agua');
             return
         }
         if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
+            showInfoAlert('Ingrese las Observaciones');
             return
         }
 
@@ -132,16 +209,17 @@ export const ModificarUsoAguaScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Exito en modificar!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Exito en modificar!')
+            // Alert.alert('¡Exito en modificar!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -243,46 +321,60 @@ export const ModificarUsoAguaScreen: React.FC = () => {
         const formData = {
             idRegistroSeguimientoUsoAgua: idRegistroSeguimientoUsoAgua,
         };
-
+        try {
+            const responseInsert = await CambiarEstadoRegistroSeguimientoUsoAgua(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado del seguimiento del uso del agua!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del seguimiento del uso agua?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado del seguimiento del uso del aguaa
-                        const responseInsert = await CambiarEstadoRegistroSeguimientoUsoAgua(formData);
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del seguimiento del uso agua?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado del seguimiento del uso del aguaa
+        //                 const responseInsert = await CambiarEstadoRegistroSeguimientoUsoAgua(formData);
 
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado del seguimiento del uso del agua!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.WatchListWaterScreen.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado del seguimiento del uso del agua!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.WatchListWaterScreen.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     //funcion que se encarga de poder formatear la fecha
     const formatSpanishDate = (date) => {
@@ -528,7 +620,7 @@ export const ModificarUsoAguaScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
                                     
@@ -537,7 +629,7 @@ export const ModificarUsoAguaScreen: React.FC = () => {
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -549,7 +641,7 @@ export const ModificarUsoAguaScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.buttonActive}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -566,6 +658,41 @@ export const ModificarUsoAguaScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.WatchListWaterScreen.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del seguimiento del uso agua?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

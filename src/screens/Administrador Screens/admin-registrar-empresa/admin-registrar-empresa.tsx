@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
+import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { styles } from './admin-registrar-empresa.styles';
 import { useNavigation } from '@react-navigation/native';
 import { InsertarEmpresa } from '../../../servicios/ServicioEmpresa';
@@ -8,10 +8,24 @@ import { useAuth } from '../../../hooks/useAuth';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import BottomNavBar from '../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons'
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 export const AdminRegistrarEmpresaScreen: React.FC = () => {
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
     const navigation = useNavigation();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     //  Se define un estado para almacenar los datos del formulario
     const [formulario, setFormulario] = useState({
         empresa: ''
@@ -25,13 +39,67 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
         }));
     };
 
+    const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.CompanyList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
 
     // Se defina una función para manejar el registro del identificacion
     const handleRegistrarCompany = async () => {
-
+        Keyboard.dismiss()
         //  Se valida que la empresa, finca y parcela estén seleccionadas
         if (!formulario.empresa) {
-            alert('Ingrese una empresa');
+            showInfoAlert('Ingrese una empresa')
+           // alert();
             return
         }
 
@@ -44,14 +112,16 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
         const responseInsert = await InsertarEmpresa(formData);
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se creo la empresa correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.CompanyList.screenName as never);
-                    },
-                },
-            ]);
+        showSuccessAlert('¡Se creo la empresa correctamente!');
+
+            // Alert.alert('¡Se creo la empresa correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
             alert('!Oops! Parece que algo salió mal')
         }
@@ -65,13 +135,12 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
             >
             </ImageBackground>
             <BackButtonComponent screenName={ScreenProps.CompanyList.screenName} color={'#ffff'} />
-
             <View style={styles.lowerContainer}>
                 <View>
                     <Text style={styles.createAccountText} >Crear empresa</Text>
                 </View>
                 <View style={styles.formContainer}>
-                    <Text style={styles.formText} >Nombre empresa</Text>
+                    <Text style={styles.formText} >Nombre</Text>
                     <TextInput
                         style={styles.input}
                         placeholder="Nombre de empresa"
@@ -88,9 +157,26 @@ export const AdminRegistrarEmpresaScreen: React.FC = () => {
                         </View>
                     </TouchableOpacity>
                 </View>
+                <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate('CompanyList' as never) : undefined}
+                />
             </View>
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

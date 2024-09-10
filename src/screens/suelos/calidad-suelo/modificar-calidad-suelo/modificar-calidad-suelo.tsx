@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -14,7 +14,14 @@ import { ModificarMedicionesSuelo, CambiarEstadoMedicionesSuelo } from '../../..
 import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 //datos desde la lista para mostrarlos en los input
 interface RouteParams {
     idMedicionesSuelo: string
@@ -36,8 +43,8 @@ interface RouteParams {
 }
 export const ModificarCalidadSueloScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
-
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
     const [isThirdFormVisible, setThirdFormVisible] = useState(false);
@@ -71,7 +78,74 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
         idParcela: idParcela,
     });
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListQualityFloorScreen.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //  Esta es una función para actualizar el estado del formulario
     const updateFormulario = (key: string, value: string) => {
         setFormulario(prevState => ({
@@ -86,32 +160,32 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
 
         if (!formulario.medicionesCalidadSuelo && !formulario.respiracionSuelo &&
             !formulario.infiltracion && !formulario.densidadAparente && !formulario.conductividadElectrica) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.medicionesCalidadSuelo) {
-            alert('Ingrese una Medicion de la Calidad del Suelo');
+            showInfoAlert('Ingrese una Medicion de la Calidad del Suelo');
             isValid = false;
             return
         }
         if (!formulario.respiracionSuelo) {
-            alert('Ingrese la Respiracion del Suelo');
+            showInfoAlert('Ingrese la Respiracion del Suelo');
             isValid = false;
             return
         }
         if (!formulario.infiltracion) {
-            alert('Ingrese la Infiltracion');
+            showInfoAlert('Ingrese la Infiltracion');
             isValid = false;
             return
         }
         if (!formulario.densidadAparente) {
-            alert('Ingrese la Densidad Aparente');
+            showInfoAlert('Ingrese la Densidad Aparente');
             isValid = false;
             return
         }
         if (!formulario.conductividadElectrica) {
-            alert('Ingrese la Conductividad Electrica');
+            showInfoAlert('Ingrese la Conductividad Electrica');
             isValid = false;
             return
         }
@@ -124,32 +198,32 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
 
         if (!formulario.ph && !formulario.nitratosSuelo &&
             !formulario.estabilidadAgregados && !formulario.desleimiento && !formulario.lombrices) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.ph) {
-            alert('Ingrese el Ph');
+            showInfoAlert('Ingrese el Ph');
             isValid = false;
             return
         }
         if (!formulario.nitratosSuelo) {
-            alert('Ingrese el Nitrato del Suelo');
+            showInfoAlert('Ingrese el Nitrato del Suelo');
             isValid = false;
             return
         }
         if (!formulario.estabilidadAgregados) {
-            alert('Ingrese la Estabilidad Agregados');
+            showInfoAlert('Ingrese la Estabilidad Agregados');
             isValid = false;
             return
         }
         if (!formulario.desleimiento) {
-            alert('Ingrese el Desleimiento');
+            showInfoAlert('Ingrese el Desleimiento');
             isValid = false;
             return
         }
         if (!formulario.lombrices) {
-            alert('Ingrese la Canitdad de lombrices');
+            showInfoAlert('Ingrese la Canitdad de lombrices');
             isValid = false;
             return
         }
@@ -160,24 +234,24 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
     const handleRegister = async () => {
 
         if (!formulario.observaciones && !formulario.calidadAgua) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.observaciones) {
-            alert('Ingrese las Observaciones');
+            showInfoAlert('Ingrese las Observaciones');
             return
         }
         if (!formulario.calidadAgua) {
-            alert('Ingrese la Calidad del Agua');
+            showInfoAlert('Ingrese la Calidad del Agua');
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -204,16 +278,17 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico la calidad del suelo correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListQualityFloorScreen.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modifico la calidad del suelo correctamente!')
+            // Alert.alert('¡Se modifico la calidad del suelo correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListQualityFloorScreen.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -224,45 +299,60 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
         const formData = {
             idMedicionesSuelo: idMedicionesSuelo,
         };
+        try {
+            const responseInsert = await CambiarEstadoMedicionesSuelo(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado del de la calidad del suelo correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del de la calidad del suelo?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado del mediciones de suelo
-                        const responseInsert = await CambiarEstadoMedicionesSuelo(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado del de la calidad del suelo correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListQualityFloorScreen.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del de la calidad del suelo?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado del mediciones de suelo
+        //                 const responseInsert = await CambiarEstadoMedicionesSuelo(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado del de la calidad del suelo correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListQualityFloorScreen.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     useEffect(() => {
         const obtenerDatosIniciales = async () => {
@@ -372,14 +462,14 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Modificar Calidad del Suelo</Text>
+                            <Text style={styles.createAccountText} >Modificar calidad del suelo</Text>
                         </View>
 
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible && !isThirdFormVisible && (
                                 <>
 
-                                    <Text style={styles.formText} >Medicion del Suelo</Text>
+                                    <Text style={styles.formText} >Medicion del suelo</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Calidad del Suelo"
@@ -408,7 +498,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Densidad Aparente (g/cm³)</Text>
+                                    <Text style={styles.formText} >Densidad aparente (g/cm³)</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Densidad Aparente"
@@ -419,7 +509,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Conductividad Electrica (ds/m)</Text>
+                                    <Text style={styles.formText} >Conductividad eléctrica (ds/m)</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Conductividad Electrica"
@@ -465,7 +555,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Nitratos de Suelo (mg/kg)</Text>
+                                    <Text style={styles.formText} >Nitratos de suelo (mg/kg)</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Nitratos de Suelo"
@@ -476,7 +566,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         }}
                                         keyboardType="numeric"
                                     />
-                                    <Text style={styles.formText} >Estabilidad de Agregados (%)</Text>
+                                    <Text style={styles.formText} >Estabilidad de agregados (%)</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Estabilidad de Agregados"
@@ -589,7 +679,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         multiline
                                         numberOfLines={5}
                                     />
-                                    <Text style={styles.formText} >Calidad del Agua (mg/L)</Text>
+                                    <Text style={styles.formText} >Calidad del agua (mg/L)</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Calidad del Agua"
@@ -623,14 +713,14 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
                                         {estado === 'Activo'
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -642,7 +732,7 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.buttonActive}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -662,6 +752,41 @@ export const ModificarCalidadSueloScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListQualityFloorScreen.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del de la calidad del suelo?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

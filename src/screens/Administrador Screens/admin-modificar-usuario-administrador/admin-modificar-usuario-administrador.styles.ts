@@ -126,5 +126,25 @@ export const styles = StyleSheet.create({
     },
     rowContainer: {
         width: '100%',
-    }
+    },
+    backButton: {
+        padding: 8,
+        alignItems: 'center',
+        borderRadius: 12,
+        marginBottom: 10,
+       // width: 150,
+        borderColor: '#a4a4a4',
+        borderWidth: 2,
+        backgroundColor: '#d3d3d3'
+    },
+buttonTextBack: {
+        color: 'black',
+        fontSize: 20,
+        fontFamily: 'CatamaranBold'
+    },
+    iconStyleRight: {
+        width: 20,
+        height: 20,
+        marginLeft: 5,
+    },
 });

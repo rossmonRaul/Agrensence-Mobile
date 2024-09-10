@@ -12,7 +12,8 @@ import { ScreenProps } from '../../../../constants';
 import { useAuth } from '../../../../hooks/useAuth';
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
-
+import { FontAwesome } from '@expo/vector-icons';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 interface ActividadInterface {
     idActividad: number;
     nombre: string;
@@ -25,7 +26,8 @@ type RootStackParamList = {
 
 export const ListaCatalogoActividadesPTScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const route = useRoute<RouteProp<RootStackParamList, 'ListCatalogoActividades'>>();
 
     const [originalApiData, setOriginalApiData] = useState<any[]>([]);
@@ -87,18 +89,19 @@ export const ListaCatalogoActividadesPTScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.RegisterCatalogoActividad.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Catalogo de Actividades de Preparación de Terreno</Text>
+                    <Text style={styles.textAbove} >Catálogo de actividades de preparación de terreno</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                 <TextInput
-                    style={styles.searchInput}
+                    style={[styles.searchInput, {marginLeft:45}]}
                     placeholder="Buscar información"
                     onChangeText={(text) => handleSearch(text)}
                 />
-                <TouchableOpacity style={styles.searchIconContainer}>
+                {/* <TouchableOpacity style={styles.searchIconContainer}>
                     <Ionicons name="search" size={20} color="#333" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
@@ -116,6 +119,16 @@ export const ListaCatalogoActividadesPTScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

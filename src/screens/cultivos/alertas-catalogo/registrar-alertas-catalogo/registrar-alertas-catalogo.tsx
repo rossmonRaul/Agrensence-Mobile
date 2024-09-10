@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ImageBackground } from 'react-native';
+import { View, ScrollView, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, ImageBackground, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -11,10 +11,18 @@ import { InsertarAlertaCatalogo, ObtenerMedicionesSensorYNomenclatura, ObtenerRo
 import BottomNavBar from '../../../../components/BottomNavbar/BottomNavbar';
 import { Ionicons } from '@expo/vector-icons';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 
 export const RegistrarAlertaCatalogoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+   // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const [fincas, setFincas] = useState<{ idFinca: number; nombreFinca?: string }[]>([]);
     const [parcelas, setParcelas] = useState<{ idFinca: number; idParcela: number; nombre: string }[]>([]);
@@ -44,11 +52,72 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
             [key]: value
         }));
     };
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListAlertasCatalogo.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
     const handleRegister = async () => {
+        Keyboard.dismiss()
         //console.log("Datos del formulario:", formulario);
         if (!formulario.nombreAlerta || !formulario.idMedicionSensor || !formulario.condicion || !formulario.parametrodeConsulta) {
-            alert('Por favor complete todos los campos obligatorios');
+            showInfoAlert('Por favor complete todos los campos obligatorios');
             return;
         }
 
@@ -65,16 +134,17 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
         const responseInsert = await InsertarAlertaCatalogo(formData);
 
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Alerta del catálogo creada correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListAlertasCatalogo.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Alerta del catálogo creada correctamente!')
+            // Alert.alert('¡Alerta del catálogo creada correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListAlertasCatalogo.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('¡Oops! Parece que algo salió mal');
+            showErrorAlert('¡Oops! Parece que algo salió mal');
         }
     };
 
@@ -156,7 +226,7 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                 <View style={styles.lowerContainer}>
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                         <View>
-                            <Text style={styles.createAccountText}>Registro de Alerta del Catálogo</Text>
+                            <Text style={styles.createAccountText}>Registro de alerta del catálogo</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -182,7 +252,7 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                                 }}
                             />
 
-                            <Text style={styles.formText}>Nombre de la Alerta</Text>
+                            <Text style={styles.formText}>Nombre de la alerta</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Nombre de la Alerta"
@@ -190,7 +260,7 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                                 onChangeText={(text) => updateFormulario('nombreAlerta', text)}
                             />
 
-                            <Text style={styles.formText}>Medición Sensor</Text>
+                            <Text style={styles.formText}>Medición sensor</Text>
                             <DropdownComponent
                                 placeholder="Seleccione una Medición"
                                 data={mediciones.map(medicion => ({ label: medicion.nombre, value: String(medicion.idMedicion) }))}
@@ -215,7 +285,7 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                                 onChange={(selectedItem) => updateFormulario('condicion', selectedItem.value)}
                             />
 
-                            <Text style={styles.formText}>Parámetro de Consulta</Text>
+                            <Text style={styles.formText}>Parámetro de consulta</Text>
                             <TextInput
                                 style={styles.input}
                                 placeholder="Parámetro de Consulta"
@@ -224,7 +294,7 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                                 keyboardType="numeric"
                             />
 
-                            <Text style={styles.formText}>Usuarios Notificación</Text>
+                            <Text style={styles.formText}>Usuarios notificación</Text>
                             {roles.map(rol => (
                                 <TouchableOpacity
                                     key={rol.idRol}
@@ -250,7 +320,7 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                                 >
                                     <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}> Guardar</Text>
+                                        <Text style={styles.buttonText}> Guardar alerta</Text>
                                     </View>
                                 </TouchableOpacity>
                             </View>
@@ -259,6 +329,24 @@ export const RegistrarAlertaCatalogoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListAlertasCatalogo.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

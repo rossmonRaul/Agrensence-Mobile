@@ -17,10 +17,12 @@ import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
 import { ObtenerEficienciaRiego } from '../../../../servicios/ServicioUsoAgua';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     // Estado para los datos mostrados en la pantalla
     const [apiData, setApiData] = useState<any[]>([]);
@@ -41,7 +43,7 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
         'Fugas': 'estadoTuberiasYAccesorios',
         'Uniformidad del riego': 'uniformidadRiego',
         //  'Obstrucciones en Aspersores': 'estadoAspersores',
-        'Obstrucciones en Canales': 'estadoCanalesRiego',
+        'Obstrucciones en canales': 'estadoCanalesRiego',
 
         'Estado': 'estado'
     };
@@ -117,10 +119,10 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
             const filteredData = rotacionCultivosResponse.map((item) => ({
                 ...item,
                 estado: item.estado === 0 ? 'Inactivo' : 'Activo',
-                estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No Tiene Fugas' : 'Tiene Fugas',
-                uniformidadRiego: item.uniformidadRiego === false ? 'No Tiene Uniformidad' : 'Tiene Uniformidad',
+                estadoTuberiasYAccesorios: item.estadoTuberiasYAccesorios === false ? 'No tiene fugas' : 'Tiene fugas',
+                uniformidadRiego: item.uniformidadRiego === false ? 'No tiene uniformidad' : 'Tiene uniformidad',
                 //estadoAspersores: item.estadoAspersores === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
-                estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No Tiene Obstrucciones' : 'Tiene Obstrucciones',
+                estadoCanalesRiego: item.estadoCanalesRiego === false ? 'No tiene obstrucciones' : 'Tiene obstrucciones',
             }));
             setOriginalApiData(rotacionCultivosResponse);
             setApiData(filteredData);
@@ -216,24 +218,30 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
                 <View style={styles.dropDownContainer}>
                     {/* Dropdown para Fincas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Finca:     </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Finca"
                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
                         value={selectedFinca}
                         iconName="tree"
                         onChange={handleFincaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
 
                     {/* Dropdown para Parcelas */}
+                    <View style={styles.searchContainer}>
+                    <Text style={styles.formText} >Parcela: </Text>
                     <DropdownComponent
                         placeholder="Seleccione una Parcela"
                         data={parcelasFiltradas.map(parcela => ({ label: parcela.nombreParcela, value: String(parcela.idParcela) }))}
                         value={selectedParcela}
                         iconName="pagelines"
                         onChange={handleParcelaChange}
-                        customWidth={375}
+                        customWidth={305}
                     />
+                    </View>
                 </View>
                 {/* <View style={styles.searchContainer}>
                     <TextInput
@@ -258,6 +266,17 @@ export const ListaMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 </ScrollView>
             </View>
             <BottomNavBar />
+            
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };

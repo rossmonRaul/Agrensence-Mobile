@@ -79,5 +79,17 @@ export const styles = StyleSheet.create({
     },
     rowContainer: {
         width: '100%',
-    }
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+        marginRight: 5,
+    },
+    buttonContent: {
+        //marginTop: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        //height: 40,
+    },
 });

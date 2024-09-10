@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { View, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, ScrollView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ModificarRegistroPuntoMedicion, CambiarEstadoRegistroPuntoMedicion } from '../../../servicios/ServicioPuntoMedicion';
@@ -16,6 +16,14 @@ import { RelacionFincaParcela } from '../../../interfaces/userDataInterface';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../servicios/ServicioUsuario';
 import { ObtenerFincas } from '../../../servicios/ServicioFinca';
 import { ObtenerParcelas } from '../../../servicios/ServicioParcela';
+import ConfirmAlert from '../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
+
 interface RouteParams {
     idPuntoMedicion: string
     idFinca: string;
@@ -28,7 +36,8 @@ interface RouteParams {
 }
 export const ModificarPuntoMedicionScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const route = useRoute();
     const [showPicker, setShowPicker] = useState(false);
     const [date, setDate] = useState(new Date())
@@ -60,27 +69,94 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
             [key]: value
         }));
     };
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListMeasurementPoint.screenName);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     //funcion para validar que todo este completo en la primera parte del formulario
     const validateFirstForm = () => {
         let isValid = true;
-
+        Keyboard.dismiss()
         if (!formulario.codigo) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             isValid = false;
             return
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             isValid = false;
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null||formulario.idParcela === '') {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             isValid = false;
             return
         }
         if (!formulario.codigo) {
-            alert('Ingrese un codigo');
+            showInfoAlert('Ingrese un codigo');
             isValid = false;
             return
         }
@@ -90,23 +166,23 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
     }
     // Se define una función para manejar el registro del manejo de fertilizantes
     const handleRegister = async () => {
-
+        Keyboard.dismiss()
         if (!formulario.longitud && !formulario.altitud && !formulario.latitud) {
-            alert('Por favor rellene el formulario');
+            showInfoAlert('Por favor rellene el formulario');
             return
         }
 
         if (!formulario.longitud) {
-            alert('Ingrese la longitud');
+            showInfoAlert('Ingrese la longitud');
             return
         }
         if (!formulario.altitud) {
-            alert('Ingrese una altitud');
+            showInfoAlert('Ingrese una altitud');
             
             return
         }
         if (!formulario.latitud ) {
-            alert('Ingrese una latitud');
+            showInfoAlert('Ingrese una latitud');
             return
         }
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
@@ -126,16 +202,17 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Exito en modificar!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListMeasurementPoint.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Exito en modificar!')
+            // Alert.alert('¡Exito en modificar!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListMeasurementPoint.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     
@@ -219,49 +296,68 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
     };
     //funcion para desactivar o activar el manejo de fertilizantes
     const handleChangeAccess = async () => {
+        Keyboard.dismiss()
+
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idPuntoMedicion: idPuntoMedicion,
         };
 
-        //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del punto de medición?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado del manejo del fertilizante
-                        const responseInsert = await CambiarEstadoRegistroPuntoMedicion(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado del punto de medición correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListMeasurementPoint.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        try {
+            const responseInsert = await CambiarEstadoRegistroPuntoMedicion(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado del punto de medición correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
+
+
+        // //  Se muestra una alerta con opción de aceptar o cancelar
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del punto de medición?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado del manejo del fertilizante
+        //                 const responseInsert = await CambiarEstadoRegistroPuntoMedicion(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado del punto de medición correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListMeasurementPoint.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
     //funcion que se encarga de poder formatear la fecha
     const formatSpanishDate = (date) => {
@@ -322,7 +418,7 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Modificar Punto de Medición</Text>
+                            <Text style={styles.createAccountText} >Modificar punto de medición</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -436,7 +532,7 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
                                     {/* </View> */}
@@ -445,7 +541,7 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
                                         ? <TouchableOpacity
                                             style={styles.buttonDelete}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -457,7 +553,7 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
                                         <TouchableOpacity
                                             style={styles.buttonActive}
                                             onPress={() => {
-                                                handleChangeAccess();
+                                                showConfirmAlert();
                                             }}
                                         >
                                             <View style={styles.buttonContent}>
@@ -474,6 +570,41 @@ export const ModificarPuntoMedicionScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListMeasurementPoint.screenName) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del punto de medición?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import { CheckBox } from 'react-native-elements';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
@@ -22,6 +22,14 @@ import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';;
 import { ActualizarRegistroEficienciaRiego } from '../../../../servicios/ServicioUsoAgua';
 import { CambiarEstadoRegistroEficienciaRiego } from '../../../../servicios/ServicioUsoAgua';
 import { Double } from 'react-native/Libraries/Types/CodegenTypes';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 
 interface RouteParams {
     idMonitoreoEficienciaRiego: string,
@@ -44,7 +52,8 @@ interface RouteParams {
 
 export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+      const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const route = useRoute();
 
@@ -96,7 +105,74 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
     const [dateTiempoCosecha, setDateTiempoCosecha] = useState(new Date())
     const [isSecondFormVisible, setSecondFormVisible] = useState(false);
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
 
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
     const handleCheckBoxChange = (isChecked, setStateFunction, clearFields) => {
         setStateFunction(isChecked); // Actualiza el estado del checkbox
         if (!isChecked) {
@@ -162,16 +238,17 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico el registro de monitoreo eficiencia de riego!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se modifico el registro de monitoreo eficiencia de riego!')
+            // Alert.alert('¡Se modifico el registro de monitoreo eficiencia de riego!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
 
@@ -272,45 +349,60 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
             idMonitoreoEficienciaRiego: idMonitoreoEficienciaRiego,
         };
 
+        try {
+            const responseInsert = await CambiarEstadoRegistroEficienciaRiego(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se actualizó el estado de esta rotación de monitoreo eficiencia riego!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
 
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar cambio de estado',
-            '¿Estás seguro de que deseas cambiar el estado del monitoreo eficiencia riego?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoRegistroEficienciaRiego(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se actualizó el estado de esta rotación de monitoreo eficiencia riego!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListIrrigationEfficiency.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar cambio de estado',
+        //     '¿Estás seguro de que deseas cambiar el estado del monitoreo eficiencia riego?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoRegistroEficienciaRiego(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se actualizó el estado de esta rotación de monitoreo eficiencia riego!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListIrrigationEfficiency.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -387,7 +479,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
-                                    <Text style={styles.formText} >Consumo Agua (L)</Text>
+                                    <Text style={styles.formText} >Consumo agua (L)</Text>
                                     <TextInput
                                         maxLength={50}
                                         style={styles.input}
@@ -413,7 +505,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         keyboardType="numeric"
                                     />
                                         <View style={styles.checkboxContainer}>
-                                          <Text style={styles.formText}>Fugas en el Sistema de Riego</Text>
+                                          <Text style={styles.formText}>Fugas en el sistema de riego</Text>
                                             <CheckBox
                                               checked={estadoTuberiasModificar}
                                                 checkedIcon='check-square-o'
@@ -434,7 +526,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
                                         {estadoTuberiasModificar && (
                                            <>
-                                              <Text style={styles.formText}>Rango de Alerta de fugas en el sistema de riego:</Text>
+                                              <Text style={styles.formText}>Rango de alerta de fugas en el sistema de riego:</Text>
                                                   <DropdownComponent
                                                    placeholder="Seleccione"
                                                     data={[
@@ -458,7 +550,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         )}
 
                                     <View style={styles.checkboxContainer}>
-                                      <Text style={styles.formText}>Uniformidad de Riego</Text>
+                                      <Text style={styles.formText}>Uniformidad de riego</Text>
                                        <CheckBox
                                        checked={uniformidadRiegoModificar}
                                         checkedIcon='check-square-o'
@@ -479,7 +571,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
                                 {uniformidadRiegoModificar && (
                                   <>
-                                  <Text style={styles.formText}>Rango de Alerta de Uniformidad de riego:</Text>
+                                  <Text style={styles.formText}>Rango de alerta de uniformidad de riego:</Text>
                                   <DropdownComponent
                                   placeholder="Seleccione"
                                    data={[
@@ -491,7 +583,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                    iconName=""
                                     onChange={(selectedItem) => updateFormulario('uniformidadalerta', selectedItem.value)}
                                    />
-                                  <Text style={styles.formText}>Detalles de Uniformidad de riego:</Text>
+                                  <Text style={styles.formText}>Detalles de uniformidad de riego:</Text>
                                  <TextInput
                                    style={styles.input}
                                     placeholder="Detalles"
@@ -503,7 +595,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                   )}
 
                                    <View style={styles.checkboxContainer}>
-                                     <Text style={styles.formText}>Obstrucción Canales de Riego</Text>
+                                     <Text style={styles.formText}>Obstrucción canales de riego</Text>
                                          <CheckBox
                                          checked={estadoCanalesRiegoModificar}
                                          checkedIcon='check-square-o'
@@ -524,7 +616,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
 
                                     {estadoCanalesRiegoModificar && (
                                       <>
-                                      <Text style={styles.formText}>Rango de Alerta de Obstrucción en Canales de Riego:</Text>
+                                      <Text style={styles.formText}>Rango de alerta de obstrucción en canales de riego:</Text>
                                       <DropdownComponent
                                        placeholder="Seleccione"
                                          data={[
@@ -536,7 +628,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                            iconName=""
                                               onChange={(selectedItem) => updateFormulario('canalesalerta', selectedItem.value)}
                                             />
-                                            <Text style={styles.formText}>Detalles de Obstrucción en Canales de Riego:</Text>
+                                            <Text style={styles.formText}>Detalles de obstrucción en canales de riego:</Text>
                                             <TextInput
                                              style={styles.input}
                                               placeholder="Detalles"
@@ -567,6 +659,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                 </>
 
                             ) : (<>
+                                <Text style={styles.formText} >Finca</Text>
                                 <DropdownComponent
                                     placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                     data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -580,6 +673,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                         updateFormulario('idFinca', selectedItem.value);
                                     }}
                                 />
+                                <Text style={styles.formText} >Parcela</Text>
                                 <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -620,7 +714,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -632,7 +726,7 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                                     <TouchableOpacity
                                         style={styles.button}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -649,6 +743,44 @@ export const ModificarMonitoreoEficienciaRiegoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListIrrigationEfficiency.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas cambiar el estado del monitoreo eficiencia riego?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
+
         </View>
     );
 }
+

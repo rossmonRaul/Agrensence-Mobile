@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View,Button, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View,Button, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -28,8 +28,14 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import { Buffer } from 'buffer';
 import * as base64js from 'base64-js';
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../../../components/CustomAlert/ConfirmAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
-
+interface ButtonAlert {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idRegistroSeguimientoPlagasYEnfermedades: string;
     idFinca: string;
@@ -47,7 +53,8 @@ interface RouteParams {
 
 export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
 
     const route = useRoute();
 
@@ -92,6 +99,74 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
     const [isThirdFormVisible, setThirdFormVisible] = useState(false);
     const [value, setValue] = useState('');
  
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss();
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
 
       
         
@@ -167,7 +242,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
       };
     const handleModify = async () => {
         if (selectedFiles.length<1) {
-            alert('Se debe insertar minimo una imagen');
+            showInfoAlert('Se debe insertar minimo una imagen');
             return;
         }
         try {
@@ -175,20 +250,20 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
             setThirdFormVisible(false)
 
         if (formulario.metodologiaEstimacion.trim() === '') {
-            alert('El campo Metodología de estimación es requerido.');
+            showInfoAlert('El campo Metodología de estimación es requerido.');
             return;
         }
 
         if (formulario.accionTomada.trim() === '') {
-            alert('El campo Acción tomada es requerido.');
+            showInfoAlert('El campo Acción tomada es requerido.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
 
@@ -245,19 +320,20 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
             }
 
             if (errorEnviandoArchivos) {
-                alert('Error al insertar uno o varios documentos');
+                showErrorAlert('Error al insertar uno o varios documentos');
             } else {
-                Alert.alert('Se Modifico correctamente', '', [
-                    {
-                        text: 'OK',
-                        onPress: () => {
-                            navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
-                        },
-                    },
-                ]);
+                showSuccessAlert('Se Modifico correctamente')
+                // Alert.alert('Se Modifico correctamente', '', [
+                //     {
+                //         text: 'OK',
+                //         onPress: () => {
+                //             navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never);
+                //         },
+                //     },
+                // ]);
             }
         } else {
-            alert(responseInsert.mensaje)
+            showErrorAlert(responseInsert.mensaje)
         }
     } catch (error) {
         console.error('Error:', error);
@@ -384,31 +460,31 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
 
         if (formulario.fecha.trim() === '') {
             isValid = false;
-            alert('La fecha es requerida.');
+            showInfoAlert('La fecha es requerida.');
             return isValid;
         }
 
         if (formulario.cultivo.trim() === '') {
             isValid = false;
-            alert('El campo Cultivo es requerido.');
+            showInfoAlert('El campo Cultivo es requerido.');
             return isValid;
         }
 
         if (formulario.problema.trim() === '') {
             isValid = false;
-            alert('El campo Problema es requerido.');
+            showInfoAlert('El campo Problema es requerido.');
             return isValid;
         }
 
         if (formulario.plagaEnfermedad.trim() === '') {
             isValid = false;
-            alert('El campo Plaga/Enfermedad es requerido.');
+            showInfoAlert('El campo Plaga/Enfermedad es requerido.');
             return isValid;
         }
 
         if (formulario.incidencia.trim() === '') {
             isValid = false;
-            alert('El campo Incidencia es requerido.');
+            showInfoAlert('El campo Incidencia es requerido.');
             return isValid;
         }
 
@@ -422,20 +498,20 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
         let isValid = true;
 
         if (formulario.metodologiaEstimacion.trim() === '') {
-            alert('El campo Metodología de estimación es requerido.');
+            showInfoAlert('El campo Metodología de estimación es requerido.');
             return;
         }
 
         if (formulario.accionTomada.trim() === '') {
-            alert('El campo Acción tomada es requerido.');
+            showInfoAlert('El campo Acción tomada es requerido.');
             return;
         }
         if (!formulario.idFinca || formulario.idFinca === null) {
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
         return isValid
@@ -447,44 +523,59 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
             idRegistroSeguimientoPlagasYEnfermedades: idRegistroSeguimientoPlagasYEnfermedades,
         };
 
+        try {
+            const responseInsert = await CambiarEstadoRegistroSeguimientoPlagasYEnfermedades(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se eliminó el registro de problemas asociados a plagas y enfermedades!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Confirmar eliminación',
-            '¿Estás seguro de que deseas eliminar el registro de salud de la planta?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se ejecuta el servicio para cambiar el estado 
-                        const responseInsert = await CambiarEstadoRegistroSeguimientoPlagasYEnfermedades(formData);
-                        //Se valida si los datos recibidos de la api son correctos
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se eliminó el registro de problemas asociados a plagas y enfermedades!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.ListPestsDiseases.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Confirmar eliminación',
+        //     '¿Estás seguro de que deseas eliminar el registro de salud de la planta?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se ejecuta el servicio para cambiar el estado 
+        //                 const responseInsert = await CambiarEstadoRegistroSeguimientoPlagasYEnfermedades(formData);
+        //                 //Se valida si los datos recibidos de la api son correctos
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se eliminó el registro de problemas asociados a plagas y enfermedades!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.ListPestsDiseases.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
 
@@ -594,7 +685,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
 
             // Validar que no se exceda el límite de 5 archivos
             if (selectedFiles.length + acceptedFiles.length > 3) {
-                alert('No se puede ingresar más de 3 archivos');
+                showErrorAlert('No se puede ingresar más de 3 archivos');
                 return;
             }
 
@@ -602,7 +693,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
             const validFiles = acceptedFiles.filter(file => {
                 // Verificar tamaño (mayor de 5 MB)
                 if (file.size > 5 * 1024 * 1024) { // 5 MB en bytes
-                    alert(`El archivo es mayor de 5 MB`);
+                    showErrorAlert(`El archivo es mayor de 5 MB`);
                     return false;
                 }
                 return true;
@@ -771,7 +862,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('problema', text)}
                                         maxLength={100}
                                     />
-                                    <Text style={styles.formText} >Plaga o Enfermedad</Text>
+                                    <Text style={styles.formText} >Plaga o enfermedad</Text>
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Plaga o enfermedad"
@@ -780,7 +871,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         maxLength={50}
 
                                     />
-                                   <Text style={styles.formText} >Valoracion</Text>
+                                   <Text style={styles.formText} >Valoración</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -848,6 +939,9 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                     maxLength={200}
                                 />
                                 {empresa &&
+                                (
+                                    <>
+                                    <Text style={styles.formText} >Finca</Text>
                                     <DropdownComponent
                                         placeholder={selectedFinca ? selectedFinca : "Seleccionar Finca"}
                                         data={fincas.map(finca => ({ label: finca.nombreFinca, value: String(finca.idFinca) }))}
@@ -861,7 +955,10 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                             updateFormulario('idFinca', selectedItem.value);
                                         }}
                                     />
+                                    </>
+                                )
                                 }
+                                <Text style={styles.formText} >Parcela</Text>
                                 <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -917,7 +1014,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                             style={[styles.button, { backgroundColor: 'lightgray', marginTop: 10 }]}
                             onPress={handleDocumentSelection}
                             >
-                           <Text style={styles.buttonTextBack}>Seleccionar Archivos</Text>
+                           <Text style={styles.buttonTextBack}>Seleccionar archivos</Text>
                            </TouchableOpacity>
                           {/* Mostrar archivos seleccionados */}
                            <View style={styles.fileList}>
@@ -955,7 +1052,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                         >
                                             <View style={styles.buttonContent}>
                                                 <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                                <Text style={styles.buttonText}> Guardar</Text>
+                                                <Text style={styles.buttonText}> Guardar cambios</Text>
                                             </View>
                                         </TouchableOpacity>
 
@@ -964,7 +1061,7 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                                     <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -981,6 +1078,43 @@ export const ModificarProblemasAsociadosPlagasScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.ListPestsDiseases.screenName as never) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar el registro de salud de la planta?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }
+
+//ScreenProps.ListPestsDiseases.screenName as never

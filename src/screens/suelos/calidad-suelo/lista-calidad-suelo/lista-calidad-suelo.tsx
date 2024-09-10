@@ -14,12 +14,14 @@ import { AddButtonComponent } from '../../../../components/AddButton/AddButton';
 import { FloorDataInterface } from '../../../../interfaces/calidadsueloInterfaces';
 import { ObtenerMedicionesSuelo } from '../../../../servicios/ServicioCalidadSuelo';
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
-
+import { FontAwesome } from '@expo/vector-icons';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 
 export const ListaCalidadSueloScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
     const [parcelas, setParcelas] = useState<{ idParcela: number }[] | []>([]);
     const [apiData, setApiData] = useState<FloorDataInterface[]>([]);
     const [calidadSueloFiltradosData, setCalidadSueloFiltradosData] = useState<any[]>([]);
@@ -120,18 +122,19 @@ export const ListaCalidadSueloScreen: React.FC = () => {
                 <AddButtonComponent screenName={ScreenProps.RegisterQualityFloorScreen.screenName} color={'#274c48'} />
 
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista de Calidad de Suelo</Text>
+                    <Text style={styles.textAbove} >Lista de calidad de suelo</Text>
                 </View>
 
                 <View style={styles.searchContainer}>
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                     <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />
-                    <TouchableOpacity style={styles.searchIconContainer}>
+                    {/* <TouchableOpacity style={styles.searchIconContainer}>
                         <Ionicons name="search" size={20} color="#333" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
                     {calidadSuelo.map((item, index) => {
@@ -152,7 +155,16 @@ export const ListaCalidadSueloScreen: React.FC = () => {
             </View>
 
             <BottomNavBar />
-
+            {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

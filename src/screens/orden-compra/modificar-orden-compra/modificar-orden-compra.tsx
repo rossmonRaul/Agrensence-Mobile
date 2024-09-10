@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../styles/global-styles.styles';
 import DropdownComponent from '../../../components/Dropdown/Dropwdown';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -22,6 +22,14 @@ import { FincaInterface } from '../../../interfaces/empresaInterfaces';
 import { ParcelaInterface } from '../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../hooks/useFetchDropDownData';
 import ListaComponenteOrdenCompra from '../../../components/ListaComponenteOrdenCompra/ListaComponenteOrdenCompra';
+import ConfirmAlert from '../../../components/CustomAlert/ConfirmAlert';
+import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
+
+interface Button {
+    text: string;
+    onPress: () => void;
+  }
 interface RouteParams {
     idOrdenDeCompra: string,
     idFinca: string,
@@ -46,7 +54,9 @@ interface Item {
 
 export const ModificarOrdenCompraScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    //const { userData } = useAuth();
+
 
     const route = useRoute();
 
@@ -100,6 +110,74 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         total: total || '',
     });
 
+
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as Button[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.AdminAdminstration.screenName);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
+      const showConfirmAlert = async () => {
+        setAlertVisibleEstado(true);
+      };
+
     const [title, setTitle] = useState('Orden de compra');
 
     const toggleTitle = () => {
@@ -120,7 +198,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
     // Se defina una función para manejar el modificar cuando le da al boton de guardar
     const handleModify = async () => {
         if (DatosDelHijo.length === 0) {
-            alert('Por favor ingrese un producto a la lista.');
+            showInfoAlert('Por favor ingrese un producto a la lista.');
             return;
         }
         const fechaOrden = parseDate(formulario.fechaOrden);
@@ -143,23 +221,28 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
             detalles:DatosDelHijo
 
         };
+
+
         //  Se ejecuta el servicio de insertar  de  la orden de compra
         const responseInsert = await ModificarOrdenDeCompra(formData);
 
+        
+
         //  Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert.indicador === 1) {
-            Alert.alert('¡Se modifico la orden de compra correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        //navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);
-                        navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
+            showSuccessAlert('¡Se modifico la orden de compra correctamente!')
+            // Alert.alert('¡Se modifico la orden de compra correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             //navigation.navigate(ScreenProps.AdminAdminstration.screenName as never);
+            //             navigation.navigate(ScreenProps.ListPurchaseOrder.screenName as never);
                         
-                    },
-                },
-            ]);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('!Oops! Parece que algo salió mal')
+            showErrorAlert('!Oops! Parece que algo salió mal')
         }
     };
     useEffect(() => {
@@ -310,26 +393,27 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         }
     };
     const validateFirstForm = () => {
+        Keyboard.dismiss()
         let isValid = true;
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return
         }
         if (formulario.numeroOrden.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el número de orden.');
+            showInfoAlert('Por favor ingrese el número de orden.');
             return;
         }
         if (formulario.proveedor.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese el proveedor.');
+            showInfoAlert('Por favor ingrese el proveedor.');
             return;
         }
 
@@ -345,25 +429,25 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
         // Comparar fechas
         if (isNaN(DateOrden.getTime())) {
             isValid = false;
-            alert('La fecha de orden no es válida.');
+            showInfoAlert('La fecha de orden no es válida.');
             return isValid;
         }
 
         if (isNaN(DateEntrega.getTime())) {
             isValid = false;
-            alert('La fecha de entrega no es válida.');
+            showInfoAlert('La fecha de entrega no es válida.');
             return isValid;
         }
 
         if (DateEntrega < DateOrden) {
             isValid = false;
-            alert('El de entrega no puede ser anterior a la fecha de orden.');
+            showInfoAlert('El de entrega no puede ser anterior a la fecha de orden.');
             return isValid;
         }
 
         if (formulario.observaciones.trim() === '') {
             isValid = false;
-            alert('Por favor ingrese observaciones o n/a.');
+            showInfoAlert('Por favor ingrese observaciones o n/a.');
             return;
         }
         return isValid;
@@ -371,50 +455,67 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
     }
 
     const handleChangeAccess = async () => {
+        Keyboard.dismiss()
         //  Se crea un objeto con los datos del formulario para mandarlo por la API con formato JSON
         const formData = {
             idOrdenDeCompra: idOrdenDeCompra,
         };
 
 
+        try {
+            const responseInsert = await CambiarEstadoOrdenDeCompra(formData);
+            if (responseInsert.indicador === 1) {
+              // Mostrar éxito o realizar otra acción
+              showSuccessAlert('¡Se elimino esta orden de compra correctamente!');
+              //navigation.navigate(ScreenProps.CompanyList.screenName as never);
+            } else {
+                showErrorAlert('¡Oops! Parece que algo salió mal');
+            }
+          } catch (error) {
+                showErrorAlert('¡Oops! Algo salió mal.');
+          } finally {
+            // setLoading(false);
+            setAlertVisibleEstado(false);
+          }
+
         //  Se muestra una alerta con opción de aceptar o cancelar
-        Alert.alert(
-            'Eliminar este registro',
-            '¿Estás seguro de que deseas eliminar esta orden de compra?',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Aceptar',
-                    onPress: async () => {
-                        //  Se inserta el identificacion en la base de datos
-                        const responseInsert = await CambiarEstadoOrdenDeCompra(formData);
-                        // Se ejecuta el cambio de estado
-                        if (responseInsert.indicador === 1) {
-                            Alert.alert(
-                                '¡Se elimino esta orden de compra correctamente!',
-                                '',
-                                [
-                                    {
-                                        text: 'OK',
-                                        onPress: () => {
-                                            navigation.navigate(
-                                                ScreenProps.AdminAdminstration.screenName
-                                            );
-                                        },
-                                    },
-                                ]
-                            );
-                        } else {
-                            alert('¡Oops! Parece que algo salió mal');
-                        }
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+        // Alert.alert(
+        //     'Eliminar este registro',
+        //     '¿Estás seguro de que deseas eliminar esta orden de compra?',
+        //     [
+        //         {
+        //             text: 'Cancelar',
+        //             style: 'cancel',
+        //         },
+        //         {
+        //             text: 'Aceptar',
+        //             onPress: async () => {
+        //                 //  Se inserta el identificacion en la base de datos
+        //                 const responseInsert = await CambiarEstadoOrdenDeCompra(formData);
+        //                 // Se ejecuta el cambio de estado
+        //                 if (responseInsert.indicador === 1) {
+        //                     Alert.alert(
+        //                         '¡Se elimino esta orden de compra correctamente!',
+        //                         '',
+        //                         [
+        //                             {
+        //                                 text: 'OK',
+        //                                 onPress: () => {
+        //                                     navigation.navigate(
+        //                                         ScreenProps.AdminAdminstration.screenName
+        //                                     );
+        //                                 },
+        //                             },
+        //                         ]
+        //                     );
+        //                 } else {
+        //                     alert('¡Oops! Parece que algo salió mal');
+        //                 }
+        //             },
+        //         },
+        //     ],
+        //     { cancelable: false }
+        // );
     };
 
     const handleValueEmpresa = (idEmpresa: number) => {
@@ -490,6 +591,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                         <View style={styles.formContainer}>
                             {!isSecondFormVisible ? (
                                 <>
+                                <Text style={styles.formText} >Finca</Text>
                                                                 {empresa &&
                                     <DropdownComponent
                                         placeholder="Seleccionar Finca"
@@ -505,6 +607,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                                         }}
                                     />
                                 }
+                                <Text style={styles.formText} >Parcela</Text>
                                 <DropdownComponent
                                     placeholder={selectedParcela ? selectedParcela : "Seleccionar Parcela"}
                                     data={parcelasFiltradas.map(parcela => ({ label: parcela.nombre, value: String(parcela.idParcela) }))}
@@ -733,7 +836,7 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                                     ? <TouchableOpacity
                                         style={styles.buttonDelete}
                                         onPress={() => {
-                                            handleChangeAccess();
+                                            showConfirmAlert();
                                         }}
                                     >
                                         <View style={styles.buttonContent}>
@@ -753,6 +856,41 @@ export const ModificarOrdenCompraScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.AdminAdminstration.screenName) : undefined}
+                />
+                <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Confirmar cambio de estado"
+                message="¿Estás seguro de que deseas eliminar esta orden de compra?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleChangeAccess,
+                 },
+                ]}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 }

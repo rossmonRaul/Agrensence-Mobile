@@ -6,11 +6,13 @@ import useLogin from '../../hooks/useLogin';
 import { ScreenProps } from '../../constants';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons'
+import CustomAlert from '../../components/CustomAlert/CustomAlert';
 
 export const IncioSesionScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const { username, setUsername, password, setPassword, isLoggedIn, handleLogin } = useLogin();
+  const { username, setUsername, password, setPassword, isLoggedIn, handleLogin, isAlertVisible,alertProps, hideAlert } = useLogin();
 
 
 
@@ -59,7 +61,10 @@ export const IncioSesionScreen: React.FC = () => {
                   style={styles.button}
                   onPress={handleLogin}
                 >
-                  <Text style={styles.buttonText}>Iniciar Sesion</Text>
+                  <View style={styles.buttonContent}>
+                  <MaterialIcons name="login" size={20} color="white" style={styles.iconStyle} />
+                  <Text style={styles.buttonText}>Iniciar sesión</Text>
+                  </View>             
                 </TouchableOpacity>
               </View>
 
@@ -67,6 +72,14 @@ export const IncioSesionScreen: React.FC = () => {
             </View>
           </ScrollView>
 
+          <CustomAlert
+        isVisible={isAlertVisible}
+        onClose={hideAlert}
+        message={alertProps.message}
+        iconType={alertProps.iconType}
+        buttons={alertProps.buttons}
+        navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate('Menu' as never) : undefined}
+      />
         </View>
       </KeyboardAvoidingView>
     </View>

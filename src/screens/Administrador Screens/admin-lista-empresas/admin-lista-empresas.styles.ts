@@ -30,7 +30,10 @@ export const styles = StyleSheet.create({
         fontSize: 24,
         color: '#548256',
         alignSelf: 'flex-start',
-        marginLeft: 5
+        marginLeft: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
     },
     titleContainer: {
         alignItems: 'flex-start',
@@ -45,8 +48,13 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
+    
+  formText: {
+    fontSize: 20,
+    fontFamily: 'CatamaranBold'
+  },
     searchInput: {
-        width: '90%',
+        width: '105%',
         height: 40,
         borderWidth: 1.2,
         fontFamily: 'CatamaranSemiBold',

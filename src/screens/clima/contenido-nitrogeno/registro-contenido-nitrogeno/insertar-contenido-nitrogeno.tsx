@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, ScrollView, Pressable, ImageBackground, TextInput, TouchableOpacity, Text, Alert, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { styles } from '../../../../styles/global-styles.styles';
 import DropdownComponent from '../../../../components/Dropdown/Dropwdown';
 import { useNavigation } from '@react-navigation/native';
@@ -21,10 +21,16 @@ import { ParcelaInterface } from '../../../../interfaces/empresaInterfaces';
 import { useFetchDropdownData } from '../../../../hooks/useFetchDropDownData';
 import { InsertarRegistroContenidoNitrogeno, ObtenerPuntoMedicionFincaParcela } from '../../../../servicios/ServiciosContenidoNitrogeno';
 import { formatSpanishDate, formatFecha } from '../../../../utils/dateFortmatter';
-
+import CustomAlert from '../../../../components/CustomAlert/CustomAlert';
+import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 export const InsertarContenidoNitrogenoScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-    const { userData } = useAuth();
+    // const { userData } = useAuth();
+   const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
 
     const [empresa, setEmpresa] = useState(userData.idEmpresa);
     const [finca, setFinca] = useState(null);
@@ -69,29 +75,93 @@ export const InsertarContenidoNitrogenoScreen: React.FC = () => {
         }));
     };
 
+    const [isAlertVisible, setAlertVisible] = useState(false);
+    const [alertProps, setAlertProps] = useState({
+        message: '',
+        buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+        iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+    });
+
+
+
+ const showSuccessAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'success',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+                navigation.navigate(ScreenProps.NitrogenContentList.screenName as never);
+              },
+            },
+          ],
+        });
+        setAlertVisible(true);
+      };
+    
+      const showErrorAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'error',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+               
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+      const showInfoAlert = (message: string) => {
+        setAlertProps({
+          message: message,
+          iconType: 'info',
+          buttons: [
+            {
+              text: 'Cerrar',
+              onPress: () => {
+             
+              },
+            },
+          ],
+        });
+	Keyboard.dismiss()
+        setAlertVisible(true);
+      };
+
+    
+      const hideAlert = () => {
+        setAlertVisible(false);
+      };
+
     const validateFirstForm = () => {
         let isValid = true;
 
         if (!formulario.idFinca || formulario.idFinca === null) {
             isValid = false;
-            alert('Ingrese la Finca');
+            showInfoAlert('Ingrese la Finca');
             return;
         }
         if (!formulario.idParcela || formulario.idParcela === null) {
             isValid = false;
-            alert('Ingrese la Parcela');
+            showInfoAlert('Ingrese la Parcela');
             return;
         }
 
         if (!formulario.idPuntoMedicion || formulario.idPuntoMedicion === null) {
             isValid = false;
-            alert('Ingrese el punto de Medición');
+            showInfoAlert('Ingrese el punto de Medición');
             return;
         }
         
         if (formulario.fechaMuestreo.trim() === '') {
             isValid = false;
-            alert('La fecha de muestreo es requerida.');
+            showInfoAlert('La fecha de muestreo es requerida.');
             return isValid;
         }
 
@@ -101,32 +171,32 @@ export const InsertarContenidoNitrogenoScreen: React.FC = () => {
     // Se define una función para manejar el registro cuando le da al botón de guardar
     const handleRegister = async () => {
         if (formulario.contenidoNitrogenoSuelo.trim() === '') {
-            alert('El campo de contenido de nitrógeno en el suelo es requerido.');
+            showInfoAlert('El campo de contenido de nitrógeno en el suelo es requerido.');
             return;
         }
         
         if (formulario.contenidoNitrogenoPlanta.trim() === '') {
-            alert('El campo de contenido de nitrógeno en la planta es requerido.');
+            showInfoAlert('El campo de contenido de nitrógeno en la planta es requerido.');
             return;
         }
 
         if (formulario.metodoAnalisis.trim() === '') {
-            alert('El campo método de análisis es requerido.');
+            showInfoAlert('El campo método de análisis es requerido.');
             return;
         }
 
         if (formulario.humedadObservable.trim() === '') {
-            alert('El campo de humedad observable es requerido.');
+            showInfoAlert('El campo de humedad observable es requerido.');
             return;
         }
 
         if (formulario.condicionSuelo.trim() === '') {
-            alert('El campo condición del suelo es requerido.');
+            showInfoAlert('El campo condición del suelo es requerido.');
             return;
         }
 
         if (formulario.observaciones.trim() === '') {
-            alert('El campo observaciones es requerido.');
+            showInfoAlert('El campo observaciones es requerido.');
             return;
         }
 
@@ -150,16 +220,17 @@ export const InsertarContenidoNitrogenoScreen: React.FC = () => {
 
         // Se muestra una alerta de éxito o error según la respuesta obtenida
         if (responseInsert && responseInsert.indicador === 1) {
-            Alert.alert('¡Se registró el contenido de nitrógeno correctamente!', '', [
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        navigation.navigate(ScreenProps.NitrogenContentList.screenName as never);
-                    },
-                },
-            ]);
+            showSuccessAlert('¡Se registró el contenido de nitrógeno correctamente!')
+            // Alert.alert('¡Se registró el contenido de nitrógeno correctamente!', '', [
+            //     {
+            //         text: 'OK',
+            //         onPress: () => {
+            //             navigation.navigate(ScreenProps.NitrogenContentList.screenName as never);
+            //         },
+            //     },
+            // ]);
         } else {
-            alert('¡Oops! Parece que algo salió mal');
+            showErrorAlert('¡Oops! Parece que algo salió mal');
         }
     };
 
@@ -493,7 +564,7 @@ export const InsertarContenidoNitrogenoScreen: React.FC = () => {
                                     }}>
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar cambios</Text>
+                                            <Text style={styles.buttonText}>Guardar Contenido Nitrógeno</Text>
                                         </View>
                                     </TouchableOpacity>
                                 </>
@@ -503,6 +574,24 @@ export const InsertarContenidoNitrogenoScreen: React.FC = () => {
                 </View>
             </KeyboardAvoidingView>
             <BottomNavBar />
+            <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.NitrogenContentList.screenName as never) : undefined}
+                />
+                {isAlertVisibleAuth  && (
+                <CustomAlertAuth
+                isVisible={isAlertVisibleAuth }
+                onClose={hideAlertAuth }
+                message={alertPropsAuth .message}
+                iconType={alertPropsAuth .iconType}
+                buttons={alertPropsAuth .buttons}
+                navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
+                />
+                )}
         </View>
     );
 };
