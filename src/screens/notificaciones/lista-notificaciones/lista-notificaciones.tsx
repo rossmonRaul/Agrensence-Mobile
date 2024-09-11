@@ -73,7 +73,6 @@ export const NotificacionesScreen: React.FC = () => {
                     
                     fincasFiltradas.some(finca => finca.idFinca === parcela.idFinca)
                 );
-
                 const notificacionesConDetalles = notificacionesData
                     .filter(notificacion => 
                         fincasFiltradas.some(finca => finca.idFinca === notificacion.idFinca) &&
@@ -90,7 +89,7 @@ export const NotificacionesScreen: React.FC = () => {
                             nombreParcela: parcela?.nombre || 'N/A',
                         };
                     });
-
+                console.log(notificacionesConDetalles)
                 setNotificaciones(notificacionesConDetalles);
                 setFincas(fincasFiltradas);
                 setParcelas(parcelasFiltradas);
