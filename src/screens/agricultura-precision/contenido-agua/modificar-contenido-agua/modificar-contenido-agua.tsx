@@ -525,7 +525,7 @@ const showSuccessAlert = (message: string) => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Modificar Contenido de Agua</Text>
+                            <Text style={styles.createAccountText} >Modificar contenido de agua</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -572,7 +572,7 @@ const showSuccessAlert = (message: string) => {
                                         onChange={(item) => (setPuntoMedicion(item.value as never), (updateFormulario('idPuntoMedicion', item.value)))}
                                     />
 
-                                    <Text style={styles.formText} >Fecha Muestreo:</Text>
+                                    <Text style={styles.formText} >Fecha muestreo:</Text>
                                     {!showFecha && (
                                        <Pressable
                                        onPress={() => toggleDatePicker('fechaMuestreo')}
@@ -661,7 +661,7 @@ const showSuccessAlert = (message: string) => {
                                 </>
 
                             ) : (<>
-                                  <Text style={styles.formText} >Contenido de Agua en el Suelo:</Text>
+                                  <Text style={styles.formText} >Contenido de agua en el suelo:</Text>
                                     <TextInput
                                          maxLength={100}
                                          keyboardType='numeric'
@@ -681,7 +681,7 @@ const showSuccessAlert = (message: string) => {
                                             updateFormulario('contenidoDeAguaEnSuelo', numericText);
                                         }}
                                     />
-                                  <Text style={styles.formText} >Contenido de Agua en la Planta:</Text>
+                                  <Text style={styles.formText} >Contenido de agua en la planta:</Text>
                                   <TextInput
                                     maxLength={100}
                                     keyboardType='numeric'
@@ -703,7 +703,7 @@ const showSuccessAlert = (message: string) => {
 
                                 />
 
-                                <Text style={styles.formText} >Metodo de Medicion:</Text>
+                                <Text style={styles.formText} >Método de medición:</Text>
                                 <TextInput
                                     style={styles.input}
                                     placeholder="Metodo de Medicion"
@@ -714,7 +714,7 @@ const showSuccessAlert = (message: string) => {
 
 
 
-                                 <Text style={styles.formText} >Condicion del Suelo:</Text>
+                                 <Text style={styles.formText} >Condición del suelo:</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione"
                                         data={[

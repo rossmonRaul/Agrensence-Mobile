@@ -140,7 +140,9 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
       <Text style={styles.poweredBy}>
         Powered by: {' '}
         <Text style={styles.link}>WeatherAPI.com</Text>
+        
       </Text>
+      
       {isAlertVisibleAuth  && (
                 <CustomAlertAuth
                 isVisible={isAlertVisibleAuth }
@@ -151,7 +153,9 @@ export const ListaPronosticoMeteorologico: React.FC = () => {
                 navigateTo={alertPropsAuth .iconType === 'success' ? () => {} : undefined}
                 />
                 )}
+                <BottomNavBar />
     </View>
+    
   );
 }
 

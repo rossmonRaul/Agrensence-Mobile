@@ -764,7 +764,7 @@ const showSuccessAlert = (message: string) => {
                 isVisible={isAlertVisibleEstado}
                 onClose={() => setAlertVisibleEstado(false)}
                 title="Confirmar cambio de estado"
-                message="¿Estás seguro de que deseas cambiar el estado del de la calidad del suelo?"
+                message="¿Estás seguro de que deseas cambiar el estado del registro de la calidad del suelo?"
                 buttons={[
                 {
                     text: 'Cancelar',

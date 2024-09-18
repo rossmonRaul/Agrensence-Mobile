@@ -252,7 +252,7 @@ export const ListaCoberturaVegetalScreen: React.FC = () => {
                 <BackButtonComponent screenName={ScreenProps.MenuPrecisionAgriculture.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertVegetationcover.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista Cobertura Vegetal</Text>
+                    <Text style={styles.textAbove} >Lista cobertura vegetal</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>

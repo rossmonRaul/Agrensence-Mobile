@@ -16,6 +16,7 @@ import { ObtenerRiesgosNaturales } from '../../../../servicios/ServicioRiesgoNat
 import { RelacionFincaParcela } from '../../../../interfaces/userDataInterface';
 import CustomAlertAuth from '../../../../components/CustomAlert/CustomAlert';
 import { ObtenerUsuariosAsignadosPorIdentificacion } from '../../../../servicios/ServicioUsuario';
+import { FontAwesome } from '@expo/vector-icons';
 
 export const ListaRiesgoNaturalScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -126,9 +127,9 @@ export const ListaRiesgoNaturalScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.searchContainer}>
-            
+                <FontAwesome name="search" size={20} color="#888" style={{   position: 'absolute', right: 20,top:10, zIndex: 1,}} />
                        <TextInput
-                        style={styles.searchInput}
+                        style={[styles.searchInput, {marginLeft:45}]}
                         placeholder="Buscar información"
                         onChangeText={(text) => handleSearch(text)}
                     />

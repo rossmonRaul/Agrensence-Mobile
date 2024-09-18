@@ -346,7 +346,7 @@ export const ReporteOrdenDeCompra:   React.FC = () => {
         <View style={styles.listcontainer}>
             <BackButtonComponent screenName={ScreenProps.AdminReports.screenName} color={'#274c48'} />
             <View style={styles.textAboveContainer}>
-                <Text style={styles.textAbove} >Reporte Orden De Compra</Text>
+                <Text style={styles.textAbove} >Reporte orden de compra</Text>
             </View>
 
             <View style={styles.dropDownContainer}>

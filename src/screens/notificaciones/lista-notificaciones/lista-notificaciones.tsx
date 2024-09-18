@@ -134,7 +134,7 @@ export const NotificacionesScreen: React.FC = () => {
                                 style={styles.closeButton}
                                 onPress={() => eliminarNotificacion(item.idNotificacion)}
                             >
-                                <Ionicons name="close-circle" size={24} color="red" />
+                                <Ionicons  name="close-circle" size={30} color="red" />
                             </TouchableOpacity>
                             <Text style={styles.notificationText}>
                                 En la parcela <Text style={styles.highlight}>{item.nombreParcela}</Text> de la finca <Text style={styles.highlight}>{item.nombreFinca}</Text> ubicada en <Text style={styles.highlight}>{item.ubicacionFinca}</Text> hubo una alerta:

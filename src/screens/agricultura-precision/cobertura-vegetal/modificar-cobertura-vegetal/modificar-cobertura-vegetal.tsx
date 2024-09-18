@@ -587,7 +587,7 @@ const showSuccessAlert = (message: string) => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                    <Text style={styles.formText} >Altura Maleza</Text>
+                                    <Text style={styles.formText} >Altura maleza</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -604,7 +604,7 @@ const showSuccessAlert = (message: string) => {
                                             updateFormulario('alturaMaleza', selectedItem.value);
                                         }}
                                     />
-                                <Text style={styles.formText} >Densidad Maleza</Text>
+                                <Text style={styles.formText} >Densidad maleza</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -622,7 +622,7 @@ const showSuccessAlert = (message: string) => {
                                         }}
                                     />
 
-                                <Text style={styles.formText} >Humedad Observable</Text>
+                                <Text style={styles.formText} >Humedad observable</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -659,7 +659,7 @@ const showSuccessAlert = (message: string) => {
                                 >
                                     <View style={styles.buttonContent}>
                                         <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                        <Text style={styles.buttonText}>Guardar Cambios</Text>
+                                        <Text style={styles.buttonText}>Guardar cambios</Text>
                                     </View>
                                 </TouchableOpacity>
                                 {estado === 'Activo'

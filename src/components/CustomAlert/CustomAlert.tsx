@@ -30,7 +30,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
       case 'success':
         return <Icon name="check-circle" size={50} color="green" />;
       case 'error':
-        return <Icon name="error" size={50} color="red" />;
+        return <Icon name="cancel" size={50} color="red" />;
       case 'warning':
         return <Icon name="warning" size={50} color="orange" />;
       case 'info':

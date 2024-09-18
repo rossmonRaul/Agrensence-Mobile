@@ -376,7 +376,7 @@ export const InsertarCoberturaVegetalScreen: React.FC = () => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Insertar Cobertura Vegetal</Text>
+                            <Text style={styles.createAccountText} >Insertar cobertura vegetal</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -441,7 +441,7 @@ export const InsertarCoberturaVegetalScreen: React.FC = () => {
                                         onChangeText={(text) => updateFormulario('cultivo', text)}
                                         maxLength={50}
                                     />
-                                <Text style={styles.formText} >Altura Maleza</Text>
+                                <Text style={styles.formText} >Altura maleza</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -459,7 +459,7 @@ export const InsertarCoberturaVegetalScreen: React.FC = () => {
                                         }}
                                     />
 
-                                <Text style={styles.formText} >Densidad Maleza</Text>
+                                <Text style={styles.formText} >Densidad maleza</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -477,7 +477,7 @@ export const InsertarCoberturaVegetalScreen: React.FC = () => {
                                         }}
                                     />
 
-                                <Text style={styles.formText} >Humedad Observable</Text>
+                                <Text style={styles.formText} >Humedad observable</Text>
                                 <DropdownComponent
                                         placeholder="Seleccione..."
                                         data={[
@@ -515,7 +515,7 @@ export const InsertarCoberturaVegetalScreen: React.FC = () => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar Cobertura Vegetal</Text>
+                                            <Text style={styles.buttonText}>Guardar cobertura vegetal</Text>
                                         </View>
                                     </TouchableOpacity>
                             </>

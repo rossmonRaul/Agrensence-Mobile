@@ -149,7 +149,7 @@ export const styles = StyleSheet.create({
 
     notificationContainer: {
         backgroundColor: '#fff',
-        padding: 10,
+        padding: 20,
         borderRadius: 8,
         marginBottom: 10,
         shadowColor: '#000',

@@ -99,9 +99,13 @@ export const AdminModificarUsuarioAdmnistradorScreen: React.FC = () => {
             {
               text: 'Cerrar',
               onPress: () => {
+                if(userData.idRol === 2){
+                    navigation.navigate(ScreenProps.Menu.screenName)
+                }else{
                 navigation.navigate(ScreenProps.AdminUserList.screenName, {
                     datoValidacion: 1,
                 });
+                }
               },
             },
           ],

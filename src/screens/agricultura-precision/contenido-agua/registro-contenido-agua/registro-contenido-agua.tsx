@@ -451,7 +451,7 @@ useEffect(() => {
                     <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
 
                         <View>
-                            <Text style={styles.createAccountText} >Insertar Contenido de Agua</Text>
+                            <Text style={styles.createAccountText} >Insertar contenido de agua</Text>
                         </View>
 
                         <View style={styles.formContainer}>
@@ -578,7 +578,7 @@ useEffect(() => {
 
                             ) : (<>
 
-                                <Text style={styles.formText} >Contenido de Agua en el Suelo:</Text>
+                                <Text style={styles.formText} >Contenido de agua en el suelo:</Text>
                                 <TextInput
                                         style={styles.input}
                                          keyboardType='numeric'
@@ -597,7 +597,7 @@ useEffect(() => {
                                             updateFormulario('contenidoDeAguaEnSuelo', numericText);
                                         }}
                                     />
-                               <Text style={styles.formText} >Contenido de Agua en la Planta:</Text>
+                               <Text style={styles.formText} >Contenido de agua en la planta:</Text>
                                   <TextInput
                                     maxLength={100}
                                     keyboardType='numeric'
@@ -620,7 +620,7 @@ useEffect(() => {
                                 />
                                 
 
-                                <Text style={styles.formText} >Metodo de Medicion:</Text>
+                                <Text style={styles.formText} >Método de medición:</Text>
                                 <TextInput
                                     style={styles.input}
                                     placeholder="Metodo de Medicion"
@@ -630,7 +630,7 @@ useEffect(() => {
                                 />
 
 
-                                 <Text style={styles.formText} >Condicion del Suelo:</Text>
+                                 <Text style={styles.formText} >Condición del suelo:</Text>
                                     <DropdownComponent
                                         placeholder="Seleccione"
                                         data={[
@@ -669,7 +669,7 @@ useEffect(() => {
                                     >
                                         <View style={styles.buttonContent}>
                                             <Ionicons name="save-outline" size={20} color="white" style={styles.iconStyle} />
-                                            <Text style={styles.buttonText}>Guardar Contenido de Agua</Text>
+                                            <Text style={styles.buttonText}>Guardar contenido de agua</Text>
                                         </View>
                                     </TouchableOpacity>
                             </>

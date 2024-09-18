@@ -315,7 +315,7 @@ export const ListaContenidoAguaScreen: React.FC = () => {
                 <BackButtonComponent screenName={ScreenProps.MenuPrecisionAgriculture.screenName} color={'#274c48'} />
                 <AddButtonComponent screenName={ScreenProps.InsertWaterContent.screenName} color={'#274c48'} />
                 <View style={styles.textAboveContainer}>
-                    <Text style={styles.textAbove} >Lista Contenido de Agua</Text>
+                    <Text style={styles.textAbove} >Lista contenido de agua</Text>
                 </View>
 
                 <View style={styles.dropDownContainer}>

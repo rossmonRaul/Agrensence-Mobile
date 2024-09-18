@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Keyboard } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "./BottomNavbar.styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -11,6 +11,12 @@ import { ObtenerNotificaciones } from "../../servicios/ServicioNotificaciones";
 import { useAuth } from "../../hooks/useAuth";
 import { ObtenerFincas } from "../../servicios/ServicioFinca";
 import { ObtenerParcelas } from "../../servicios/ServicioParcela";
+import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import ConfirmAlert from '../../components/CustomAlert/ConfirmAlert';
+interface ButtonAlert{
+    text: string;
+    onPress: () => void;
+  }
 
 const BottomNavBar = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
@@ -20,10 +26,15 @@ const BottomNavBar = () => {
     let fincas = [];
     let parcelas = [];
     let cargaInicial = false;
+
+
     const fetchFincas = async () => {
       fincas = await ObtenerFincas(userData.idEmpresa);
       parcelas = await ObtenerParcelas(userData.idEmpresa);
     };
+
+  
+
 
     const fetchNotifications = async () => {
       try {
@@ -52,6 +63,7 @@ const BottomNavBar = () => {
           );
           const unreadCount = notificacionesFiltradas.length; // Puedes ajustar esto según tu lógica
           setNotificationCount(unreadCount);
+          
         }
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -68,6 +80,79 @@ const BottomNavBar = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+
+  const [isAlertVisible, setAlertVisible] = useState(false);
+  const [isAlertVisibleEstado, setAlertVisibleEstado] = useState(false);
+  const [alertProps, setAlertProps] = useState({
+      message: '',
+      buttons: [] as ButtonAlert[], // Define el tipo explícitamente
+      iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
+  });
+
+
+
+const showSuccessAlert = (message: string) => {
+      setAlertProps({
+        message: message,
+        iconType: 'success',
+        buttons: [
+          {
+            text: 'Cerrar',
+            onPress: () => {
+              navigation.navigate(ScreenProps.Login.screenName as never);
+            },
+          },
+        ],
+      });
+      setAlertVisible(true);
+    };
+  
+    const showErrorAlert = (message: string) => {
+      setAlertProps({
+        message: message,
+        iconType: 'error',
+        buttons: [
+          {
+            text: 'Cerrar',
+            onPress: () => {
+              
+            },
+          },
+        ],
+      });
+Keyboard.dismiss();
+      setAlertVisible(true);
+    };
+
+    const showInfoAlert = (message: string) => {
+      setAlertProps({
+        message: message,
+        iconType: 'info',
+        buttons: [
+          {
+            text: 'Cerrar',
+            onPress: () => {
+           
+            },
+          },
+        ],
+      });
+Keyboard.dismiss();
+      setAlertVisible(true);
+    };
+
+  
+    const hideAlert = () => {
+      setAlertVisible(false);
+    };
+
+    const showConfirmAlert = async () => {
+      setAlertVisibleEstado(true);
+    };
+
+
+
+
   const navigateToInicio = () => {
     navigation.navigate(ScreenProps.Menu.screenName);
   };
@@ -77,34 +162,44 @@ const BottomNavBar = () => {
   };
 
   const handleLogOut = async () => {
-    Alert.alert(
-      "Cerrar Sesión",
-      "¿Estás seguro de que deseas cerrar sesión?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Sí",
-          onPress: async () => {
-            try {
-              await CerrarSesion();
-              navigation.navigate(ScreenProps.Login.screenName);
-            } catch (error) {
-              console.error("Error al cerrar sesión:", error);
-              Alert.alert(
-                "Error",
-                "Ocurrió un error al cerrar sesión. Por favor, inténtalo de nuevo más tarde.",
-                [{ text: "Aceptar" }],
-                { cancelable: false }
-              );
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+    try {
+      await CerrarSesion();
+      navigation.navigate(ScreenProps.Login.screenName);
+    } catch (error) {
+          showErrorAlert('Ocurrió un error al cerrar sesión. Por favor, inténtalo de nuevo más tarde.');
+    } finally {
+      // setLoading(false);
+      setAlertVisibleEstado(false);
+    }
+
+    // Alert.alert(
+    //   "Cerrar Sesión",
+    //   "¿Estás seguro de que deseas cerrar sesión?",
+    //   [
+    //     {
+    //       text: "Cancelar",
+    //       style: "cancel",
+    //     },
+    //     {
+    //       text: "Sí",
+    //       onPress: async () => {
+    //         try {
+    //           await CerrarSesion();
+    //           navigation.navigate(ScreenProps.Login.screenName);
+    //         } catch (error) {
+    //           console.error("Error al cerrar sesión:", error);
+    //           Alert.alert(
+    //             "Error",
+    //             "Ocurrió un error al cerrar sesión. Por favor, inténtalo de nuevo más tarde.",
+    //             [{ text: "Aceptar" }],
+    //             { cancelable: false }
+    //           );
+    //         }
+    //       },
+    //     },
+    //   ],
+    //   { cancelable: false }
+    // );
   };
 
   return (
@@ -124,11 +219,38 @@ const BottomNavBar = () => {
                 </View>
                 <Text style={styles.tabText}>Notificaciones</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.tab} onPress={handleLogOut}>
+            <TouchableOpacity style={styles.tab} onPress={showConfirmAlert}>
                 <MaterialIcons name="logout" size={22} color="#a5cf60" />
                 <Text style={styles.tabText}>Cerrar sesión</Text>
             </TouchableOpacity>
+              <CustomAlert
+                isVisible={isAlertVisible}
+                onClose={hideAlert}
+                message={alertProps.message}
+                iconType={alertProps.iconType}
+                buttons={alertProps.buttons}
+                navigateTo={alertProps.iconType === 'success' ? () => navigation.navigate(ScreenProps.Login.screenName as never) : undefined}
+                />
+            <ConfirmAlert
+                isVisible={isAlertVisibleEstado}
+                onClose={() => setAlertVisibleEstado(false)}
+                title="Cerrar Sesión"
+                message="¿Estás seguro de que deseas cerrar sesión?"
+                buttons={[
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                    onPress: () => setAlertVisibleEstado(false),
+                },
+                {
+                text: 'Aceptar',
+                onPress: handleLogOut,
+                 },
+                ]}
+                />
+
         </View>
+        
   );
 };
 
