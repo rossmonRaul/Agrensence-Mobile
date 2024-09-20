@@ -8,6 +8,8 @@ import { ScreenProps } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import useAuth from '../../hooks/useAuth';
+import { ObtenerAccesoMenuPorRol } from '../../servicios/ServicioUsuario';
 
 
 interface ButtonAlert{
@@ -23,7 +25,8 @@ export const AdministracionReportes: React.FC = () => {
         iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
     });
 
-
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    const [valoresSubMenuFiltrados, setValoresSubMenuFiltrados] = useState<any[]>([]);
 
  const showSuccessAlert = (message: string) => {
         setAlertProps({
@@ -90,7 +93,34 @@ export const AdministracionReportes: React.FC = () => {
             showInfoAlert('Pantalla aún no disponible');
         }
     }
+    useEffect( () => {
+      obtenerDatosIniciales();
+    }, [userData.idRol]);
 
+  const obtenerDatosIniciales = async () => {
+    // Lógica para obtener datos desde la API
+    const formData = { idRol: userData.idRol };
+    try {
+
+
+    const accessMenu = await ObtenerAccesoMenuPorRol(formData); 
+    //console.log("accessMenu",accessMenu)
+
+    const uniqueItems = accessMenu.filter(item => item.idCategoria === 13);
+
+     let filteredAdminReportsProps = Admin_Reports;
+
+     filteredAdminReportsProps = Admin_Reports.filter(opcion =>
+     uniqueItems.some(opcionMenu => opcionMenu.idOpcionMenu === opcion.id)
+     );
+      //console.log("uniqueItems",uniqueItems)
+      setValoresSubMenuFiltrados(filteredAdminReportsProps)
+
+     
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
     return (
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
@@ -100,7 +130,7 @@ export const AdministracionReportes: React.FC = () => {
 
             <View style={styles.rowContainer}>
 
-                {Admin_Reports.map((report) => (
+                {valoresSubMenuFiltrados.map((report) => (
                     <View style={styles.row} key={report.id}>
                         <IconRectangle
                             onPress={() => HandleRectanglePress(report)}

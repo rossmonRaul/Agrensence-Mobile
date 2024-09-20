@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, Keyboard } from 'react-native';
 import { styles } from '../../../styles/menu-global-styles.styles';
 import { IconRectangle } from '../../../components/IconRectangle/IconRectangle';
@@ -11,6 +11,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BackButtonComponent } from '../../../components/BackButton/BackButton';
 import CustomAlertAuth from '../../../components/CustomAlert/CustomAlert';
 import CustomAlert from '../../../components/CustomAlert/CustomAlert';
+import { ObtenerAccesoMenuPorRol } from '../../../servicios/ServicioUsuario';
 
 interface ButtonAlert{
     text: string;
@@ -28,7 +29,7 @@ export const MenuHidricoScreen: React.FC = () => {
         buttons: [] as ButtonAlert[], // Define el tipo explícitamente
         iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
     });
-
+    const [valoresSubMenuFiltrados, setValoresSubMenuFiltrados] = useState<any[]>([]);
 
 
  const showSuccessAlert = (message: string) => {
@@ -97,7 +98,34 @@ export const MenuHidricoScreen: React.FC = () => {
     }
 
     //  Se renderiza los cuadros con sus respectivos iconos
+    useEffect( () => {
+      obtenerDatosIniciales();
+    }, [userData.idRol]);
 
+  const obtenerDatosIniciales = async () => {
+    // Lógica para obtener datos desde la API
+    const formData = { idRol: userData.idRol };
+    try {
+
+
+    const accessMenu = await ObtenerAccesoMenuPorRol(formData); 
+    //console.log("accessMenu",accessMenu)
+
+    const uniqueItems = accessMenu.filter(item => item.idCategoria === 15);
+
+     let filteredAdminHidricoProps = Admin_hidrico;
+
+     filteredAdminHidricoProps = Admin_hidrico.filter(opcion =>
+     uniqueItems.some(opcionMenu => opcionMenu.idOpcionMenu === opcion.id)
+     );
+      //console.log("uniqueItems",uniqueItems)
+      setValoresSubMenuFiltrados(filteredAdminHidricoProps)
+
+     
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+  };
 
     return (
         <>
@@ -109,7 +137,7 @@ export const MenuHidricoScreen: React.FC = () => {
 
                 <View style={styles.rowContainer}>
 
-                    {Admin_hidrico.map((item) => (
+                    {valoresSubMenuFiltrados.map((item) => (
 
                         <View style={styles.row} key={item.id}>
                             <IconRectangle

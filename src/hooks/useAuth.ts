@@ -27,7 +27,17 @@ export const useAuth = () => {
       buttons: [],
       iconType: 'success',
     });
-  
+    const initialUserData: UserDataInterface = {
+      identificacion: "",
+      nombre: "",
+      correo: "",
+      idEmpresa: 0,
+      idFinca: 0,
+      idParcela: 0,
+      idRol: 0,
+      estado: false,
+      token: ""
+      };
 
     const showSuccessAlert = (message: string) => {
         setAlertPropsAuth({
@@ -109,6 +119,7 @@ export const useAuth = () => {
                             showInfoAlert('Atención, tu sesión ha expirado. Por favor, vuelve a iniciar sesión.');
 
                             // Elimina los datos del usuario
+                            setUserData(initialUserData);
                             await AsyncStorage.clear();
 
                             // Redirige a la pantalla de inicio de sesión

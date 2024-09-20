@@ -186,6 +186,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
+        await AsyncStorage.clear();
         const storedData = await AsyncStorage.getItem('userData');
         if (storedData) {
           const parsedData = JSON.parse(storedData);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Text, Keyboard } from 'react-native';
 import { styles } from './menu-principal.styles';
 import { SquareIcon } from '../../components/IconSquare/IconSquare';
@@ -9,6 +9,7 @@ import BottomNavBar from '../../components/BottomNavbar/BottomNavbar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomAlert from '../../components/CustomAlert/CustomAlert';
 import CustomAlertAuth from '../../components/CustomAlert/CustomAlert';
+import { ObtenerAccesoMenuPorRol } from '../../servicios/ServicioUsuario';
 interface ButtonAlert{
     text: string;
     onPress: () => void;
@@ -18,8 +19,9 @@ export const MenuScreen: React.FC = () => {
   //const { userData } = useAuth();
     const userRole = userData.idRol;
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
-
+    const [valoresMenuFiltrados, setValoresMenuFiltrados] = useState<any[]>([]);
     const [isAlertVisible, setAlertVisible] = useState(false);
+    const [key, setKey] = useState(0);
     const [alertProps, setAlertProps] = useState({
         message: '',
         buttons: [] as ButtonAlert[], // Define el tipo explícitamente
@@ -95,24 +97,68 @@ export const MenuScreen: React.FC = () => {
             showInfoAlert('Pantalla aún no disponible');
         }
     }
+    useEffect( () => {
+      obtenerDatosIniciales();
+    }, [userRole]);
 
+  const obtenerDatosIniciales = async () => {
+    setValoresMenuFiltrados([]);
+    // Lógica para obtener datos desde la API
+    const formData = { idRol: userRole };
+    try {
+
+
+    const accessMenu = await ObtenerAccesoMenuPorRol(formData); 
+    console.log("accessMenu",accessMenu)
+
+    const uniqueItems = accessMenu.length > 0 ? accessMenu.filter((item, index, self) =>
+      index === self.findIndex((t) => t.idCategoria === item.idCategoria)
+   ) : [];
+
+     console.log("uniqueItems",uniqueItems)
+     setValoresMenuFiltrados(uniqueItems);
+     setKey(key+1)
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
     //  Se renderiza los cuadros con sus respectivos iconos
     const renderRows = () => {
+        //console.log('user',userData);
+
+       // console.log('accessMenu',accessMenu);
         let filteredCompanyProps = Company_Props;
-        if (userRole === 1) {
-            filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 200);
+        // if (userRole === 1) {
+        //     filteredCompanyProps = Company_Props.filter(company => company.id >= 100 && company.id <= 200);
+        // }
+
+        // if (userRole === 2) {
+        //     filteredCompanyProps = Company_Props.filter(company => (company.id >= 50 && company.id <= 99) || company.id === 200);
+        // }
+        // if (userRole === 3) {
+        //     filteredCompanyProps = Company_Props.slice(0, 10);
+        // }
+        if (valoresMenuFiltrados.length === 0) {
+          return <Text>No hay elementos disponibles para este rol.</Text>;
         }
 
-        if (userRole === 2) {
-            filteredCompanyProps = Company_Props.filter(company => (company.id >= 50 && company.id <= 99) || company.id === 200);
-        }
-        if (userRole === 3) {
-            filteredCompanyProps = Company_Props.slice(0, 10);
-        }
+        if(userRole === 2) {
+    // Primero añade el elemento con id: 99
+       const extraItems = Company_Props.filter(company => company.id === 99);
+        filteredCompanyProps = Company_Props.filter(company =>
+        valoresMenuFiltrados.some(categoria => categoria.idCategoria === company.id)
+        );
+        filteredCompanyProps.push(...extraItems);
+        console.log("filteredCompanyProps",filteredCompanyProps);
+        }else{
+        filteredCompanyProps = Company_Props.filter(company =>
+          valoresMenuFiltrados.some(categoria => categoria.idCategoria === company.id)
+      );}
 
         const rows = [];
         for (let i = 0; i < filteredCompanyProps.length; i += 2) {
             const rowItems = filteredCompanyProps.slice(i, i + 2);
+            //console.log("REVISAR:",rowItems)
             const row = (
                 <View key={i / 2} style={styles.row}>
                     {rowItems.map((company) => (
@@ -136,6 +182,7 @@ export const MenuScreen: React.FC = () => {
                 <ScrollView
                     style={styles.rowContainer}
                     showsVerticalScrollIndicator={false}
+                    key={key}
                 >
 
                     {renderRows()}

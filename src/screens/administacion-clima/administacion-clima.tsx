@@ -8,6 +8,8 @@ import { ScreenProps } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import useAuth from '../../hooks/useAuth';
+import { ObtenerAccesoMenuPorRol } from '../../servicios/ServicioUsuario';
 
 interface ButtonAlert{
     text: string;
@@ -21,7 +23,8 @@ export const AdministracionClima: React.FC = () => {
         buttons: [] as ButtonAlert[], // Define el tipo explícitamente
         iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
     });
-
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    const [valoresSubMenuFiltrados, setValoresSubMenuFiltrados] = useState<any[]>([]);
 
 
  const showSuccessAlert = (message: string) => {
@@ -89,6 +92,36 @@ export const AdministracionClima: React.FC = () => {
         }
     }
 
+    useEffect( () => {
+      obtenerDatosIniciales();
+    }, [userData.idRol]);
+
+  const obtenerDatosIniciales = async () => {
+    // Lógica para obtener datos desde la API
+    const formData = { idRol: userData.idRol };
+    try {
+
+
+    const accessMenu = await ObtenerAccesoMenuPorRol(formData); 
+    //console.log("accessMenu",accessMenu)
+
+    const uniqueItems = accessMenu.filter(item => item.idCategoria === 16);
+
+
+     let filteredAdminClimaProps = Admin_clima;
+
+     filteredAdminClimaProps = Admin_clima.filter(opcion =>
+     uniqueItems.some(opcionMenu => opcionMenu.idOpcionMenu === opcion.id)
+     );
+      //console.log("uniqueItems",uniqueItems)
+      setValoresSubMenuFiltrados(filteredAdminClimaProps)
+
+     
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+  };
+
     return (
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
@@ -98,7 +131,7 @@ export const AdministracionClima: React.FC = () => {
 
             <View style={styles.rowContainer}>
 
-                {Admin_clima.map((weather) => (
+                {valoresSubMenuFiltrados.map((weather) => (
                     <View style={styles.row} key={weather.id}>
                         <IconRectangle
                             onPress={() => HandleRectanglePress(weather)}

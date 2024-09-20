@@ -8,6 +8,8 @@ import { ScreenProps } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import useAuth from '../../hooks/useAuth';
+import { ObtenerAccesoMenuPorRol } from '../../servicios/ServicioUsuario';
 interface ButtonAlert{
     text: string;
     onPress: () => void;
@@ -21,6 +23,9 @@ export const AdministracionSensores: React.FC = () => {
         buttons: [] as ButtonAlert[], // Define el tipo explícitamente
         iconType: 'success' as 'success' | 'error' | 'warning' | 'info',
     });
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
+    const [valoresSubMenuFiltrados, setValoresSubMenuFiltrados] = useState<any[]>([]);
+
 
 
 
@@ -90,7 +95,34 @@ export const AdministracionSensores: React.FC = () => {
             showInfoAlert('Pantalla aún no disponible');
         }
     }
+    useEffect( () => {
+      obtenerDatosIniciales();
+    }, [userData.idRol]);
 
+  const obtenerDatosIniciales = async () => {
+    // Lógica para obtener datos desde la API
+    const formData = { idRol: userData.idRol };
+    try {
+
+
+    const accessMenu = await ObtenerAccesoMenuPorRol(formData); 
+    //console.log("accessMenu",accessMenu)
+
+    const uniqueItems = accessMenu.filter(item => item.idCategoria === 11);
+
+     let filteredAdminSensorProps = Admin_sensor;
+
+     filteredAdminSensorProps = Admin_sensor.filter(opcion =>
+     uniqueItems.some(opcionMenu => opcionMenu.idOpcionMenu === opcion.id)
+     );
+      //console.log("uniqueItems",uniqueItems)
+      setValoresSubMenuFiltrados(filteredAdminSensorProps)
+
+     
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+    };
     return (
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
@@ -100,7 +132,7 @@ export const AdministracionSensores: React.FC = () => {
 
             <View style={styles.rowContainer}>
 
-                {Admin_sensor.map((sensors) => (
+                {valoresSubMenuFiltrados.map((sensors) => (
                     <View style={styles.row} key={sensors.id}>
                         <IconRectangle
                             onPress={() => HandleRectanglePress(sensors)}

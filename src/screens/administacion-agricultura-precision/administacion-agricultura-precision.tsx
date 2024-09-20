@@ -8,6 +8,8 @@ import { ScreenProps } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import useAuth from '../../hooks/useAuth';
+import { ObtenerAccesoMenuPorRol } from '../../servicios/ServicioUsuario';
 
 interface ButtonAlert{
     text: string;
@@ -15,7 +17,9 @@ interface ButtonAlert{
   }
 export const AdministracionAgriculturaPrecision: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<any>>();
+    const { userData, isAlertVisibleAuth , alertPropsAuth , hideAlertAuth  } = useAuth();
     const [isAlertVisible, setAlertVisible] = useState(false);
+    const [valoresSubMenuFiltrados, setValoresSubMenuFiltrados] = useState<any[]>([]);
     const [alertProps, setAlertProps] = useState({
         message: '',
         buttons: [] as ButtonAlert[], // Define el tipo explícitamente
@@ -90,6 +94,36 @@ export const AdministracionAgriculturaPrecision: React.FC = () => {
         }
     }
 
+
+    useEffect( () => {
+      obtenerDatosIniciales();
+    }, [userData.idRol]);
+
+  const obtenerDatosIniciales = async () => {
+    // Lógica para obtener datos desde la API
+    const formData = { idRol: userData.idRol };
+    try {
+
+
+    const accessMenu = await ObtenerAccesoMenuPorRol(formData); 
+    //console.log("accessMenu",accessMenu)
+
+    const uniqueItems = accessMenu.filter(item => item.idCategoria === 18);
+
+     let filteredAgriculturaPrecisionProps = Admin_Agricultura_Precision;
+
+     filteredAgriculturaPrecisionProps = Admin_Agricultura_Precision.filter(opcion =>
+     uniqueItems.some(opcionMenu => opcionMenu.idOpcionMenu === opcion.id)
+     );
+      //console.log("uniqueItems",uniqueItems)
+      setValoresSubMenuFiltrados(filteredAgriculturaPrecisionProps)
+
+     
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
+
     return (
         <View style={styles.container} >
             <BackButtonComponent screenName={ScreenProps.Menu.screenName} color={'#274c48'} />
@@ -99,7 +133,7 @@ export const AdministracionAgriculturaPrecision: React.FC = () => {
             {/* <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}> */}
             <View style={styles.rowContainer}>
 
-                {Admin_Agricultura_Precision.map((agriculture) => (
+                {valoresSubMenuFiltrados.map((agriculture) => (
                     <View style={styles.rowEspaciado} key={agriculture.id}>
                         <IconRectangle 
                             onPress={() => HandleRectanglePress(agriculture)}

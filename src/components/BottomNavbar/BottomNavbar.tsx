@@ -164,6 +164,8 @@ Keyboard.dismiss();
   const handleLogOut = async () => {
     try {
       await CerrarSesion();
+      //setUserData(initialUserData);
+      await AsyncStorage.clear();
       navigation.navigate(ScreenProps.Login.screenName);
     } catch (error) {
           showErrorAlert('Ocurrió un error al cerrar sesión. Por favor, inténtalo de nuevo más tarde.');

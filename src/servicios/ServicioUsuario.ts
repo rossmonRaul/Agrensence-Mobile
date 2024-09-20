@@ -88,3 +88,7 @@ export const ObtenerFincasUbicacionPorIdEmpresa = async (data: any) => {
     return await ProcesarDatosApi('POST', url, data);
 }
 
+export const ObtenerAccesoMenuPorRol = async (data: any) => {
+    const url = `${API_URL}/api/v1.0/${controlador}/ObtenerAccesoMenuPorRol`;
+    return await ProcesarDatosApi('POST', url, data);
+}
