@@ -11,7 +11,7 @@ import { IncioSesionScreen } from "./src/screens/inicio-sesion/inicio-sesion";
 import { RegistrarUsuarioScreen } from "./src/screens/registrar-usuario/registrar-usuario";
 import { MenuScreen } from "./src/screens/menu-principal/menu-principal";
 import { MenuSueloScreen } from "./src/screens/suelos/menu-suelos/menu-suelos";
-
+import './i18n'; 
 import { NotificacionesScreen } from "./src/screens/notificaciones/lista-notificaciones/lista-notificaciones";
 
 import { ListaUsuarioRol4Screen } from "./src/screens/lista-usuarios-rol4/lista-usuarios-rol4";

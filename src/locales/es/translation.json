@@ -1,0 +1,15 @@
+{
+    "login": {
+      "title": "Inicio de sesión",
+      "user": "Usuario",
+      "placeholder_user": "identificación o correo",
+      "password":"Contraseña",
+      "placeholder_password":"Contraseña",
+      "submit_button": "Iniciar sesión",
+      "language":"Idioma"
+    }
+
+
+
+
+}

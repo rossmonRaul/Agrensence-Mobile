@@ -1,0 +1,13 @@
+{
+  "login": {
+    "title": "Login",
+    "user": "User",
+    "placeholder_user": "Identification or email",
+    "password":"Password",
+    "placeholder_password":"Password",
+    "submit_button": "Login",
+    "language":"Language"
+  }
+
+
+}

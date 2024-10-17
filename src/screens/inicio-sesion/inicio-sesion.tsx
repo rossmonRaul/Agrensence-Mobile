@@ -8,13 +8,30 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'
 import CustomAlert from '../../components/CustomAlert/CustomAlert';
+import { useTranslation } from 'react-i18next';
+import DropdownComponent from '../../components/Dropdown/Dropwdown';
 
 export const IncioSesionScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
   const { username, setUsername, password, setPassword, isLoggedIn, handleLogin, isAlertVisible,alertProps, hideAlert } = useLogin();
+  const { t, i18n  } = useTranslation();
 
-
+  // Opciones de idiomas
+  const languageOptions = [
+    { label: 'Español', value: 'es' },
+    { label: 'English', value: 'en' },
+    { label: 'Deutsch', value: 'de' },  // Añadir alemán
+  ];
+  //const [selectedLanguage, setSelectedLanguage] = React.useState<string>(i18n.language);
+  const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+    // Cambia el idioma cuando se selecciona
+    const handleLanguageChange = (item: unknown) => {
+      // Convertir el valor del item a string (por ejemplo, de { label: 'English', value: 'en' } a 'en')
+      const language = (item as { value: string }).value;
+      setSelectedLanguage(language);
+      i18n.changeLanguage(language); // Cambia el idioma
+    };
 
   return (
     <View style={styles.container}>
@@ -32,30 +49,44 @@ export const IncioSesionScreen: React.FC = () => {
         <View style={styles.lowerContainer}>
           <ScrollView style={styles.rowContainer} showsVerticalScrollIndicator={false}>
             <View>
-              <Text style={styles.loginText} >Inicio de sesión</Text>
+              <Text style={styles.loginText} >{t('login.title')}</Text>
             </View>
 
             <View style={styles.formContainer}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                 <FontAwesome name="user" size={20} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 5 }}>Usuario</Text>
+                <Text style={{ fontSize: 16, marginLeft: 5 }}>{t('login.user')}</Text>
               </View>
               <TextInput
                 style={styles.input}
-                placeholder="Identificación o correo"
+                placeholder={t('login.placeholder_user')}
                 value={username}
                 onChangeText={(text) => setUsername(text)}
               />
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
                 <FontAwesome name="lock" size={20} color="black" />
-                <Text style={{ fontSize: 16, marginLeft: 5 }}>Contraseña</Text>
+                <Text style={{ fontSize: 16, marginLeft: 5 }}>{t('login.password')}</Text>
               </View>
               <TextInput style={styles.input}
                 secureTextEntry={true}
-                placeholder="Contraseña"
+                placeholder={t('login.placeholder_password')}
                 value={password}
                 onChangeText={(text) => setPassword(text)}
               />
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                <FontAwesome name="language" size={20} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 5 }}>{t('login.language')}</Text>
+              </View>
+                <DropdownComponent
+                placeholder={t('login.language')}
+                data={languageOptions}
+                value={selectedLanguage}
+                iconName="globe"
+                onChange={handleLanguageChange}  
+                
+              />
+              
               <View style={styles.buttonContainer} >
                 <TouchableOpacity
                   style={styles.button}
@@ -63,7 +94,7 @@ export const IncioSesionScreen: React.FC = () => {
                 >
                   <View style={styles.buttonContent}>
                   <MaterialIcons name="login" size={20} color="white" style={styles.iconStyle} />
-                  <Text style={styles.buttonText}>Iniciar sesión</Text>
+                  <Text style={styles.buttonText}>{t('login.submit_button')}</Text>
                   </View>             
                 </TouchableOpacity>
               </View>
